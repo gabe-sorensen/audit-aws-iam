@@ -1,0 +1,1 @@
+This repo is designed to work with CloudCoreo. It will monitor IAM against best practices for you and send a report to the email address designated by the config.yaml AUDIT_AWS_IAM_ALERT_RECIPIENT value
