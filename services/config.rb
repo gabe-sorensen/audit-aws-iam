@@ -42,7 +42,7 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   alert_when ["", "90.days.ago", "Active"]
 end
 
-coreo_aws_advisor_alert "missing-password-policy" do
+coreo_aws_advisor_alert "iam-missing-password-policy" do
   action :define
   service :iam
   description "There currently isn't a password policy to require a certain password length, password expiration, prevent password reuse, and more."
