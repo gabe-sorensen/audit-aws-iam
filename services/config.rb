@@ -185,7 +185,7 @@ coreo_uni_util_notify "advise-iam" do
   "number_of_violations":"STACK::coreo_aws_advisor_iam.advise-iam.number_violations",
   "number_violations_ignored":"STACK::coreo_aws_advisor_iam.advise-iam.number_ignored_violations",
   "violations": STACK::coreo_aws_advisor_iam.advise-iam.report }'
-  payload_type "${AUDIT_AWS_IAM_PAYLOAD_TYPE}"
+  payload_type "json"
   endpoint ({ 
               :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'CloudCoreo iam advisor alerts on INSTANCE::stack_name :: INSTANCE::name'
             })
