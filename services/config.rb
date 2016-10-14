@@ -25,11 +25,12 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Alert"
+  id_map "object.access_key_metadata.access_key_id"
   objectives ["users", "access_keys", "access_keys"]
-  audit_objects ["", "access_key_metadata.create_date", "access_key_metadata.status"]
+  audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
-  operators ["", "<", "=="]
-  alert_when ["", "90.days.ago", "Inactive"]
+  operators ["", "==", "<"]
+  alert_when ["", "Inactive", "90.days.ago"]
 end
 
 coreo_aws_advisor_alert "iam-active-key-no-rotation" do
@@ -41,11 +42,12 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Alert"
+  id_map "object.access_key_metadata.access_key_id"
   objectives ["users", "access_keys", "access_keys"]
-  audit_objects ["", "access_key_metadata.create_date", "access_key_metadata.status"]
+  audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
-  operators ["", "<", "=="]
-  alert_when ["", "90.days.ago", "Active"]
+  operators ["", "==", "<"]
+  alert_when ["", "Active", "90.days.ago"]
 end
 
 coreo_aws_advisor_alert "iam-missing-password-policy" do
