@@ -48,7 +48,7 @@ end
 #   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
 #   operators ["", "==", "<"]
 #   alert_when ["", "Active", "90.days.ago"]
-end
+#end
 
 # coreo_aws_advisor_alert "iam-missing-password-policy" do
 #   action :define
