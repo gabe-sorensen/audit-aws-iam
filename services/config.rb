@@ -30,25 +30,25 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
   operators ["", "==", "<"]
-  alert_when ["", "Inactive", "7.days.ago"]
+  alert_when ["", "Inactive", "90.days.ago"]
 end
 
-# coreo_aws_advisor_alert "iam-active-key-no-rotation" do
-#   action :define
-#   service :iam
-#   link "http://kb.cloudcoreo.com/mydoc_iam-active-key-no-rotation.html"
-#   display_name "Active user Access Key not rotated"
-#   description "User has active keys that have not been rotated in the last 90 days"
-#   category "Access"
-#   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
-#   level "Alert"
-#   id_map "object.access_key_metadata.access_key_id"
-#   objectives ["users", "access_keys", "access_keys"]
-#   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
-#   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
-#   operators ["", "==", "<"]
-#   alert_when ["", "Active", "90.days.ago"]
-#end
+coreo_aws_advisor_alert "iam-active-key-no-rotation" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-active-key-no-rotation.html"
+  display_name "Active user Access Key not rotated"
+  description "User has active keys that have not been rotated in the last 90 days"
+  category "Access"
+  suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
+  level "Alert"
+  id_map "object.access_key_metadata.access_key_id"
+  objectives ["users", "access_keys", "access_keys"]
+  audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
+  call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
+  operators ["", "==", "<"]
+  alert_when ["", "Active", "90.days.ago"]
+end
 
 # coreo_aws_advisor_alert "iam-missing-password-policy" do
 #   action :define
