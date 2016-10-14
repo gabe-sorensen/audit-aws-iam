@@ -57,6 +57,7 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Alert"
+  id_map "object.access_key_metadata.access_key_id"
   objectives ["users", "access_keys"]
   audit_objects ["", "access_key_metadata.status"]
   call_modifiers [{}, {:user_name => "users.user_name"}]
