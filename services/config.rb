@@ -29,7 +29,7 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   audit_objects ["", "access_key_metadata.create_date", "access_key_metadata.status"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
   operators ["", "<", "=="]
-  alert_when ["", "90.days.ago", "Inactive"]
+  alert_when ["", "1.days.ago", "Inactive"]
 end
 
 coreo_aws_advisor_alert "iam-active-key-no-rotation" do
@@ -45,7 +45,7 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   audit_objects ["", "access_key_metadata.create_date", "access_key_metadata.status"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
   operators ["", "<", "=="]
-  alert_when ["", "90.days.ago", "Active"]
+  alert_when ["", "1.days.ago", "Active"]
 end
 
 coreo_aws_advisor_alert "iam-missing-password-policy" do
