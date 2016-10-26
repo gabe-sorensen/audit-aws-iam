@@ -47,6 +47,10 @@ This repo is designed to work with CloudCoreo. It will monitor IAM against best 
 1. Alert
 1. IAM
 
+## Categories
+
+1. Audit
+
 ## Diagram
 
 
