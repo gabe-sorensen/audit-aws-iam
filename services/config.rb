@@ -60,7 +60,7 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
-  audit_objects ["object.password_policy"]
+  audit_objects ["object"]
   operators ["=="]
   alert_when [nil]
 end
@@ -75,9 +75,10 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
-  audit_objects ["object.password_policy.password_reuse_prevention"]
-  operators ["=="]
-  alert_when [nil]
+  audit_objects ["object.password_policy"]
+  formulas ["include?(password_reuse_prevention)"]
+  operators ["!="]
+  alert_when [true]
 end
 
 coreo_aws_advisor_alert "iam-expirepasswords" do
