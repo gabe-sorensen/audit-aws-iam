@@ -187,6 +187,11 @@ coreo_aws_advisor_iam "advise-iam" do
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
+=begin
+  START AWS IAM METHODS
+  JSON SEND METHOD
+  HTML SEND METHOD
+=end
 coreo_uni_util_notify "advise-iam-json" do
   action :${AUDIT_AWS_IAM_FULL_JSON_REPORT}
   type 'email'
@@ -204,14 +209,13 @@ coreo_uni_util_notify "advise-iam-json" do
   })
 end
 
-## Create Notifiers
-coreo_uni_util_jsrunner "tags-to-notifiers-array" do
+coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   action :run
   data_type "json"
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.0.4"
+                   :version => "1.0.5"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
@@ -227,12 +231,10 @@ callback(notifiers);
   EOH
 end
 
-
-## Create rollup String
-coreo_uni_util_jsrunner "tags-rollup" do
+coreo_uni_util_jsrunner "tags-rollup-iam" do
   action :run
   data_type "text"
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array.return'
+  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
   function <<-EOH
 var rollup_string = "";
 for (var entry=0; entry < json_input.length; entry++) {
@@ -246,15 +248,10 @@ callback(rollup_string);
   EOH
 end
 
-
-## Send Notifiers
 coreo_uni_util_notify "advise-iam-to-tag-values" do
   action :${AUDIT_AWS_IAM_OWNERS_HTML_REPORT}
-  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array.return'
+  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
 end
-
-
-
 
 coreo_uni_util_notify "advise-iam-rollup" do
   action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
@@ -269,10 +266,13 @@ number_of_violations: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violati
 number_violations_ignored: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations
 
 rollup report:
-COMPOSITE::coreo_uni_util_jsrunner.tags-rollup.return
+COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
   '
   payload_type 'text'
   endpoint ({
       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name'
   })
 end
+=begin
+  AWS IAM END
+=end
