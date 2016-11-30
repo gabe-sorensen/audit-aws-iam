@@ -215,7 +215,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.0.5"
+                   :version => "1.0.9"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
@@ -225,7 +225,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                 "violations": COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
   function <<-EOH
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditIAM = new CloudCoreoJSRunner(json_input, false, "${AUDIT_AWS_IAM_ALERT_NO_OWNER_RECIPIENT}", "${AUDIT_AWS_IAM_OWNER_TAG}");
+const AuditIAM = new CloudCoreoJSRunner(json_input, false, "${AUDIT_AWS_IAM_ALERT_NO_OWNER_RECIPIENT}", "${AUDIT_AWS_IAM_OWNER_TAG}", 'iam');
 const notifiers = AuditIAM.getNotifiers();
 callback(notifiers);
   EOH
