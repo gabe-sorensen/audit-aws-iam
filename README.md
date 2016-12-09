@@ -77,5 +77,5 @@ This repo is designed to work with CloudCoreo. It will monitor IAM against best 
 
 
 ## Icon
-
+![icon](https://raw.githubusercontent.com/CloudCoreo/audit-aws-iam/master/images/icon.png "icon")
 
