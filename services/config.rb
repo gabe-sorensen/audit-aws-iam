@@ -1,6 +1,7 @@
 
 #‘aws object id’ title should be ‘group name’
 #including the group arn would be helpful
+#   e.g. Group ARN: arn:aws:iam::530342348278:group/unusedgrouptest
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
@@ -19,7 +20,10 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
 end
 
 # need to include the username, key created date in the list of violations
+#    e.g. Users: andrew, 
+#    creation date for key: 2016-09-09 05:22 UTC+0600
 # what is the value in the ‘aws object id’?  Not sure this is useful
+#  - its the access key ID for that user
 # tags, owner email, region - these fields are not applicable for IAM (CON-167)
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   action :define
@@ -38,8 +42,7 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   alert_when ["", "Inactive", "90.days.ago"]
 end
 
-# need to include the username, key created date in the list of violations
-# what is the value in the ‘aws object id’?  Not sure this is useful
+# same as last
 coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   action :define
   service :iam
