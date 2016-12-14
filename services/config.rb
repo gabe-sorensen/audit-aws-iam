@@ -193,22 +193,22 @@ end
   JSON SEND METHOD
   HTML SEND METHOD
 =end
-coreo_uni_util_notify "advise-iam-json" do
-  action :${AUDIT_AWS_IAM_FULL_JSON_REPORT}
-  type 'email'
-  allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
-  send_on '${AUDIT_AWS_IAM_SEND_ON}'
-  payload '{"composite name":"PLAN::stack_name",
-  "plan name":"PLAN::name",
-  "number_of_checks":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks",
-  "number_of_violations":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations",
-  "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations",
-  "violations": COMPOSITE::coreo_aws_advisor_iam.advise-iam.report }'
-  payload_type "json"
-  endpoint ({
-      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name'
-  })
-end
+# coreo_uni_util_notify "advise-iam-json" do
+#   action :${AUDIT_AWS_IAM_FULL_JSON_REPORT}
+#   type 'email'
+#   allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
+#   send_on '${AUDIT_AWS_IAM_SEND_ON}'
+#   payload '{"composite name":"PLAN::stack_name",
+#   "plan name":"PLAN::name",
+#   "number_of_checks":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks",
+#   "number_of_violations":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations",
+#   "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations",
+#   "violations": COMPOSITE::coreo_aws_advisor_iam.advise-iam.report }'
+#   payload_type "json"
+#   endpoint ({
+#       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name'
+#   })
+# end
 
 coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   action :run
@@ -227,8 +227,8 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   function <<-EOH
   
 const JSON = json_input;
-const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT_2}";
-const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
+const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
+const OWNER_TAG = "NOT_A_TAG";
 const AUDIT_NAME = 'iam';
 const IS_KILL_SCRIPTS_SHOW = false;
 const EC2_LOGIC = ''; // you can choose 'and' or 'or';
@@ -250,48 +250,48 @@ callback(notifiers);
   EOH
 end
 
-coreo_uni_util_jsrunner "tags-rollup-iam" do
-  action :run
-  data_type "text"
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
-  function <<-EOH
-var rollup_string = "";
-for (var entry=0; entry < json_input.length; entry++) {
-  console.log(json_input[entry]);
-  if (json_input[entry]['endpoint']['to'].length) {
-    console.log('got an email to rollup');
-    rollup_string = rollup_string + "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
-  }
-}
-callback(rollup_string);
-  EOH
-end
+# coreo_uni_util_jsrunner "tags-rollup-iam" do
+#   action :run
+#   data_type "text"
+#   json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
+#   function <<-EOH
+# var rollup_string = "";
+# for (var entry=0; entry < json_input.length; entry++) {
+#   console.log(json_input[entry]);
+#   if (json_input[entry]['endpoint']['to'].length) {
+#     console.log('got an email to rollup');
+#     rollup_string = rollup_string + "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
+#   }
+# }
+# callback(rollup_string);
+#   EOH
+# end
 
-coreo_uni_util_notify "advise-iam-to-tag-values" do
-  action :${AUDIT_AWS_IAM_OWNERS_HTML_REPORT}
+coreo_uni_util_notify "advise-iam-html-report" do
+  action :${AUDIT_AWS_IAM_HTML_REPORT}
   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
 end
 
-coreo_uni_util_notify "advise-iam-rollup" do
-  action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
-  type 'email'
-  allow_empty true
-  send_on '${AUDIT_AWS_IAM_SEND_ON}'
-  payload '
-composite name: PLAN::stack_name
-plan name: PLAN::name
-number_of_checks: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks
-number_of_violations: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations
-number_violations_ignored: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations
+# coreo_uni_util_notify "advise-iam-rollup" do
+#   action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
+#   type 'email'
+#   allow_empty true
+#   send_on '${AUDIT_AWS_IAM_SEND_ON}'
+#   payload '
+# composite name: PLAN::stack_name
+# plan name: PLAN::name
+# number_of_checks: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks
+# number_of_violations: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations
+# number_violations_ignored: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations
 
-rollup report:
-COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
-  '
-  payload_type 'text'
-  endpoint ({
-      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT_2}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name'
-  })
-end
+# rollup report:
+# COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
+#   '
+#   payload_type 'text'
+#   endpoint ({
+#       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT_2}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name'
+#   })
+# end
 =begin
   AWS IAM END
 =end
