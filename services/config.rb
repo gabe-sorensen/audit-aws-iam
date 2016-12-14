@@ -194,7 +194,7 @@ end
   HTML SEND METHOD
 =end
 # coreo_uni_util_notify "advise-iam-json" do
-#   action :${AUDIT_AWS_IAM_FULL_JSON_REPORT}
+#   action :$ { AUDIT_AWS_IAM_FULL_JSON_REPORT }
 #   type 'email'
 #   allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
 #   send_on '${AUDIT_AWS_IAM_SEND_ON}'
