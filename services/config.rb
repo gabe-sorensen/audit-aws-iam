@@ -1,9 +1,14 @@
 
 #‘aws object id’ title should be ‘group name’
+# modify_column [ "aws_object_id", "Group Name"]
+# https://cloudcoreo.atlassian.net/browse/PLA-2348
 #including the group arn would be helpful
 #   e.g. Group ARN: arn:aws:iam::530342348278:group/unusedgrouptest
-# add_html_column [ "group-arn", "Group ARN", "" ]
-# PROBLEM - the AWS json return is not part of the advisor output for this advisor?
+# add_column [ "///group_arn", "Group ARN" ]
+# https://cloudcoreo.atlassian.net/browse/PLA-2349
+# PROBLEM - the AWS json return is not part of the advisor output for this advisor
+# https://cloudcoreo.atlassian.net/browse/PLA-2350
+
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
@@ -33,7 +38,8 @@ end
 #    creation date for key: 2016-09-09 05:22 UTC+0600
 # what is the value in the ‘aws object id’?  Not sure this is useful
 #  - its the access key ID for that user
-# tags, owner email, region - these fields are not applicable for IAM (CON-167)
+# tags, owner email, region - these fields are not applicable for IAM
+# https://cloudcoreo.atlassian.net/browse/CON-167
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   action :define
   service :iam
@@ -85,6 +91,8 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
 end
 
 # the link does not take me to the policy
+# https://cloudcoreo.atlassian.net/browse/CON-168
+
 coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   action :define
   service :iam
@@ -120,6 +128,7 @@ end
 # ‘aws object id’ title should be ‘user name’
 # also, I think if console password is ‘disabled’ then this violation should not be flagged.  
 #   Ie, this user does not log into the console and therefore MFA is N/A (GEORGE - probably jsrunner?)
+# https://cloudcoreo.atlassian.net/browse/CON-172
 coreo_aws_advisor_alert "iam-no-mfa" do
   action :define
   service :iam
