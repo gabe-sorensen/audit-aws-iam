@@ -2,6 +2,8 @@
 #‘aws object id’ title should be ‘group name’
 #including the group arn would be helpful
 #   e.g. Group ARN: arn:aws:iam::530342348278:group/unusedgrouptest
+# add_html_column [ "group-arn", "Group ARN", "" ]
+# PROBLEM - the AWS json return is not part of the advisor output for this advisor?
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
@@ -20,6 +22,12 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
 end
 
 # need to include the username, key created date in the list of violations
+# these are in the json return structure
+#
+#access_key_id : AKIAI4FYSVOKIXN3YYZA
+#user_name : andrew
+#create_date : 2016-09-08T23:22:50Z
+#status  : Active
 #    e.g. Users: andrew, 
 #    creation date for key: 2016-09-09 05:22 UTC+0600
 # what is the value in the ‘aws object id’?  Not sure this is useful
@@ -184,6 +192,7 @@ end
 
 # the link does not take me to the policy
 # need to include violation field (i.e. policies attached inline &  group) GEORGE ???
+# PROBLEM - the json return does not include anything in the violating_object
 coreo_aws_advisor_alert "iam-user-attached-policies" do
   action :define
   service :iam
