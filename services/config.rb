@@ -216,7 +216,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.1.7"
+                   :version => "1.2.0"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
@@ -230,17 +230,45 @@ const JSON = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT_2}";
 const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
 const AUDIT_NAME = 'iam';
-const IS_KILL_SCRIPTS_SHOW = false;
+const ARE_KILL_SCRIPTS_SHOWN = false;
 const EC2_LOGIC = ''; // you can choose 'and' or 'or';
 const EXPECTED_TAGS = [];
+const WHAT_NEED_TO_SHOWN = {
+    OBJECT_ID: {
+        headerName: 'AWS Object ID',
+        isShown: true,
+    },
+    REGION: {
+        headerName: 'Region',
+        isShown: false,
+    },
+    AWS_CONSOLE: {
+        headerName: 'AWS Console',
+        isShown: true,
+    },
+    TAGS: {
+        headerName: 'Tags',
+        isShown: false,
+    },
+    AMI: {
+        headerName: 'AMI',
+        isShown: false,
+    },
+    KILL_SCRIPTS: {
+        headerName: 'Kill Cmd',
+        isShown: false,
+    }
+};
+
 
 const VARIABLES = {
-    'NO_OWNER_EMAIL': NO_OWNER_EMAIL,
-    'OWNER_TAG': OWNER_TAG,
-    'AUDIT_NAME': AUDIT_NAME,
-    'IS_KILL_SCRIPTS_SHOW': IS_KILL_SCRIPTS_SHOW,
-    'EC2_LOGIC': EC2_LOGIC,
-    'EXPECTED_TAGS': EXPECTED_TAGS
+    NO_OWNER_EMAIL,
+    OWNER_TAG,
+    AUDIT_NAME,
+    ARE_KILL_SCRIPTS_SHOWN,
+    EC2_LOGIC,
+    EXPECTED_TAGS,
+    WHAT_NEED_TO_SHOWN
 };
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
