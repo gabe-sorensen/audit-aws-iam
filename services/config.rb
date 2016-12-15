@@ -28,6 +28,7 @@ end
 #user_name : andrew
 #create_date : 2016-09-08T23:22:50Z
 #status  : Active
+#add_html_column [ "/user_name", "User Name" ] # key name, relative path from "object", display name
 #    e.g. Users: andrew, 
 #    creation date for key: 2016-09-09 05:22 UTC+0600
 # what is the value in the ‘aws object id’?  Not sure this is useful
