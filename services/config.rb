@@ -339,7 +339,7 @@ coreo_uni_util_notify "advise-iam-html-report" do
 end
 
 coreo_uni_util_notify "advise-iam-rollup" do
-  action :"AUDIT_AWS_IAM_ROLLUP_REPORT" # CANT UNCOMMENT
+  action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
   type 'email'
   allow_empty true
   send_on '${AUDIT_AWS_IAM_SEND_ON}'
@@ -355,7 +355,7 @@ COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
   '
   payload_type 'text'
   endpoint ({
-      :to => 'AUDIT_AWS_IAM_ALERT_RECIPIENT_2', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name' # CANT UNCOMMENT
+      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT_2}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name' # CANT UNCOMMENT
   })
 end
 =begin
