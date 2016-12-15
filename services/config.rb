@@ -1,4 +1,14 @@
 
+#‘aws object id’ title should be ‘group name’
+# modify_column [ "aws_object_id", "Group Name"]
+# https://cloudcoreo.atlassian.net/browse/PLA-2348
+#including the group arn would be helpful
+#   e.g. Group ARN: arn:aws:iam::530342348278:group/unusedgrouptest
+# add_column [ "///group_arn", "Group ARN" ]
+# https://cloudcoreo.atlassian.net/browse/PLA-2349
+# PROBLEM - the AWS json return is not part of the advisor output for this advisor
+# https://cloudcoreo.atlassian.net/browse/PLA-2350
+
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
@@ -16,6 +26,20 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   alert_when ["", 0]
 end
 
+# need to include the username, key created date in the list of violations
+# these are in the json return structure
+#
+#access_key_id : AKIAI4FYSVOKIXN3YYZA
+#user_name : andrew
+#create_date : 2016-09-08T23:22:50Z
+#status  : Active
+#add_html_column [ "/user_name", "User Name" ] # key name, relative path from "object", display name
+#    e.g. Users: andrew, 
+#    creation date for key: 2016-09-09 05:22 UTC+0600
+# what is the value in the ‘aws object id’?  Not sure this is useful
+#  - its the access key ID for that user
+# tags, owner email, region - these fields are not applicable for IAM
+# https://cloudcoreo.atlassian.net/browse/CON-167
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   action :define
   service :iam
@@ -33,6 +57,7 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   alert_when ["", "Inactive", "90.days.ago"]
 end
 
+# same as last
 coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   action :define
   service :iam
@@ -65,6 +90,9 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
   alert_when [nil]
 end
 
+# the link does not take me to the policy
+# https://cloudcoreo.atlassian.net/browse/CON-168
+
 coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   action :define
   service :iam
@@ -81,6 +109,7 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   alert_when [true]
 end
 
+# the link does not take me to the policy
 coreo_aws_advisor_alert "iam-expirepasswords" do
   action :define
   service :iam
@@ -96,6 +125,10 @@ coreo_aws_advisor_alert "iam-expirepasswords" do
   alert_when ["false"]
 end
 
+# ‘aws object id’ title should be ‘user name’
+# also, I think if console password is ‘disabled’ then this violation should not be flagged.  
+#   Ie, this user does not log into the console and therefore MFA is N/A (GEORGE - probably jsrunner?)
+# https://cloudcoreo.atlassian.net/browse/CON-172
 coreo_aws_advisor_alert "iam-no-mfa" do
   action :define
   service :iam
@@ -114,6 +147,7 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   alert_when ["", 1]
 end
 
+# the link does not take me to the policy
 coreo_aws_advisor_alert "iam-root-no-mfa" do
   action :define
   service :iam
@@ -148,6 +182,7 @@ coreo_aws_advisor_alert "iam-root-active-key" do
   alert_when ["true"]
 end
 
+#the link does not take me to the policy
 coreo_aws_advisor_alert "iam-root-active-password" do
   action :define
   service :iam
@@ -165,6 +200,9 @@ coreo_aws_advisor_alert "iam-root-active-password" do
   alert_when ["15.days.ago"]
 end
 
+# the link does not take me to the policy
+# need to include violation field (i.e. policies attached inline &  group) GEORGE ???
+# PROBLEM - the json return does not include anything in the violating_object
 coreo_aws_advisor_alert "iam-user-attached-policies" do
   action :define
   service :iam
@@ -194,7 +232,7 @@ end
   HTML SEND METHOD
 =end
 coreo_uni_util_notify "advise-iam-json" do
-  action :${AUDIT_AWS_IAM_FULL_JSON_REPORT}
+  action :${AUDIT_AWS_IAM_JSON_REPORT}
   type 'email'
   allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
   send_on '${AUDIT_AWS_IAM_SEND_ON}'
@@ -227,8 +265,8 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   function <<-EOH
   
 const JSON = json_input;
-const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT_2}";
-const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
+const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
+const OWNER_TAG = "NOT_A_TAG";
 const AUDIT_NAME = 'iam';
 const ARE_KILL_SCRIPTS_SHOWN = false;
 const EC2_LOGIC = ''; // you can choose 'and' or 'or';
@@ -278,48 +316,48 @@ callback(notifiers);
   EOH
 end
 
-coreo_uni_util_jsrunner "tags-rollup-iam" do
-  action :run
-  data_type "text"
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
-  function <<-EOH
-var rollup_string = "";
-for (var entry=0; entry < json_input.length; entry++) {
-  console.log(json_input[entry]);
-  if (json_input[entry]['endpoint']['to'].length) {
-    console.log('got an email to rollup');
-    rollup_string = rollup_string + "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
-  }
-}
-callback(rollup_string);
-  EOH
-end
+# coreo_uni_util_jsrunner "tags-rollup-iam" do
+#   action :run
+#   data_type "text"
+#   json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
+#   function <<-EOH
+# var rollup_string = "";
+# for (var entry=0; entry < json_input.length; entry++) {
+#   console.log(json_input[entry]);
+#   if (json_input[entry]['endpoint']['to'].length) {
+#     console.log('got an email to rollup');
+#     rollup_string = rollup_string + "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
+#   }
+# }
+# callback(rollup_string);
+#   EOH
+# end
 
-coreo_uni_util_notify "advise-iam-to-tag-values" do
-  action :${AUDIT_AWS_IAM_OWNERS_HTML_REPORT}
+coreo_uni_util_notify "advise-iam-html-report" do
+  action :${AUDIT_AWS_IAM_HTML_REPORT}
   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
 end
 
-coreo_uni_util_notify "advise-iam-rollup" do
-  action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
-  type 'email'
-  allow_empty true
-  send_on '${AUDIT_AWS_IAM_SEND_ON}'
-  payload '
-composite name: PLAN::stack_name
-plan name: PLAN::name
-number_of_checks: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks
-number_of_violations: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations
-number_violations_ignored: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations
+# coreo_uni_util_notify "advise-iam-rollup" do
+#   action :"AUDIT_AWS_IAM_ROLLUP_REPORT" # CANT UNCOMMENT
+#   type 'email'
+#   allow_empty true
+#   send_on '${AUDIT_AWS_IAM_SEND_ON}'
+#   payload '
+# composite name: PLAN::stack_name
+# plan name: PLAN::name
+# number_of_checks: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks
+# number_of_violations: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations
+# number_violations_ignored: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations
 
-rollup report:
-COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
-  '
-  payload_type 'text'
-  endpoint ({
-      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT_2}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name'
-  })
-end
+# rollup report:
+# COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
+#   '
+#   payload_type 'text'
+#   endpoint ({
+#       :to => 'AUDIT_AWS_IAM_ALERT_RECIPIENT_2', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name' # CANT UNCOMMENT
+#   })
+# end
 =begin
   AWS IAM END
 =end
