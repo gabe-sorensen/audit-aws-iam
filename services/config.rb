@@ -341,7 +341,7 @@ end
 coreo_uni_util_notify "advise-iam-rollup" do
   action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
   type 'email'
-  allow_empty true
+  allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
   send_on '${AUDIT_AWS_IAM_SEND_ON}'
   payload '
 composite name: PLAN::stack_name
