@@ -266,7 +266,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   
 const JSON = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
-const OWNER_TAG = "NOT_A_TAG";
+const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
 const AUDIT_NAME = 'iam';
 const ARE_KILL_SCRIPTS_SHOWN = false;
 const EC2_LOGIC = ''; // you can choose 'and' or 'or';
