@@ -232,7 +232,7 @@ end
   HTML SEND METHOD
 =end
 coreo_uni_util_notify "advise-iam-json" do
-  action :${AUDIT_AWS_IAM_JSON_REPORT}
+  action :nothing
   type 'email'
   allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
   send_on '${AUDIT_AWS_IAM_SEND_ON}'
@@ -254,7 +254,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.2.1"
+                   :version => "1.2.6"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
@@ -267,10 +267,14 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
 const JSON = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
 const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
+const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
+const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
 const AUDIT_NAME = 'iam';
+
 const ARE_KILL_SCRIPTS_SHOWN = false;
 const EC2_LOGIC = ''; // you can choose 'and' or 'or';
-const EXPECTED_TAGS = [];
+const EXPECTED_TAGS = ['example_2', 'example_1'];
+
 const WHAT_NEED_TO_SHOWN = {
     OBJECT_ID: {
         headerName: 'AWS Object ID',
@@ -298,7 +302,6 @@ const WHAT_NEED_TO_SHOWN = {
     }
 };
 
-
 const VARIABLES = {
     NO_OWNER_EMAIL,
     OWNER_TAG,
@@ -306,7 +309,9 @@ const VARIABLES = {
     ARE_KILL_SCRIPTS_SHOWN,
     EC2_LOGIC,
     EXPECTED_TAGS,
-    WHAT_NEED_TO_SHOWN
+    WHAT_NEED_TO_SHOWN,
+    ALLOW_EMPTY,
+    SEND_ON
 };
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
@@ -322,13 +327,21 @@ coreo_uni_util_jsrunner "tags-rollup-iam" do
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
   function <<-EOH
 var rollup_string = "";
+let rollup = '';
+let emailText = '';
+let numberOfViolations = 0;
 for (var entry=0; entry < json_input.length; entry++) {
-  console.log(json_input[entry]);
-  if (json_input[entry]['endpoint']['to'].length) {
-    console.log('got an email to rollup');
-    rollup_string = rollup_string + "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
-  }
+    if (json_input[entry]['endpoint']['to'].length) {
+        numberOfViolations += parseInt(json_input[entry]['num_violations']);
+        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
+    }
 }
+
+rollup += 'number of Violations: ' + numberOfViolations + "\\n";
+rollup += 'Rollup' + "\\n";
+rollup += emailText;
+
+rollup_string = rollup;
 callback(rollup_string);
   EOH
 end
@@ -347,10 +360,7 @@ coreo_uni_util_notify "advise-iam-rollup" do
 composite name: PLAN::stack_name
 plan name: PLAN::name
 number_of_checks: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks
-number_of_violations: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations
 number_violations_ignored: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations
-
-rollup report:
 COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
   '
   payload_type 'text'
