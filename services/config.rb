@@ -266,7 +266,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   
 const JSON = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
-const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
+const OWNER_TAG = "NOT_A_TAG";
 const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
 const AUDIT_NAME = 'iam';
