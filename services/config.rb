@@ -281,6 +281,21 @@ coreo_aws_advisor_alert "iam-password-policy-number" do
   alert_when [false]
 end
 
+coreo_aws_advisor_alert "iam-password-policy-min-length" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require a minimum length of 14 characters"
+  description "The password policy must require a minimum length of 14 characters to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Critical"
+  objectives ["account_password_policy"]
+  audit_objects ["object.password_policy.minimum_password_length"]
+  operators ["<"]
+  alert_when [14]
+end
+
 coreo_aws_advisor_iam "advise-iam" do
   action :advise
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
