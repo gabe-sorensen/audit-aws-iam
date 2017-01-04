@@ -236,6 +236,51 @@ coreo_aws_advisor_alert "iam-password-policy-uppercase" do
   alert_when [false]
 end
 
+coreo_aws_advisor_alert "iam-password-policy-lowercase" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require an lowercase letter"
+  description "The password policy must require an lowercase letter to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Critical"
+  objectives ["account_password_policy"]
+  audit_objects ["object.password_policy.require_lowercase_characters"]
+  operators ["=="]
+  alert_when [false]
+end
+
+coreo_aws_advisor_alert "iam-password-policy-symbol" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require a symbol"
+  description "The password policy must require a symbol to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Critical"
+  objectives ["account_password_policy"]
+  audit_objects ["object.password_policy.require_symbols"]
+  operators ["=="]
+  alert_when [false]
+end
+
+coreo_aws_advisor_alert "iam-password-policy-number" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require a number"
+  description "The password policy must require a number to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Critical"
+  objectives ["account_password_policy"]
+  audit_objects ["object.password_policy.require_numbers"]
+  operators ["=="]
+  alert_when [false]
+end
+
 coreo_aws_advisor_iam "advise-iam" do
   action :advise
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
