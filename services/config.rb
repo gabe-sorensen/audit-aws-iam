@@ -221,7 +221,7 @@ coreo_aws_advisor_alert "iam-user-attached-policies" do
   alert_when ["", 0]
 end
 
-coreo_aws_advisor_alert "iam-ian-uppercaser" do
+coreo_aws_advisor_alert "iam-password-policy-uppercase" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
