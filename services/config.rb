@@ -203,23 +203,38 @@ end
 # the link does not take me to the policy
 # need to include violation field (i.e. policies attached inline &  group) GEORGE ???
 # PROBLEM - the json return does not include anything in the violating_object
-# coreo_aws_advisor_alert "iam-user-attached-policies" do
-#   action :define
-#   service :iam
-#   link "http://kb.cloudcoreo.com/mydoc_iam-user-attached-policies.html"
-#   display_name "Account using inline policies"
-#   description "User account is using custom inline policies versus using IAM group managed policies."
-#   category "Access"
-#   suggested_action "Switch all inline policies to apply to IAM groups and assign users IAMs roles."
-#   level "Warning"
-#   id_map "modifiers.user_name"
-#   objectives ["users", "user_policies"]
-#   formulas ["", "count"]
-#   call_modifiers [{}, { :user_name => "users.user_name" }]
-#   audit_objects ["", "object.policy_names"]
-#   operators ["", ">"]
-#   alert_when ["", 0]
-# end
+coreo_aws_advisor_alert "iam-user-attached-policies" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-user-attached-policies.html"
+  display_name "Account using inline policies"
+  description "User account is using custom inline policies versus using IAM group managed policies."
+  category "Access"
+  suggested_action "Switch all inline policies to apply to IAM groups and assign users IAMs roles."
+  level "Warning"
+  id_map "modifiers.user_name"
+  objectives ["users", "user_policies"]
+  formulas ["", "count"]
+  call_modifiers [{}, { :user_name => "users.user_name" }]
+  audit_objects ["", "object.policy_names"]
+  operators ["", ">"]
+  alert_when ["", 0]
+end
+
+coreo_aws_advisor_alert "iam-ian-uppercaser" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require an uppercase letter"
+  description "The password policy must require an uppercase letter to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Critical"
+  objectives ["account_password_policy"]
+  audit_objects ["object.password_policy.require_uppercase_characters"]
+  operators ["=="]
+  alert_when [false]
+end
 
 coreo_aws_advisor_iam "advise-iam" do
   action :advise
