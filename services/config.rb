@@ -231,6 +231,7 @@ coreo_aws_advisor_alert "iam-password-policy-uppercase" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
+  id_map "static.password_policy"
   audit_objects ["object.password_policy.require_uppercase_characters"]
   operators ["=="]
   alert_when [false]
@@ -246,6 +247,7 @@ coreo_aws_advisor_alert "iam-password-policy-lowercase" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
+  id_map "static.password_policy"
   audit_objects ["object.password_policy.require_lowercase_characters"]
   operators ["=="]
   alert_when [false]
@@ -261,6 +263,7 @@ coreo_aws_advisor_alert "iam-password-policy-symbol" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
+  id_map "static.password_policy"
   audit_objects ["object.password_policy.require_symbols"]
   operators ["=="]
   alert_when [false]
@@ -276,6 +279,7 @@ coreo_aws_advisor_alert "iam-password-policy-number" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
+  id_map "static.password_policy"
   audit_objects ["object.password_policy.require_numbers"]
   operators ["=="]
   alert_when [false]
@@ -291,6 +295,7 @@ coreo_aws_advisor_alert "iam-password-policy-min-length" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
+  id_map "static.password_policy"
   audit_objects ["object.password_policy.minimum_password_length"]
   operators ["<"]
   alert_when [14]
