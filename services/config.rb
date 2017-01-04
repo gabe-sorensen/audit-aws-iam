@@ -203,23 +203,23 @@ end
 # the link does not take me to the policy
 # need to include violation field (i.e. policies attached inline &  group) GEORGE ???
 # PROBLEM - the json return does not include anything in the violating_object
-coreo_aws_advisor_alert "iam-user-attached-policies" do
-  action :define
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-user-attached-policies.html"
-  display_name "Account using inline policies"
-  description "User account is using custom inline policies versus using IAM group managed policies."
-  category "Access"
-  suggested_action "Switch all inline policies to apply to IAM groups and assign users IAMs roles."
-  level "Warning"
-  id_map "modifiers.user_name"
-  objectives ["users", "user_policies"]
-  formulas ["", "count"]
-  call_modifiers [{}, { :user_name => "users.user_name" }]
-  audit_objects ["", "object.policy_names"]
-  operators ["", ">"]
-  alert_when ["", 0]
-end
+# coreo_aws_advisor_alert "iam-user-attached-policies" do
+#   action :define
+#   service :iam
+#   link "http://kb.cloudcoreo.com/mydoc_iam-user-attached-policies.html"
+#   display_name "Account using inline policies"
+#   description "User account is using custom inline policies versus using IAM group managed policies."
+#   category "Access"
+#   suggested_action "Switch all inline policies to apply to IAM groups and assign users IAMs roles."
+#   level "Warning"
+#   id_map "modifiers.user_name"
+#   objectives ["users", "user_policies"]
+#   formulas ["", "count"]
+#   call_modifiers [{}, { :user_name => "users.user_name" }]
+#   audit_objects ["", "object.policy_names"]
+#   operators ["", ">"]
+#   alert_when ["", 0]
+# end
 
 coreo_aws_advisor_iam "advise-iam" do
   action :advise
