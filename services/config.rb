@@ -301,6 +301,23 @@ coreo_aws_advisor_alert "iam-password-policy-min-length" do
   alert_when [14]
 end
 
+coreo_aws_advisor_alert "iam-root-access-key" do
+  action :define
+  service :iam
+#   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
+  display_name "Root Access Key 1"
+  description "Root Access Key 1 exists when it should not"
+  category "Security"
+  suggested_action "Remove all access keys associated with the account"
+  level "Critical"
+  id_map "object.user"
+  objectives ["credential_report"]
+  formulas ["CSV[user=<root_account>]"]
+  audit_objects ["object.content.access_key_1_active"]
+  operators ["=="]
+  alert_when ["true"]
+end
+
 coreo_aws_advisor_iam "advise-iam" do
   action :advise
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
