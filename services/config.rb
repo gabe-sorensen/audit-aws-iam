@@ -224,7 +224,7 @@ end
 coreo_aws_advisor_alert "iam-password-policy-uppercase" do
   action :define
   service :iam
-  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
   display_name "Password policy doesn't require an uppercase letter"
   description "The password policy must require an uppercase letter to meet CIS standards"
   category "Access"
@@ -240,7 +240,7 @@ end
 coreo_aws_advisor_alert "iam-password-policy-lowercase" do
   action :define
   service :iam
-  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
   display_name "Password policy doesn't require an lowercase letter"
   description "The password policy must require an lowercase letter to meet CIS standards"
   category "Access"
@@ -256,7 +256,7 @@ end
 coreo_aws_advisor_alert "iam-password-policy-symbol" do
   action :define
   service :iam
-  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
   display_name "Password policy doesn't require a symbol"
   description "The password policy must require a symbol to meet CIS standards"
   category "Access"
@@ -272,7 +272,7 @@ end
 coreo_aws_advisor_alert "iam-password-policy-number" do
   action :define
   service :iam
-  # link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
   display_name "Password policy doesn't require a number"
   description "The password policy must require a number to meet CIS standards"
   category "Access"
