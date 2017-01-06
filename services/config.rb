@@ -229,7 +229,7 @@ coreo_aws_advisor_alert "iam-password-policy-uppercase" do
   description "The password policy must require an uppercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  level "Critical"
+  level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_uppercase_characters"]
@@ -245,7 +245,7 @@ coreo_aws_advisor_alert "iam-password-policy-lowercase" do
   description "The password policy must require an lowercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  level "Critical"
+  level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_lowercase_characters"]
@@ -261,7 +261,7 @@ coreo_aws_advisor_alert "iam-password-policy-symbol" do
   description "The password policy must require a symbol to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  level "Critical"
+  level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_symbols"]
@@ -277,7 +277,7 @@ coreo_aws_advisor_alert "iam-password-policy-number" do
   description "The password policy must require a number to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  level "Critical"
+  level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_numbers"]
@@ -293,7 +293,7 @@ coreo_aws_advisor_alert "iam-password-policy-min-length" do
   description "The password policy must require a minimum length of 14 characters to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  level "Critical"
+  level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
   audit_objects ["object.password_policy.minimum_password_length"]
@@ -309,7 +309,7 @@ coreo_aws_advisor_alert "iam-root-access-key-1" do
   description "Root Access Key 1 exists when it should not"
   category "Security"
   suggested_action "Remove all access keys associated with the account"
-  level "Critical"
+  level "Warning"
   id_map "object.user"
   objectives ["credential_report"]
   formulas ["CSV[user=<root_account>]"]
@@ -326,7 +326,7 @@ coreo_aws_advisor_alert "iam-root-access-key-2" do
   description "Root Access Key 2 exists when it should not"
   category "Security"
   suggested_action "Remove all access keys associated with the account"
-  level "Critical"
+  level "Warning"
   id_map "object.user"
   objectives ["credential_report"]
   formulas ["CSV[user=<root_account>]"]
