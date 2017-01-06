@@ -1,5 +1,5 @@
 
-#‘aws object id’ title should be ‘group name’
+#'aws object id' title should be 'group name'
 # modify_column [ "aws_object_id", "Group Name"]
 # https://cloudcoreo.atlassian.net/browse/PLA-2348
 #including the group arn would be helpful
@@ -36,7 +36,7 @@ end
 #add_html_column [ "/user_name", "User Name" ] # key name, relative path from "object", display name
 #    e.g. Users: andrew, 
 #    creation date for key: 2016-09-09 05:22 UTC+0600
-# what is the value in the ‘aws object id’?  Not sure this is useful
+# what is the value in the 'aws object id'?  Not sure this is useful
 #  - its the access key ID for that user
 # tags, owner email, region - these fields are not applicable for IAM
 # https://cloudcoreo.atlassian.net/browse/CON-167
@@ -125,8 +125,8 @@ coreo_aws_advisor_alert "iam-expirepasswords" do
   alert_when ["false"]
 end
 
-# ‘aws object id’ title should be ‘user name’
-# also, I think if console password is ‘disabled’ then this violation should not be flagged.  
+# 'aws object id' title should be 'user name'
+# also, I think if console password is 'disabled' then this violation should not be flagged.  
 #   Ie, this user does not log into the console and therefore MFA is N/A (GEORGE - probably jsrunner?)
 # https://cloudcoreo.atlassian.net/browse/CON-172
 coreo_aws_advisor_alert "iam-no-mfa" do
