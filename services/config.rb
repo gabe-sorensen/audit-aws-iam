@@ -138,7 +138,7 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for every cloud user."
   level "Critical"
-  id_map "object.modifiers.user_name"
+  id_map "modifiers.user_name"
   objectives ["users", "mfa_devices", "credential_report"]
   formulas ["", "count", "CSV[user=<root_account>]"]
   call_modifiers [{}, { :user_name => "users.user_name" }, {}]
