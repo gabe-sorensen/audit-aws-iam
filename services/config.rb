@@ -106,8 +106,8 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   level "Critical"
   id_map "modifiers.user_name"
   objectives ["users", "mfa_devices", "credential_report"]
-  formulas ["", "count", "CSV[user=object.users.user_name]"]
-  call_modifiers [{}, { :user_name => "object.users.user_name" }, {}]
+  formulas ["", "count", "CSV[user=users.user_name]"]
+  call_modifiers [{}, { :user_name => "users.user_name" }, {}]
   audit_objects ["", "object.mfa_devices", "object.content.password_enabled"]
   operators ["", "<", "=="]
   alert_when ["", 1, "false"]
@@ -187,11 +187,11 @@ coreo_aws_advisor_iam "advise-iam" do
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
-=begin
- START AWS IAM METHODS
- JSON SEND METHOD
- HTML SEND METHOD
-=end
+# =begin
+#  START AWS IAM METHODS
+#  JSON SEND METHOD
+#  HTML SEND METHOD
+# =end
 
 coreo_uni_util_notify "advise-iam-json" do
   action :nothing
