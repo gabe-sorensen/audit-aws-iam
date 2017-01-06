@@ -1,14 +1,4 @@
 
-#‘aws object id’ title should be ‘group name’
-# modify_column [ "aws_object_id", "Group Name"]
-# https://cloudcoreo.atlassian.net/browse/PLA-2348
-#including the group arn would be helpful
-#   e.g. Group ARN: arn:aws:iam::530342348278:group/unusedgrouptest
-# add_column [ "///group_arn", "Group ARN" ]
-# https://cloudcoreo.atlassian.net/browse/PLA-2349
-# PROBLEM - the AWS json return is not part of the advisor output for this advisor
-# https://cloudcoreo.atlassian.net/browse/PLA-2350
-
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
@@ -26,20 +16,6 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   alert_when ["", 0]
 end
 
-# need to include the username, key created date in the list of violations
-# these are in the json return structure
-#
-#access_key_id : AKIAI4FYSVOKIXN3YYZA
-#user_name : andrew
-#create_date : 2016-09-08T23:22:50Z
-#status  : Active
-#add_html_column [ "/user_name", "User Name" ] # key name, relative path from "object", display name
-#    e.g. Users: andrew, 
-#    creation date for key: 2016-09-09 05:22 UTC+0600
-# what is the value in the ‘aws object id’?  Not sure this is useful
-#  - its the access key ID for that user
-# tags, owner email, region - these fields are not applicable for IAM
-# https://cloudcoreo.atlassian.net/browse/CON-167
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   action :define
   service :iam
@@ -57,7 +33,6 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   alert_when ["", "Inactive", "90.days.ago"]
 end
 
-# same as last
 coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   action :define
   service :iam
@@ -90,9 +65,6 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
   alert_when [nil]
 end
 
-# the link does not take me to the policy
-# https://cloudcoreo.atlassian.net/browse/CON-168
-
 coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   action :define
   service :iam
@@ -109,7 +81,6 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   alert_when [true]
 end
 
-# the link does not take me to the policy
 coreo_aws_advisor_alert "iam-expirepasswords" do
   action :define
   service :iam
@@ -125,10 +96,6 @@ coreo_aws_advisor_alert "iam-expirepasswords" do
   alert_when ["false"]
 end
 
-# ‘aws object id’ title should be ‘user name’
-# also, I think if console password is ‘disabled’ then this violation should not be flagged.  
-#   Ie, this user does not log into the console and therefore MFA is N/A (GEORGE - probably jsrunner?)
-# https://cloudcoreo.atlassian.net/browse/CON-172
 coreo_aws_advisor_alert "iam-no-mfa" do
   action :define
   service :iam
@@ -147,7 +114,6 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   alert_when ["", 1]
 end
 
-# the link does not take me to the policy
 coreo_aws_advisor_alert "iam-root-no-mfa" do
   action :define
   service :iam
@@ -182,7 +148,6 @@ coreo_aws_advisor_alert "iam-root-active-key" do
   alert_when ["true"]
 end
 
-#the link does not take me to the policy
 coreo_aws_advisor_alert "iam-root-active-password" do
   action :define
   service :iam
@@ -200,9 +165,6 @@ coreo_aws_advisor_alert "iam-root-active-password" do
   alert_when ["15.days.ago"]
 end
 
-# the link does not take me to the policy
-# need to include violation field (i.e. policies attached inline &  group) GEORGE ???
-# PROBLEM - the json return does not include anything in the violating_object
 coreo_aws_advisor_alert "iam-user-attached-policies" do
   action :define
   service :iam
@@ -304,7 +266,6 @@ end
 coreo_aws_advisor_alert "iam-root-access-key-1" do
   action :define
   service :iam
-#   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
   display_name "Root Access Key 1"
   description "Root Access Key 1 exists when it should not"
   category "Security"
@@ -321,7 +282,6 @@ end
 coreo_aws_advisor_alert "iam-root-access-key-2" do
   action :define
   service :iam
-#   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
   display_name "Root Access Key 2"
   description "Root Access Key 2 exists when it should not"
   category "Security"
@@ -340,11 +300,12 @@ coreo_aws_advisor_iam "advise-iam" do
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
-=begin
-  START AWS IAM METHODS
-  JSON SEND METHOD
-  HTML SEND METHOD
-=end
+# =begin
+#   START AWS IAM METHODS
+#   JSON SEND METHOD
+#   HTML SEND METHOD
+# =end
+
 coreo_uni_util_notify "advise-iam-json" do
   action :nothing
   type 'email'
