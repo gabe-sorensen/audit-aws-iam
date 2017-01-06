@@ -140,7 +140,7 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   level "Critical"
   id_map "object.modifiers.user_name"
   objectives ["users", "mfa_devices", "credential_report"]
-  formulas ["", "count", "CSV[user=users.user_name]"]
+  formulas ["", "count", "CSV[user=<root_account>]"]
   call_modifiers [{}, { :user_name => "users.user_name" }, {}]
   audit_objects ["", "object.mfa_devices", "object.content.password_enabled"]
   operators ["", "<", "=="]
