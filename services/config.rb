@@ -110,7 +110,7 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   call_modifiers [{}, { :user_name => "users.user_name" }, {}]
   audit_objects ["", "object.mfa_devices", "object.content.password_enabled"]
   operators ["", "<", "=="]
-  alert_when ["", 1, "false"]
+  alert_when ["", 1, false]
 end
 
 coreo_aws_advisor_alert "iam-root-no-mfa" do
