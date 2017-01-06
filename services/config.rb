@@ -32,7 +32,6 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   alert_when ["", "Inactive", "90.days.ago"]
 end
 
-# same as last
 coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   action :define
   service :iam
@@ -188,11 +187,11 @@ coreo_aws_advisor_iam "advise-iam" do
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
-#=begin
-#  START AWS IAM METHODS
-#  JSON SEND METHOD
-#  HTML SEND METHOD
-#=end
+=begin
+ START AWS IAM METHODS
+ JSON SEND METHOD
+ HTML SEND METHOD
+=end
 
 coreo_uni_util_notify "advise-iam-json" do
   action :nothing
