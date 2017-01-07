@@ -107,7 +107,7 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   id_map "modifiers.user_name"
   objectives ["users", "mfa_devices", "login_profile"]
   formulas ["", "count", ""]
-  call_modifiers [{}, { :user_name => "users.user_name" }, {}]
+  call_modifiers [{}, { :user_name => "users.user_name" }, { :user_name => "users.user_name" }]
   audit_objects ["", "object.mfa_devices", "object.login_profile"]
   operators ["", "<", "=="]
   alert_when ["", 1, null]
