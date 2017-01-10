@@ -276,7 +276,7 @@ coreo_aws_advisor_alert "iam-root-access-key-1" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_1_active"]
   operators ["=="]
-  alert_when ["false"]
+  alert_when ["true"]
 end
 
 coreo_aws_advisor_alert "iam-root-access-key-2" do
@@ -292,7 +292,7 @@ coreo_aws_advisor_alert "iam-root-access-key-2" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_2_active"]
   operators ["=="]
-  alert_when ["false"]
+  alert_when ["true"]
 end
 
 coreo_aws_advisor_iam "advise-iam" do
