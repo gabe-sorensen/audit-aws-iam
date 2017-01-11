@@ -182,16 +182,129 @@ coreo_aws_advisor_alert "iam-user-attached-policies" do
   alert_when ["", 0]
 end
 
+coreo_aws_advisor_alert "iam-password-policy-uppercase" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require an uppercase letter"
+  description "The password policy must require an uppercase letter to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Warning"
+  objectives ["account_password_policy"]
+  id_map "static.password_policy"
+  audit_objects ["object.password_policy.require_uppercase_characters"]
+  operators ["=="]
+  alert_when [false]
+end
+
+coreo_aws_advisor_alert "iam-password-policy-lowercase" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require an lowercase letter"
+  description "The password policy must require an lowercase letter to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Warning"
+  objectives ["account_password_policy"]
+  id_map "static.password_policy"
+  audit_objects ["object.password_policy.require_lowercase_characters"]
+  operators ["=="]
+  alert_when [false]
+end
+
+coreo_aws_advisor_alert "iam-password-policy-symbol" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require a symbol"
+  description "The password policy must require a symbol to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Warning"
+  objectives ["account_password_policy"]
+  id_map "static.password_policy"
+  audit_objects ["object.password_policy.require_symbols"]
+  operators ["=="]
+  alert_when [false]
+end
+
+coreo_aws_advisor_alert "iam-password-policy-number" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require a number"
+  description "The password policy must require a number to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Warning"
+  objectives ["account_password_policy"]
+  id_map "static.password_policy"
+  audit_objects ["object.password_policy.require_numbers"]
+  operators ["=="]
+  alert_when [false]
+end
+
+coreo_aws_advisor_alert "iam-password-policy-min-length" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
+  display_name "Password policy doesn't require a minimum length of 14 characters"
+  description "The password policy must require a minimum length of 14 characters to meet CIS standards"
+  category "Access"
+  suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  level "Warning"
+  objectives ["account_password_policy"]
+  id_map "static.password_policy"
+  audit_objects ["object.password_policy.minimum_password_length"]
+  operators ["<"]
+  alert_when [14]
+end
+
+coreo_aws_advisor_alert "iam-root-access-key-1" do
+  action :define
+  service :iam
+  display_name "Root Access Key 1"
+  description "Root Access Key 1 exists when it should not"
+  category "Security"
+  suggested_action "Remove all access keys associated with the account"
+  level "Warning"
+  id_map "object.user"
+  objectives ["credential_report"]
+  formulas ["CSV[user=<root_account>]"]
+  audit_objects ["object.content.access_key_1_active"]
+  operators ["=="]
+  alert_when ["true"]
+end
+
+coreo_aws_advisor_alert "iam-root-access-key-2" do
+  action :define
+  service :iam
+  display_name "Root Access Key 2"
+  description "Root Access Key 2 exists when it should not"
+  category "Security"
+  suggested_action "Remove all access keys associated with the account"
+  level "Warning"
+  id_map "object.user"
+  objectives ["credential_report"]
+  formulas ["CSV[user=<root_account>]"]
+  audit_objects ["object.content.access_key_2_active"]
+  operators ["=="]
+  alert_when ["true"]
+end
+
 coreo_aws_advisor_iam "advise-iam" do
   action :advise
   alerts ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
-=begin
-  START AWS IAM METHODS
-  JSON SEND METHOD
-  HTML SEND METHOD
-=end
+# =begin
+#   START AWS IAM METHODS
+#   JSON SEND METHOD
+#   HTML SEND METHOD
+# =end
+
 coreo_uni_util_notify "advise-iam-json" do
   action :nothing
   type 'email'

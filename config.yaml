@@ -15,6 +15,13 @@ variables:
       - iam-root-active-key
       - iam-root-active-password
       - iam-user-attached-policies
+      - iam-password-policy-uppercase
+      - iam-password-policy-lowercase
+      - iam-password-policy-symbol
+      - iam-password-policy-number
+      - iam-password-policy-min-length
+      - iam-root-access-key-1
+      - iam-root-access-key-2
   AUDIT_AWS_IAM_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
     required: true
