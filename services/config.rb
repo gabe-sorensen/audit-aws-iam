@@ -23,7 +23,7 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   description "User has inactive keys that have not been rotated in the last 90 days."
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
-  level "Alert"
+  level "Critical"
   id_map "object.access_key_metadata.access_key_id"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
