@@ -37,16 +37,6 @@ variables:
     required: true
     type: string
     default: "change"
-  AUDIT_AWS_IAM_REGIONS:
-    description: "List of AWS regions to check. Default is us-east-1,us-west-1,us-west-2."
-    required: true
-    type: array
-    default:
-        - us-east-1
-        - us-east-2
-        - us-west-1
-        - us-west-2
-        - eu-west-1
   AUDIT_AWS_IAM_ROLLUP_REPORT:
       description: "Would you like to send a Summary ELB report? Options - notify / nothing. Default is no / nothing."
       required: true
@@ -57,8 +47,3 @@ variables:
       required: true
       type: string
       default: "notify"
-  AUDIT_AWS_IAM_OWNER_TAG:
-     description: "Enter an AWS tag whose value is an email address of owner of the ELB object. (Optional)"
-     required: false
-     type: string
-     default: "NOT_A_TAG"

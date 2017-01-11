@@ -1,4 +1,3 @@
-
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
@@ -41,7 +40,7 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   description "User has active keys that have not been rotated in the last 90 days"
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
-  level "Alert"
+  level "Critical"
   id_map "object.access_key_metadata.access_key_id"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
@@ -329,13 +328,10 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.3.2"
+                   :version => "1.3.9"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "number_of_checks":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks",
-                "number_of_violations":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations",
-                "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations",
                 "violations": COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
   function <<-EOH
   
@@ -435,8 +431,6 @@ coreo_uni_util_notify "advise-iam-rollup" do
   payload '
 composite name: PLAN::stack_name
 plan name: PLAN::name
-number_of_checks: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks
-number_violations_ignored: COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations
 COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
   '
   payload_type 'text'
