@@ -1,3 +1,20 @@
+coreo_aws_advisor_alert "iam-inventory" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
+  include_violations_in_count false
+  display_name "IAM User Inventory"
+  description "This rule performs an inventory on all IAM Users in the target AWS account."
+  category "Inventory"
+  suggested_action "None."
+  level "Informational"
+  objectives ["users"]
+  audit_objects ["object"]
+  operators ["=~"]
+  alert_when [//]
+  id_map "modifiers.user_name"
+end
+
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
