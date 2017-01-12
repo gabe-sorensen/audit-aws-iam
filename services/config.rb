@@ -1,4 +1,4 @@
-coreo_aws_advisor_alert "iam-inventory" do
+coreo_aws_advisor_alert "iam-inventory-users" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -14,6 +14,59 @@ coreo_aws_advisor_alert "iam-inventory" do
   alert_when [//]
   id_map "object.users.user_name"
 end
+
+coreo_aws_advisor_alert "iam-inventory-roles" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
+  include_violations_in_count false
+  display_name "IAM Role Inventory"
+  description "This rule performs an inventory on all IAM Roles in the target AWS account."
+  category "Inventory"
+  suggested_action "None."
+  level "Informational"
+  objectives ["roles"]
+  audit_objects ["object.roles.role_name"]
+  operators ["=~"]
+  alert_when [//]
+  id_map "object.roles.role_id"
+end
+
+coreo_aws_advisor_alert "iam-inventory-policies" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
+  include_violations_in_count false
+  display_name "IAM Policy Inventory"
+  description "This rule performs an inventory on all IAM Policies in the target AWS account."
+  category "Inventory"
+  suggested_action "None."
+  level "Informational"
+  objectives ["policies"]
+  audit_objects ["object.policies.policy_name"]
+  operators ["=~"]
+  alert_when [//]
+  id_map "object.policies.policy_id"
+end
+
+coreo_aws_advisor_alert "iam-inventory-groups" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
+  include_violations_in_count false
+  display_name "IAM Group Inventory"
+  description "This rule performs an inventory on all IAM User Groups in the target AWS account."
+  category "Inventory"
+  suggested_action "None."
+  level "Informational"
+  objectives ["groups"]
+  audit_objects ["object.groups.group_name"]
+  operators ["=~"]
+  alert_when [//]
+  id_map "object.groups.group_id"
+end
+
+
 
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
