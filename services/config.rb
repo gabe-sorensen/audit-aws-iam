@@ -12,7 +12,7 @@ coreo_aws_advisor_alert "iam-inventory" do
   audit_objects ["object.users.user_name"]
   operators ["=~"]
   alert_when [//]
-  id_map "modifiers.user_name"
+  id_map "object.users.user_name"
 end
 
 coreo_aws_advisor_alert "iam-unusediamgroup" do
