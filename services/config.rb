@@ -9,7 +9,7 @@ coreo_aws_advisor_alert "iam-inventory" do
   suggested_action "None."
   level "Informational"
   objectives ["users"]
-  audit_objects [""]
+  audit_objects ["object.users.user_name"]
   operators ["=~"]
   alert_when [//]
   id_map "modifiers.user_name"
