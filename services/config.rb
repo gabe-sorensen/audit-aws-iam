@@ -83,6 +83,7 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   audit_objects ["", "users"]
   operators ["", "=="]
   alert_when ["", 0]
+  id_map "object.group.group_name"
 end
 
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
@@ -132,6 +133,7 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
   audit_objects ["object"]
   operators ["=="]
   alert_when [nil]
+  id_map "static.password_policy"
 end
 
 coreo_aws_advisor_alert "iam-passwordreuseprevention" do
@@ -148,6 +150,7 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   formulas ["include?(password_reuse_prevention)"]
   operators ["!="]
   alert_when [true]
+  id_map "static.password_policy"
 end
 
 coreo_aws_advisor_alert "iam-expirepasswords" do
@@ -163,6 +166,7 @@ coreo_aws_advisor_alert "iam-expirepasswords" do
   audit_objects ["object.password_policy.expire_passwords"]
   operators ["=="]
   alert_when ["false"]
+  id_map "static.password_policy"
 end
 
 coreo_aws_advisor_alert "iam-no-mfa" do
