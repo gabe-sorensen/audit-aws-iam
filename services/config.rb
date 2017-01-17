@@ -66,8 +66,6 @@ coreo_aws_advisor_alert "iam-inventory-groups" do
   id_map "object.groups.group_id"
 end
 
-
-
 coreo_aws_advisor_alert "iam-unusediamgroup" do
   action :define
   service :iam
