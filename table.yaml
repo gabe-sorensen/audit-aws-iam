@@ -20,7 +20,6 @@ iam-inventory-groups:
   "AWS Tags": "__TAGS__"
 iam-unusediamgroup:
   "Group Name": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/groups/+__OBJECT__+"
-
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 iam-inactive-key-no-rotation:
