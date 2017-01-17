@@ -63,7 +63,7 @@ coreo_aws_advisor_alert "iam-inventory-groups" do
   audit_objects ["object.groups.group_name"]
   operators ["=~"]
   alert_when [//]
-  id_map "object.group.group_id"
+  id_map "object.groups.group_name"
 end
 
 coreo_aws_advisor_alert "iam-unusediamgroup" do
