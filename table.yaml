@@ -19,17 +19,21 @@ iam-inventory-groups:
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 iam-unusediamgroup:
-  "IAM Group": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/groups/+__OBJECT__+"
+  "Group Name": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/groups/+__OBJECT__+"
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 iam-inactive-key-no-rotation:
   "IAM Key": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/+__OBJECT__.violations.__RULE__.violating_object.0.object.user_name+?section=security_credentials"
   "Access Key ID": "+__OBJECT__.violations.__RULE__.violating_object.0.object.access_key_id+"
+  "User Name": "+__OBJECT__.violations.__RULE__.violating_object.0.object.user_name+"
+  "Key Create Date": "+__OBJECT__.violations.__RULE__.violating_object.0.object.create_date+"
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 iam-active-key-no-rotation:
   "IAM Key": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/+__OBJECT__.violations.__RULE__.violating_object.0.object.user_name+?section=security_credentials"
   "Access Key ID": "+__OBJECT__.violations.__RULE__.violating_object.0.object.access_key_id+"
+  "User Name": "+__OBJECT__.violations.__RULE__.violating_object.0.object.user_name+"
+  "Key Create Date": "+__OBJECT__.violations.__RULE__.violating_object.0.object.create_date+"
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 iam-missing-password-policy:
@@ -45,7 +49,7 @@ iam-expirepasswords:
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 iam-no-mfa:
-  "User Security": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/+__OBJECT__+?section=security_credentials"
+  "User Name": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/+__OBJECT__+?section=security_credentials"
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 iam-root-no-mfa:
