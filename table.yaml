@@ -1,6 +1,6 @@
 iam-inventory-users:
   "IAM Users": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/+__OBJECT__+"
-  "User Name": "+__OBJECT__+"
+  "User Name": "__OBJECT__"
   "User ID": "+__OBJECT__.violations.__RULE__.violating_object.0.object.user_id+"
   "User Create Date": "+__OBJECT__.violations.__RULE__.violating_object.0.object.create_date+"
   "Password Last Used": "+__OBJECT__.violations.__RULE__.violating_object.0.object.password_last_used+"
