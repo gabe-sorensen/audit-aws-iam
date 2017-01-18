@@ -337,10 +337,11 @@ end
 coreo_aws_advisor_alert "iam-root-access-key-1" do
   action :define
   service :iam
-  display_name "Root Access Key 1"
-  description "Root Access Key 1 exists when it should not"
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  display_name "Root Access Key Exists - Key #1"
+  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
   category "Security"
-  suggested_action "Remove all access keys associated with the account"
+  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
   id_map "object.user"
   objectives ["credential_report"]
@@ -353,10 +354,11 @@ end
 coreo_aws_advisor_alert "iam-root-access-key-2" do
   action :define
   service :iam
-  display_name "Root Access Key 2"
-  description "Root Access Key 2 exists when it should not"
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  display_name "Root Access Key Exists - Key #2"
+  description "Root Access Key #2 exists. Ideally, the root account should not have any active keys."
   category "Security"
-  suggested_action "Remove all access keys associated with the account"
+  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
   id_map "object.user"
   objectives ["credential_report"]
