@@ -1,6 +1,6 @@
 variables: 
   AUDIT_AWS_IAM_ALERT_LIST:
-    description: "Which alerts would you like to check for? (Default is all IAM alerts)"
+    description: "Which alerts would you like to check for? Default is all IAM alerts."
     required: true
     type: array
     default:
@@ -15,6 +15,13 @@ variables:
       - iam-root-active-key
       - iam-root-active-password
       - iam-user-attached-policies
+      - iam-password-policy-uppercase
+      - iam-password-policy-lowercase
+      - iam-password-policy-symbol
+      - iam-password-policy-number
+      - iam-password-policy-min-length
+      - iam-root-access-key-1
+      - iam-root-access-key-2
   AUDIT_AWS_IAM_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
     required: true
@@ -31,12 +38,12 @@ variables:
     type: string
     default: "change"
   AUDIT_AWS_IAM_ROLLUP_REPORT:
-      description: "Would you like to send a Summary ELB report? Options - notify / nothing. Default is no / nothing."
+      description: "Would you like to send a rollup IAM report? This is a short email that summarizes the number of checks performed and the number of violations found. Options - notify / nothing. Default is nothing."
       required: true
       type: string
       default: "nothing"
   AUDIT_AWS_IAM_HTML_REPORT:
-      description: notify or nothing
+      description: "Would you like to send a full IAM report? This is an email that details any violations found and includes a list of the violating cloud objects. Options - notify / nothing. Default is notify."
       required: true
       type: string
       default: "notify"
