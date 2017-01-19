@@ -16,7 +16,7 @@ iam-inventory-policies:
   "Create Date": "+__OBJECT__.violations.__RULE__.violating_object.0.object.create_date+"
 iam-inventory-groups:
   "IAM Group": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/groups/+__OBJECT__.violations.__RULE__.violating_object.0.object.group_name+"
-  "Group Name": "+__OBJECT__+"
+  "Group Name": "+__OBJECT__.violations.__RULE__.violating_object.0.object.group_name+"
   "Group ARN": "+__OBJECT__.violations.__RULE__.violating_object.0.object.arn+"
   "Create Date": "+__OBJECT__.violations.__RULE__.violating_object.0.object.create_date+"
 iam-unusediamgroup:
