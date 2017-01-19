@@ -80,7 +80,7 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   formulas ["", "count", ""]
   audit_objects ["", "users", "group.arn"]
   operators ["", "==", "=~"]
-  alert_when ["", 0,  //]
+  alert_when ["", 0,  /.*/]
   id_map "object.group.group_name"
 end
 
