@@ -75,12 +75,12 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   category "Access"
   suggested_action "Ensure that groups defined within IAM have active users in them. If the groups don't have active users or are not being used, delete the unused IAM group."
   level "Warning"
-  objectives ["groups", "group"]
-  call_modifiers [{}, { :group_name => "groups.group_name" }]
-  formulas ["", "count"]
-  audit_objects ["", "users"]
-  operators ["", "=="]
-  alert_when ["", 0]
+  objectives ["groups", "group", "group"]
+  call_modifiers [{}, { :group_name => "groups.group_name" }, { :group_name => "groups.group_name" }]
+  formulas ["", "count", ""]
+  audit_objects ["", "users", "group.arn"]
+  operators ["", "==", "=~"]
+  alert_when ["", 0,  //]
   id_map "object.group.group_name"
 end
 
