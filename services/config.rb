@@ -379,7 +379,7 @@ end
 #   HTML SEND METHOD
 # =end
 
-coreo_uni_util_jsrunner "jsrunner-process-suppression" do
+coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
   action :run
   provide_composite_access true
   json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
@@ -466,7 +466,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
   EOH
 end
 
-coreo_uni_util_jsrunner "jsrunner-process-table" do
+coreo_uni_util_jsrunner "jsrunner-process-table-iam" do
   action :run
   provide_composite_access true
   json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
@@ -514,8 +514,8 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table.return,
-                "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression.return}'
+                "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table-iam.return,
+                "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return}'
   function <<-EOH
   
 const JSON_INPUT = json_input;
@@ -559,7 +559,7 @@ let numberOfViolations = 0;
 for (var entry=0; entry < json_input.length; entry++) {
     if (json_input[entry]['endpoint']['to'].length) {
         numberOfViolations += parseInt(json_input[entry]['num_violations']);
-        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
+        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "Violations: " + json_input[entry]['num_violations'] + "\\n";
     }
 }
 
