@@ -1,3 +1,7 @@
+###########################################
+# User Visible Rule Definitions
+###########################################
+
 coreo_aws_advisor_alert "iam-inventory-users" do
   action :define
   service :iam
@@ -367,6 +371,11 @@ coreo_aws_advisor_alert "iam-root-access-key-2" do
   operators ["=="]
   alert_when ["true"]
 end
+
+###########################################
+# Compsite-Internal Resources follow until end
+#   (Resources used by the system for execution and display processing)
+###########################################
 
 coreo_aws_advisor_iam "advise-iam" do
   action :advise
