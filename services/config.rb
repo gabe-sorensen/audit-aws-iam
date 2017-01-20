@@ -63,7 +63,7 @@ coreo_aws_advisor_alert "iam-inventory-groups" do
   audit_objects ["object.groups.group_name"]
   operators ["=~"]
   alert_when [//]
-  id_map "object.groups.group_id"
+  id_map "object.groups.group_name"
 end
 
 coreo_aws_advisor_alert "iam-unusediamgroup" do
@@ -81,6 +81,7 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   audit_objects ["", "users"]
   operators ["", "=="]
   alert_when ["", 0]
+  id_map "object.group.group_name"
 end
 
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
@@ -130,6 +131,7 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
   audit_objects ["object"]
   operators ["=="]
   alert_when [nil]
+  id_map "static.password_policy"
 end
 
 coreo_aws_advisor_alert "iam-passwordreuseprevention" do
@@ -146,6 +148,7 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   formulas ["include?(password_reuse_prevention)"]
   operators ["!="]
   alert_when [true]
+  id_map "static.password_policy"
 end
 
 coreo_aws_advisor_alert "iam-expirepasswords" do
@@ -161,6 +164,7 @@ coreo_aws_advisor_alert "iam-expirepasswords" do
   audit_objects ["object.password_policy.expire_passwords"]
   operators ["=="]
   alert_when ["false"]
+  id_map "static.password_policy"
 end
 
 coreo_aws_advisor_alert "iam-no-mfa" do
@@ -333,10 +337,11 @@ end
 coreo_aws_advisor_alert "iam-root-access-key-1" do
   action :define
   service :iam
-  display_name "Root Access Key 1"
-  description "Root Access Key 1 exists when it should not"
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  display_name "Root Access Key Exists - Key #1"
+  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
   category "Security"
-  suggested_action "Remove all access keys associated with the account"
+  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
   id_map "object.user"
   objectives ["credential_report"]
@@ -349,10 +354,11 @@ end
 coreo_aws_advisor_alert "iam-root-access-key-2" do
   action :define
   service :iam
-  display_name "Root Access Key 2"
-  description "Root Access Key 2 exists when it should not"
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  display_name "Root Access Key Exists - Key #2"
+  description "Root Access Key #2 exists. Ideally, the root account should not have any active keys."
   category "Security"
-  suggested_action "Remove all access keys associated with the account"
+  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
   id_map "object.user"
   objectives ["credential_report"]
