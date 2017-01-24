@@ -33,7 +33,7 @@ coreo_aws_advisor_alert "iam-inventory-roles" do
   audit_objects ["object.roles.role_name"]
   operators ["=~"]
   alert_when [//]
-  id_map "object.roles.role_id"
+  id_map "object.roles.role_name"
 end
 
 coreo_aws_advisor_alert "iam-inventory-policies" do
@@ -50,7 +50,7 @@ coreo_aws_advisor_alert "iam-inventory-policies" do
   audit_objects ["object.policies.policy_name"]
   operators ["=~"]
   alert_when [//]
-  id_map "object.policies.policy_id"
+  id_map "object.policies.policy_name"
 end
 
 coreo_aws_advisor_alert "iam-inventory-groups" do
@@ -97,7 +97,7 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
-  id_map "object.access_key_metadata.access_key_id"
+  id_map "modifiers.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
