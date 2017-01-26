@@ -88,6 +88,24 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   id_map "object.group.group_name"
 end
 
+coreo_aws_advisor_alert "iam-multiple-keys" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_iam-unusediamgroup.html"
+  display_name "IAM User with multiple keys"
+  description "There is an IAM User with multiple access keys"
+  category "Access"
+  suggested_action "Remove excess access keys"
+  level "Warning"
+  objectives ["users", "access_keys"]
+  call_modifiers [{}, {:user_name => "users.user_name"}]
+  formulas ["", "count"]
+  audit_objects ["", "object.access_key_metadata"]
+  operators ["", ">"]
+  alert_when ["", 1]
+  id_map "modifiers.user_name"
+end
+
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   action :define
   service :iam
