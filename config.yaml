@@ -5,6 +5,7 @@ variables:
     type: array
     default:
       - iam-unusediamgroup
+      - iam-multiple-keys
       - iam-inactive-key-no-rotation
       - iam-active-key-no-rotation
       - iam-passwordreuseprevention
