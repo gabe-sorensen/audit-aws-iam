@@ -1,7 +1,7 @@
 variables: 
   AUDIT_AWS_IAM_ALERT_LIST:
     description: "Which alerts would you like to check for? Default is all IAM alerts."
-    required: true
+    required: false
     type: array
     default:
       - iam-unusediamgroup
