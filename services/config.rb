@@ -30,7 +30,7 @@ coreo_aws_advisor_alert "iam-inventory-roles" do
   audit_objects ["object.roles.role_name"]
   operators ["=~"]
   alert_when [//]
-  id_map "object.roles.role_id"
+  id_map "object.roles.role_name"
 end
 
 coreo_aws_advisor_alert "iam-inventory-policies" do
@@ -47,7 +47,7 @@ coreo_aws_advisor_alert "iam-inventory-policies" do
   audit_objects ["object.policies.policy_name"]
   operators ["=~"]
   alert_when [//]
-  id_map "object.policies.policy_id"
+  id_map "object.policies.policy_name"
 end
 
 coreo_aws_advisor_alert "iam-inventory-groups" do
@@ -85,6 +85,24 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   id_map "object.group.group_name"
 end
 
+coreo_aws_advisor_alert "iam-multiple-keys" do
+  action :define
+  service :iam
+  # link "http://kb.cloudcoreo.com/mydoc_iam-unusediamgroup.html"
+  display_name "IAM User with multiple keys"
+  description "There is an IAM User with multiple access keys"
+  category "Access"
+  suggested_action "Remove excess access keys"
+  level "Warning"
+  objectives ["users", "access_keys"]
+  call_modifiers [{}, {:user_name => "users.user_name"}]
+  formulas ["", "count"]
+  audit_objects ["", "object.access_key_metadata"]
+  operators ["", ">"]
+  alert_when ["", 1]
+  id_map "modifiers.user_name"
+end
+
 coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   action :define
   service :iam
@@ -94,7 +112,7 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
-  id_map "object.access_key_metadata.access_key_id"
+  id_map "modifiers.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
@@ -111,7 +129,7 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
-  id_map "object.access_key_metadata.access_key_id"
+  id_map "modifiers.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
@@ -145,11 +163,10 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
   level "Critical"
   objectives ["account_password_policy"]
-  audit_objects ["object.password_policy"]
-  formulas ["include?(password_reuse_prevention)"]
-  operators ["!="]
-  alert_when [true]
   id_map "static.password_policy"
+  audit_objects ["object.password_policy.password_reuse_prevention"]
+  operators [">"]
+  alert_when [0]
 end
 
 coreo_aws_advisor_alert "iam-expirepasswords" do
