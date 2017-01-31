@@ -392,8 +392,7 @@ coreo_aws_advisor_iam "advise-iam" do
 end
 
 coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
-  #action :run
-  action :nothing
+  action :run
   provide_composite_access true
   json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
   packages([
@@ -483,8 +482,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
 end
 
 coreo_uni_util_variables "iam-for-suppression-update-advisor-output" do
-  #action :set
-  action :nothing
+  action :set
   variables([
                 {'COMPOSITE::coreo_aws_advisor_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return'}
             ])
