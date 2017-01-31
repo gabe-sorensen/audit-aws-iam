@@ -525,7 +525,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   
 const JSON_INPUT = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
-const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
+const OWNER_TAG = "NOT_A_TAG";
 const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
@@ -540,48 +540,8 @@ callback(notifiers);
   EOH
 end
 
-coreo_uni_util_jsrunner "tags-rollup-iam" do
-  action :run
-  data_type "text"
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
-  function <<-EOH
-var rollup_string = "";
-let rollup = '';
-let emailText = '';
-let numberOfViolations = 0;
-for (var entry=0; entry < json_input.length; entry++) {
-    if (json_input[entry]['endpoint']['to'].length) {
-        numberOfViolations += parseInt(json_input[entry]['num_violations']);
-        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "Violations: " + json_input[entry]['num_violations'] + "\\n";
-    }
-}
-
-rollup += 'number of Violations: ' + numberOfViolations + "\\n";
-rollup += 'Rollup' + "\\n";
-rollup += emailText;
-
-rollup_string = rollup;
-callback(rollup_string);
-  EOH
-end
-
 coreo_uni_util_notify "advise-iam-html-report" do
   action :${AUDIT_AWS_IAM_HTML_REPORT}
   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
 end
 
-coreo_uni_util_notify "advise-iam-rollup" do
-  action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
-  type 'email'
-  allow_empty true
-  send_on '${AUDIT_AWS_IAM_SEND_ON}'
-  payload '
-composite name: PLAN::stack_name
-plan name: PLAN::name
-COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
-  '
-  payload_type 'text'
-  endpoint ({
-      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name' # CANT UNCOMMENT
-  })
-end
