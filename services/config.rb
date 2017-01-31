@@ -483,7 +483,8 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
 end
 
 coreo_uni_util_variables "iam-for-suppression-update-advisor-output" do
-  action :set
+  #action :set
+  action :nothing
   variables([
                 {'COMPOSITE::coreo_aws_advisor_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return'}
             ])
