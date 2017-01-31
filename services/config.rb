@@ -489,7 +489,7 @@ coreo_uni_util_variables "iam-for-suppression-update-advisor-output" do
 end
 
 coreo_uni_util_jsrunner "jsrunner-process-table-iam" do
-  action :run
+  action :${AUDIT_AWS_IAM_HTML_REPORT}
   provide_composite_access true
   json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
   packages([
@@ -510,7 +510,7 @@ coreo_uni_util_jsrunner "jsrunner-process-table-iam" do
 end
 
 coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
-  action :run
+  action :${AUDIT_AWS_IAM_HTML_REPORT}
   data_type "json"
   packages([
                {
