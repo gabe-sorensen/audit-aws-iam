@@ -392,7 +392,7 @@ coreo_aws_advisor_iam "advise-iam" do
 end
 
 coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
-  action :nothing
+  action :run
   provide_composite_access true
   json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
   packages([
@@ -482,7 +482,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
 end
 
 coreo_uni_util_variables "iam-for-suppression-update-advisor-output" do
-  action :nothing
+  action :set
   variables([
                 {'COMPOSITE::coreo_aws_advisor_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return'}
             ])
@@ -538,6 +538,28 @@ const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
 const notifiers = AuditIAM.getNotifiers();
 callback(notifiers);
   EOH
+end
+
+coreo_uni_util_notify "advise-jsrunner-file" do
+  action :notify
+  type 'email'
+  allow_empty true
+  payload_type "text"
+  payload 'STACK::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.jsrunner_file'
+  endpoint ({
+      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'jsrunner file for INSTANCE::stack_name :: INSTANCE::name'
+  })
+end
+ 
+coreo_uni_util_notify "advise-package" do
+  action :notify
+  type 'email'
+  allow_empty true
+  payload_type "json"
+  payload 'STACK::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.packages_file'
+  endpoint ({
+      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'package.json file for INSTANCE::stack_name :: INSTANCE::name'
+  })
 end
 
 coreo_uni_util_notify "advise-iam-html-report" do
