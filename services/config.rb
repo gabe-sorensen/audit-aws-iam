@@ -486,7 +486,7 @@ coreo_uni_util_notify "advise-jsrunner-file" do
   type 'email'
   allow_empty true
   payload_type "text"
-  payload 'STACK::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.jsrunner_file'
+  payload 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.jsrunner_file'
   endpoint ({
       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'jsrunner file for iam suppressions'
   })
@@ -497,7 +497,7 @@ coreo_uni_util_notify "advise-package" do
   type 'email'
   allow_empty true
   payload_type "json"
-  payload 'STACK::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.packages_file'
+  payload 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.packages_file'
   endpoint ({
       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'package.json file for iam suppressions'
   })
@@ -567,7 +567,7 @@ coreo_uni_util_notify "advise-jsrunner-file" do
   type 'email'
   allow_empty true
   payload_type "text"
-  payload 'STACK::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.jsrunner_file'
+  payload 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.jsrunner_file'
   endpoint ({
       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'jsrunner file for iam HTML'
   })
@@ -578,7 +578,7 @@ coreo_uni_util_notify "advise-package" do
   type 'email'
   allow_empty true
   payload_type "json"
-  payload 'STACK::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.packages_file'
+  payload 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.packages_file'
   endpoint ({
       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'package.json file for iam HTML'
   })
