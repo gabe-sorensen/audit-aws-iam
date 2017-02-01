@@ -482,7 +482,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
 end
 
 coreo_uni_util_notify "advise-jsrunner-file" do
-  action :notify
+  action :nothing
   type 'email'
   allow_empty true
   payload_type "text"
@@ -493,7 +493,7 @@ coreo_uni_util_notify "advise-jsrunner-file" do
 end
  
 coreo_uni_util_notify "advise-package" do
-  action :notify
+  action :nothing
   type 'email'
   allow_empty true
   payload_type "json"
@@ -563,7 +563,7 @@ callback(notifiers);
 end
 
 coreo_uni_util_notify "advise-jsrunner-file" do
-  action :notify
+  action :nothing
   type 'email'
   allow_empty true
   payload_type "text"
@@ -574,7 +574,7 @@ coreo_uni_util_notify "advise-jsrunner-file" do
 end
  
 coreo_uni_util_notify "advise-package" do
-  action :notify
+  action :nothing
   type 'email'
   allow_empty true
   payload_type "json"
