@@ -1,5 +1,5 @@
 
-coreo_aws_advisor_alert "iam-inventory-users" do
+coreo_aws_rule "iam-inventory-users" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -12,11 +12,11 @@ coreo_aws_advisor_alert "iam-inventory-users" do
   objectives ["users"]
   audit_objects ["object.users.user_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.users.user_name"
 end
 
-coreo_aws_advisor_alert "iam-inventory-roles" do
+coreo_aws_rule "iam-inventory-roles" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -29,11 +29,11 @@ coreo_aws_advisor_alert "iam-inventory-roles" do
   objectives ["roles"]
   audit_objects ["object.roles.role_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.roles.role_name"
 end
 
-coreo_aws_advisor_alert "iam-inventory-policies" do
+coreo_aws_rule "iam-inventory-policies" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -46,11 +46,11 @@ coreo_aws_advisor_alert "iam-inventory-policies" do
   objectives ["policies"]
   audit_objects ["object.policies.policy_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.policies.policy_name"
 end
 
-coreo_aws_advisor_alert "iam-inventory-groups" do
+coreo_aws_rule "iam-inventory-groups" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -63,11 +63,11 @@ coreo_aws_advisor_alert "iam-inventory-groups" do
   objectives ["groups"]
   audit_objects ["object.groups.group_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.groups.group_name"
 end
 
-coreo_aws_advisor_alert "iam-unusediamgroup" do
+coreo_aws_rule "iam-unusediamgroup" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-unusediamgroup.html"
@@ -81,11 +81,11 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   formulas ["", "count"]
   audit_objects ["", "users"]
   operators ["", "=="]
-  alert_when ["", 0]
+  raise_when ["", 0]
   id_map "object.group.group_name"
 end
 
-coreo_aws_advisor_alert "iam-multiple-keys" do
+coreo_aws_rule "iam-multiple-keys" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_iam-unusediamgroup.html"
@@ -99,11 +99,11 @@ coreo_aws_advisor_alert "iam-multiple-keys" do
   formulas ["", "count"]
   audit_objects ["", "object.access_key_metadata"]
   operators ["", ">"]
-  alert_when ["", 1]
+  raise_when ["", 1]
   id_map "modifiers.user_name"
 end
 
-coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
+coreo_aws_rule "iam-inactive-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-inactive-key-no-rotation.html"
@@ -117,10 +117,10 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
   operators ["", "==", "<"]
-  alert_when ["", "Inactive", "90.days.ago"]
+  raise_when ["", "Inactive", "90.days.ago"]
 end
 
-coreo_aws_advisor_alert "iam-active-key-no-rotation" do
+coreo_aws_rule "iam-active-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-active-key-no-rotation.html"
@@ -134,10 +134,10 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
   operators ["", "==", "<"]
-  alert_when ["", "Active", "90.days.ago"]
+  raise_when ["", "Active", "90.days.ago"]
 end
 
-coreo_aws_advisor_alert "iam-missing-password-policy" do
+coreo_aws_rule "iam-missing-password-policy" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -149,11 +149,11 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
   objectives ["account_password_policy"]
   audit_objects ["object"]
   operators ["=="]
-  alert_when [nil]
+  raise_when [nil]
   id_map "static.password_policy"
 end
 
-coreo_aws_advisor_alert "iam-passwordreuseprevention" do
+coreo_aws_rule "iam-passwordreuseprevention" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-passwordreuseprevention.html"
@@ -166,10 +166,10 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.password_reuse_prevention"]
   operators [">"]
-  alert_when [0]
+  raise_when [0]
 end
 
-coreo_aws_advisor_alert "iam-expirepasswords" do
+coreo_aws_rule "iam-expirepasswords" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-expirepasswords.html"
@@ -181,11 +181,11 @@ coreo_aws_advisor_alert "iam-expirepasswords" do
   objectives ["account_password_policy"]
   audit_objects ["object.password_policy.expire_passwords"]
   operators ["=="]
-  alert_when ["false"]
+  raise_when ["false"]
   id_map "static.password_policy"
 end
 
-coreo_aws_advisor_alert "iam-no-mfa" do
+coreo_aws_rule "iam-no-mfa" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-no-mfa.html"
@@ -200,10 +200,10 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   call_modifiers [{}, { :user_name => "users.user_name" }]
   audit_objects ["", "object.mfa_devices"]
   operators ["", "<"]
-  alert_when ["", 1]
+  raise_when ["", 1]
 end
 
-coreo_aws_advisor_alert "iam-root-no-mfa" do
+coreo_aws_rule "iam-root-no-mfa" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
@@ -217,10 +217,10 @@ coreo_aws_advisor_alert "iam-root-no-mfa" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.mfa_active"]
   operators ["=="]
-  alert_when ["false"]
+  raise_when ["false"]
 end
 
-coreo_aws_advisor_alert "iam-root-active-key" do
+coreo_aws_rule "iam-root-active-key" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
@@ -234,10 +234,10 @@ coreo_aws_advisor_alert "iam-root-active-key" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_1_active"]
   operators ["=="]
-  alert_when ["true"]
+  raise_when ["true"]
 end
 
-coreo_aws_advisor_alert "iam-root-active-password" do
+coreo_aws_rule "iam-root-active-password" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
@@ -251,10 +251,10 @@ coreo_aws_advisor_alert "iam-root-active-password" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.password_last_used"]
   operators [">"]
-  alert_when ["15.days.ago"]
+  raise_when ["15.days.ago"]
 end
 
-coreo_aws_advisor_alert "iam-user-attached-policies" do
+coreo_aws_rule "iam-user-attached-policies" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-user-attached-policies.html"
@@ -269,10 +269,10 @@ coreo_aws_advisor_alert "iam-user-attached-policies" do
   call_modifiers [{}, { :user_name => "users.user_name" }]
   audit_objects ["", "object.policy_names"]
   operators ["", ">"]
-  alert_when ["", 0]
+  raise_when ["", 0]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-uppercase" do
+coreo_aws_rule "iam-password-policy-uppercase" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -285,10 +285,10 @@ coreo_aws_advisor_alert "iam-password-policy-uppercase" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_uppercase_characters"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-lowercase" do
+coreo_aws_rule "iam-password-policy-lowercase" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -301,10 +301,10 @@ coreo_aws_advisor_alert "iam-password-policy-lowercase" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_lowercase_characters"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-symbol" do
+coreo_aws_rule "iam-password-policy-symbol" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -317,10 +317,10 @@ coreo_aws_advisor_alert "iam-password-policy-symbol" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_symbols"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-number" do
+coreo_aws_rule "iam-password-policy-number" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -333,10 +333,10 @@ coreo_aws_advisor_alert "iam-password-policy-number" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_numbers"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-min-length" do
+coreo_aws_rule "iam-password-policy-min-length" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -349,10 +349,10 @@ coreo_aws_advisor_alert "iam-password-policy-min-length" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.minimum_password_length"]
   operators ["<"]
-  alert_when [14]
+  raise_when [14]
 end
 
-coreo_aws_advisor_alert "iam-root-access-key-1" do
+coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
@@ -366,10 +366,10 @@ coreo_aws_advisor_alert "iam-root-access-key-1" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_1_active"]
   operators ["=="]
-  alert_when ["true"]
+  raise_when ["true"]
 end
 
-coreo_aws_advisor_alert "iam-root-access-key-2" do
+coreo_aws_rule "iam-root-access-key-2" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
@@ -383,18 +383,18 @@ coreo_aws_advisor_alert "iam-root-access-key-2" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_2_active"]
   operators ["=="]
-  alert_when ["true"]
+  raise_when ["true"]
 end
 
-coreo_aws_advisor_iam "advise-iam" do
-  action :advise
-  alerts ${AUDIT_AWS_IAM_ALERT_LIST}
+coreo_aws_rule_runner_iam "advise-iam" do
+  action :run
+  rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
 coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
   action :run
   provide_composite_access true
-  json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
+  json_input '{"violations":COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   packages([
                {
                    :name => "js-yaml",
@@ -506,14 +506,14 @@ end
 coreo_uni_util_variables "iam-for-suppression-update-advisor-output" do
   action :set
   variables([
-                {'COMPOSITE::coreo_aws_advisor_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return'}
+                {'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return'}
             ])
 end
 
 coreo_uni_util_jsrunner "jsrunner-process-table-iam" do
   action :run
   provide_composite_access true
-  json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
+  json_input '{"violations":COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   packages([
                {
                    :name => "js-yaml",
