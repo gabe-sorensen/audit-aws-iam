@@ -1,8 +1,5 @@
-###########################################
-# User Visible Rule Definitions
-###########################################
 
-coreo_aws_advisor_alert "iam-inventory-users" do
+coreo_aws_rule "iam-inventory-users" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -15,11 +12,11 @@ coreo_aws_advisor_alert "iam-inventory-users" do
   objectives ["users"]
   audit_objects ["object.users.user_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.users.user_name"
 end
 
-coreo_aws_advisor_alert "iam-inventory-roles" do
+coreo_aws_rule "iam-inventory-roles" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -32,11 +29,11 @@ coreo_aws_advisor_alert "iam-inventory-roles" do
   objectives ["roles"]
   audit_objects ["object.roles.role_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.roles.role_name"
 end
 
-coreo_aws_advisor_alert "iam-inventory-policies" do
+coreo_aws_rule "iam-inventory-policies" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -49,11 +46,11 @@ coreo_aws_advisor_alert "iam-inventory-policies" do
   objectives ["policies"]
   audit_objects ["object.policies.policy_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.policies.policy_name"
 end
 
-coreo_aws_advisor_alert "iam-inventory-groups" do
+coreo_aws_rule "iam-inventory-groups" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
@@ -66,11 +63,11 @@ coreo_aws_advisor_alert "iam-inventory-groups" do
   objectives ["groups"]
   audit_objects ["object.groups.group_name"]
   operators ["=~"]
-  alert_when [//]
+  raise_when [//]
   id_map "object.groups.group_name"
 end
 
-coreo_aws_advisor_alert "iam-unusediamgroup" do
+coreo_aws_rule "iam-unusediamgroup" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-unusediamgroup.html"
@@ -84,11 +81,11 @@ coreo_aws_advisor_alert "iam-unusediamgroup" do
   formulas ["", "count"]
   audit_objects ["", "users"]
   operators ["", "=="]
-  alert_when ["", 0]
+  raise_when ["", 0]
   id_map "object.group.group_name"
 end
 
-coreo_aws_advisor_alert "iam-multiple-keys" do
+coreo_aws_rule "iam-multiple-keys" do
   action :define
   service :iam
   # link "http://kb.cloudcoreo.com/mydoc_iam-unusediamgroup.html"
@@ -102,11 +99,11 @@ coreo_aws_advisor_alert "iam-multiple-keys" do
   formulas ["", "count"]
   audit_objects ["", "object.access_key_metadata"]
   operators ["", ">"]
-  alert_when ["", 1]
+  raise_when ["", 1]
   id_map "modifiers.user_name"
 end
 
-coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
+coreo_aws_rule "iam-inactive-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-inactive-key-no-rotation.html"
@@ -115,15 +112,15 @@ coreo_aws_advisor_alert "iam-inactive-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
-  id_map "modifiers.user_name"
+  id_map "object.access_key_metadata.access_key_id"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
   operators ["", "==", "<"]
-  alert_when ["", "Inactive", "90.days.ago"]
+  raise_when ["", "Inactive", "90.days.ago"]
 end
 
-coreo_aws_advisor_alert "iam-active-key-no-rotation" do
+coreo_aws_rule "iam-active-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-active-key-no-rotation.html"
@@ -137,10 +134,10 @@ coreo_aws_advisor_alert "iam-active-key-no-rotation" do
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
   operators ["", "==", "<"]
-  alert_when ["", "Active", "90.days.ago"]
+  raise_when ["", "Active", "90.days.ago"]
 end
 
-coreo_aws_advisor_alert "iam-missing-password-policy" do
+coreo_aws_rule "iam-missing-password-policy" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -152,11 +149,11 @@ coreo_aws_advisor_alert "iam-missing-password-policy" do
   objectives ["account_password_policy"]
   audit_objects ["object"]
   operators ["=="]
-  alert_when [nil]
+  raise_when [nil]
   id_map "static.password_policy"
 end
 
-coreo_aws_advisor_alert "iam-passwordreuseprevention" do
+coreo_aws_rule "iam-passwordreuseprevention" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-passwordreuseprevention.html"
@@ -169,10 +166,10 @@ coreo_aws_advisor_alert "iam-passwordreuseprevention" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.password_reuse_prevention"]
   operators [">"]
-  alert_when [0]
+  raise_when [0]
 end
 
-coreo_aws_advisor_alert "iam-expirepasswords" do
+coreo_aws_rule "iam-expirepasswords" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-expirepasswords.html"
@@ -184,11 +181,11 @@ coreo_aws_advisor_alert "iam-expirepasswords" do
   objectives ["account_password_policy"]
   audit_objects ["object.password_policy.expire_passwords"]
   operators ["=="]
-  alert_when ["false"]
+  raise_when ["false"]
   id_map "static.password_policy"
 end
 
-coreo_aws_advisor_alert "iam-no-mfa" do
+coreo_aws_rule "iam-no-mfa" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-no-mfa.html"
@@ -203,10 +200,10 @@ coreo_aws_advisor_alert "iam-no-mfa" do
   call_modifiers [{}, { :user_name => "users.user_name" }]
   audit_objects ["", "object.mfa_devices"]
   operators ["", "<"]
-  alert_when ["", 1]
+  raise_when ["", 1]
 end
 
-coreo_aws_advisor_alert "iam-root-no-mfa" do
+coreo_aws_rule "iam-root-no-mfa" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
@@ -220,10 +217,10 @@ coreo_aws_advisor_alert "iam-root-no-mfa" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.mfa_active"]
   operators ["=="]
-  alert_when ["false"]
+  raise_when ["false"]
 end
 
-coreo_aws_advisor_alert "iam-root-active-key" do
+coreo_aws_rule "iam-root-active-key" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
@@ -237,10 +234,10 @@ coreo_aws_advisor_alert "iam-root-active-key" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_1_active"]
   operators ["=="]
-  alert_when ["true"]
+  raise_when ["true"]
 end
 
-coreo_aws_advisor_alert "iam-root-active-password" do
+coreo_aws_rule "iam-root-active-password" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
@@ -254,10 +251,10 @@ coreo_aws_advisor_alert "iam-root-active-password" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.password_last_used"]
   operators [">"]
-  alert_when ["15.days.ago"]
+  raise_when ["15.days.ago"]
 end
 
-coreo_aws_advisor_alert "iam-user-attached-policies" do
+coreo_aws_rule "iam-user-attached-policies" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-user-attached-policies.html"
@@ -272,10 +269,10 @@ coreo_aws_advisor_alert "iam-user-attached-policies" do
   call_modifiers [{}, { :user_name => "users.user_name" }]
   audit_objects ["", "object.policy_names"]
   operators ["", ">"]
-  alert_when ["", 0]
+  raise_when ["", 0]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-uppercase" do
+coreo_aws_rule "iam-password-policy-uppercase" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -288,10 +285,10 @@ coreo_aws_advisor_alert "iam-password-policy-uppercase" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_uppercase_characters"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-lowercase" do
+coreo_aws_rule "iam-password-policy-lowercase" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -304,10 +301,10 @@ coreo_aws_advisor_alert "iam-password-policy-lowercase" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_lowercase_characters"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-symbol" do
+coreo_aws_rule "iam-password-policy-symbol" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -320,10 +317,10 @@ coreo_aws_advisor_alert "iam-password-policy-symbol" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_symbols"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-number" do
+coreo_aws_rule "iam-password-policy-number" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -336,10 +333,10 @@ coreo_aws_advisor_alert "iam-password-policy-number" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_numbers"]
   operators ["=="]
-  alert_when [false]
+  raise_when [false]
 end
 
-coreo_aws_advisor_alert "iam-password-policy-min-length" do
+coreo_aws_rule "iam-password-policy-min-length" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-missing-password-policy.html"
@@ -352,10 +349,10 @@ coreo_aws_advisor_alert "iam-password-policy-min-length" do
   id_map "static.password_policy"
   audit_objects ["object.password_policy.minimum_password_length"]
   operators ["<"]
-  alert_when [14]
+  raise_when [14]
 end
 
-coreo_aws_advisor_alert "iam-root-access-key-1" do
+coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
@@ -369,10 +366,10 @@ coreo_aws_advisor_alert "iam-root-access-key-1" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_1_active"]
   operators ["=="]
-  alert_when ["true"]
+  raise_when ["true"]
 end
 
-coreo_aws_advisor_alert "iam-root-access-key-2" do
+coreo_aws_rule "iam-root-access-key-2" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
@@ -386,116 +383,144 @@ coreo_aws_advisor_alert "iam-root-access-key-2" do
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_2_active"]
   operators ["=="]
-  alert_when ["true"]
+  raise_when ["true"]
 end
 
-###########################################
-# Compsite-Internal Resources follow until end
-#   (Resources used by the system for execution and display processing)
-###########################################
-
-coreo_aws_advisor_iam "advise-iam" do
-  action :advise
-  alerts ${AUDIT_AWS_IAM_ALERT_LIST}
+coreo_aws_rule_runner_iam "advise-iam" do
+  action :run
+  rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
-
-# =begin
-#   START AWS IAM METHODS
-#   JSON SEND METHOD
-#   HTML SEND METHOD
-# =end
 
 coreo_uni_util_jsrunner "jsrunner-process-suppression-iam" do
   action :run
   provide_composite_access true
-  json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
+  json_input '{"violations":COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   packages([
                {
                    :name => "js-yaml",
                    :version => "3.7.0"
                }       ])
   function <<-EOH
-  var fs = require('fs');
-  var yaml = require('js-yaml');
+  const fs = require('fs');
+  const yaml = require('js-yaml');
   let suppression;
   try {
       suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
   } catch (e) {
   }
   coreoExport('suppression', JSON.stringify(suppression));
-  var violations = json_input.violations;
-  var result = {};
-    var file_date = null;
-    for (var violator_id in violations) {
-        result[violator_id] = {};
-        result[violator_id].tags = violations[violator_id].tags;
-        result[violator_id].violations = {}
-        for (var rule_id in violations[violator_id].violations) {
-            is_violation = true;
- 
-            result[violator_id].violations[rule_id] = violations[violator_id].violations[rule_id];
-            for (var suppress_rule_id in suppression) {
-                for (var suppress_violator_num in suppression[suppress_rule_id]) {
-                    for (var suppress_violator_id in suppression[suppress_rule_id][suppress_violator_num]) {
-                        file_date = null;
-                        var suppress_obj_id_time = suppression[suppress_rule_id][suppress_violator_num][suppress_violator_id];
-                        if (rule_id === suppress_rule_id) {
- 
-                            if (violator_id === suppress_violator_id) {
-                                var now_date = new Date();
- 
-                                if (suppress_obj_id_time === "") {
-                                    suppress_obj_id_time = new Date();
-                                } else {
-                                    file_date = suppress_obj_id_time;
-                                    suppress_obj_id_time = file_date;
-                                }
-                                var rule_date = new Date(suppress_obj_id_time);
-                                if (isNaN(rule_date.getTime())) {
-                                    rule_date = new Date(0);
-                                }
- 
-                                if (now_date <= rule_date) {
- 
-                                    is_violation = false;
- 
-                                    result[violator_id].violations[rule_id]["suppressed"] = true;
-                                    if (file_date != null) {
-                                        result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
-                                        result[violator_id].violations[rule_id]["suppression_expired"] = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
- 
-                }
-            }
-            if (is_violation) {
- 
-                if (file_date !== null) {
-                    result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
-                    result[violator_id].violations[rule_id]["suppression_expired"] = true;
-                } else {
-                    result[violator_id].violations[rule_id]["suppression_expired"] = false;
-                }
-                result[violator_id].violations[rule_id]["suppressed"] = false;
-            }
-        }
-    }
- 
-    var rtn = result;
+  function createViolationWithSuppression(result) {
+      const regionKeys = Object.keys(violations);
+      regionKeys.forEach(regionKey => {
+          result[regionKey] = {};
+          const objectIdKeys = Object.keys(violations[regionKey]);
+          objectIdKeys.forEach(objectIdKey => {
+              createObjectId(regionKey, objectIdKey);
+          });
+      });
+  }
   
-  var rtn = result;
+  function createObjectId(regionKey, objectIdKey) {
+      const wayToResultObjectId = result[regionKey][objectIdKey] = {};
+      const wayToViolationObjectId = violations[regionKey][objectIdKey];
+      wayToResultObjectId.tags = wayToViolationObjectId.tags;
+      wayToResultObjectId.violations = {};
+      createSuppression(wayToViolationObjectId, regionKey, objectIdKey);
+  }
   
+  
+  function createSuppression(wayToViolationObjectId, regionKey, violationObjectIdKey) {
+      const ruleKeys = Object.keys(wayToViolationObjectId['violations']);
+      ruleKeys.forEach(violationRuleKey => {
+          result[regionKey][violationObjectIdKey].violations[violationRuleKey] = wayToViolationObjectId['violations'][violationRuleKey];
+          Object.keys(suppression).forEach(suppressRuleKey => {
+              suppression[suppressRuleKey].forEach(suppressionObject => {
+                  Object.keys(suppressionObject).forEach(suppressObjectIdKey => {
+                      setDateForSuppression(
+                          suppressionObject, suppressObjectIdKey,
+                          violationRuleKey, suppressRuleKey,
+                          violationObjectIdKey, regionKey
+                      );
+                  });
+              });
+          });
+      });
+  }
+  
+  
+  function setDateForSuppression(
+      suppressionObject, suppressObjectIdKey,
+      violationRuleKey, suppressRuleKey,
+      violationObjectIdKey, regionKey
+  ) {
+      file_date = null;
+      let suppressDate = suppressionObject[suppressObjectIdKey];
+      const areViolationsEqual = violationRuleKey === suppressRuleKey && violationObjectIdKey === suppressObjectIdKey;
+      if (areViolationsEqual) {
+          const nowDate = new Date();
+          const correctDateSuppress = getCorrectSuppressDate(suppressDate);
+          const isSuppressionDate = nowDate <= correctDateSuppress;
+          if (isSuppressionDate) {
+              setSuppressionProp(regionKey, violationObjectIdKey, violationRuleKey, file_date);
+          } else {
+              setSuppressionExpired(regionKey, violationObjectIdKey, violationRuleKey, file_date);
+          }
+      }
+  }
+  
+  
+  function getCorrectSuppressDate(suppressDate) {
+      const hasSuppressionDate = suppressDate !== '';
+      if (hasSuppressionDate) {
+          file_date = suppressDate;
+      } else {
+          suppressDate = new Date();
+      }
+      let correctDateSuppress = new Date(suppressDate);
+      if (isNaN(correctDateSuppress.getTime())) {
+          correctDateSuppress = new Date(0);
+      }
+      return correctDateSuppress;
+  }
+  
+  
+  function setSuppressionProp(regionKey, objectIdKey, violationRuleKey, file_date) {
+      const wayToViolationObject = result[regionKey][objectIdKey].violations[violationRuleKey];
+      wayToViolationObject["suppressed"] = true;
+      if (file_date != null) {
+          wayToViolationObject["suppression_until"] = file_date;
+          wayToViolationObject["suppression_expired"] = false;
+      }
+  }
+  
+  function setSuppressionExpired(regionKey, objectIdKey, violationRuleKey, file_date) {
+      if (file_date !== null) {
+          result[regionKey][objectIdKey].violations[violationRuleKey]["suppression_until"] = file_date;
+          result[regionKey][objectIdKey].violations[violationRuleKey]["suppression_expired"] = true;
+      } else {
+          result[regionKey][objectIdKey].violations[violationRuleKey]["suppression_expired"] = false;
+      }
+      result[regionKey][objectIdKey].violations[violationRuleKey]["suppressed"] = false;
+  }
+  
+  const violations = json_input['violations'];
+  const result = {};
+  createViolationWithSuppression(result, json_input);
   callback(result);
   EOH
+end
+
+coreo_uni_util_variables "iam-for-suppression-update-advisor-output" do
+  action :set
+  variables([
+                {'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return'}
+            ])
 end
 
 coreo_uni_util_jsrunner "jsrunner-process-table-iam" do
   action :run
   provide_composite_access true
-  json_input '{"violations":COMPOSITE::coreo_aws_advisor_iam.advise-iam.report}'
+  json_input '{"violations":COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   packages([
                {
                    :name => "js-yaml",
@@ -513,21 +538,20 @@ coreo_uni_util_jsrunner "jsrunner-process-table-iam" do
   EOH
 end
 
-coreo_uni_util_notify "advise-iam-json" do
-  action :nothing
-  type 'email'
-  allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
-  send_on '${AUDIT_AWS_IAM_SEND_ON}'
-  payload '{"composite name":"PLAN::stack_name",
-  "plan name":"PLAN::name",
-  "number_of_checks":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_checks",
-  "number_of_violations":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_violations",
-  "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_iam.advise-iam.number_ignored_violations",
-  "violations": COMPOSITE::coreo_aws_advisor_iam.advise-iam.report }'
-  payload_type "json"
-  endpoint ({
-      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name'
-  })
+coreo_uni_util_jsrunner "jsrunner-process-alert-list-iam" do
+  action :run
+  provide_composite_access true
+  json_input '{"violations":COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
+  packages([
+               {
+                   :name => "js-yaml",
+                   :version => "3.7.0"
+               }       ])
+  function <<-EOH
+    let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
+    let alertListArray = alertListToJSON.replace(/'/g, '"');
+    callback(alertListArray);
+  EOH
 end
 
 coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
@@ -536,88 +560,56 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.6.0"
+                   :version => "1.7.8"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
+                "alert list": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-alert-list-iam.return,
                 "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table-iam.return,
                 "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-iam.return}'
   function <<-EOH
   
 const JSON_INPUT = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
-const OWNER_TAG = "${AUDIT_AWS_IAM_OWNER_TAG}";
+const OWNER_TAG = "NOT_A_TAG";
 const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
-const AUDIT_NAME = 'iam';
-const TABLES = json_input['table'];
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
-const WHAT_NEED_TO_SHOWN_ON_TABLE = {
-    OBJECT_ID: { headerName: 'AWS Object ID', isShown: true},
-    REGION: { headerName: 'Region', isShown: true },
-    AWS_CONSOLE: { headerName: 'AWS Console', isShown: true },
-    TAGS: { headerName: 'Tags', isShown: true },
-    AMI: { headerName: 'AMI', isShown: false },
-    KILL_SCRIPTS: { headerName: 'Kill Cmd', isShown: false }
-};
-
-const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG, AUDIT_NAME,
-    WHAT_NEED_TO_SHOWN_ON_TABLE, ALLOW_EMPTY, SEND_ON,
-    undefined, undefined, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
+const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
+     ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES, TABLES);
+const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
 const notifiers = AuditIAM.getNotifiers();
 callback(notifiers);
   EOH
 end
 
-coreo_uni_util_jsrunner "tags-rollup-iam" do
-  action :run
-  data_type "text"
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
-  function <<-EOH
-var rollup_string = "";
-let rollup = '';
-let emailText = '';
-let numberOfViolations = 0;
-for (var entry=0; entry < json_input.length; entry++) {
-    if (json_input[entry]['endpoint']['to'].length) {
-        numberOfViolations += parseInt(json_input[entry]['num_violations']);
-        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "Violations: " + json_input[entry]['num_violations'] + "\\n";
-    }
-}
-
-rollup += 'number of Violations: ' + numberOfViolations + "\\n";
-rollup += 'Rollup' + "\\n";
-rollup += emailText;
-
-rollup_string = rollup;
-callback(rollup_string);
-  EOH
-end
+# coreo_uni_util_notify "advise-jsrunner-file-html-iam" do
+#   action :nothing
+#   type 'email'
+#   allow_empty true
+#   payload_type "text"
+#   payload 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.jsrunner_file'
+#   endpoint ({
+#       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'jsrunner file for iam HTML'
+#   })
+# end
+ 
+# coreo_uni_util_notify "advise-package-html-iam" do
+#   action :nothing
+#   type 'email'
+#   allow_empty true
+#   payload_type "json"
+#   payload 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.packages_file'
+#   endpoint ({
+#       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'package.json file for iam HTML'
+#   })
+# end
 
 coreo_uni_util_notify "advise-iam-html-report" do
   action :${AUDIT_AWS_IAM_HTML_REPORT}
   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
 end
 
-coreo_uni_util_notify "advise-iam-rollup" do
-  action :${AUDIT_AWS_IAM_ROLLUP_REPORT}
-  type 'email'
-  allow_empty true
-  send_on '${AUDIT_AWS_IAM_SEND_ON}'
-  payload '
-composite name: PLAN::stack_name
-plan name: PLAN::name
-COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-iam.return
-  '
-  payload_type 'text'
-  endpoint ({
-      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'CloudCoreo iam advisor alerts on PLAN::stack_name :: PLAN::name' # CANT UNCOMMENT
-  })
-end
-=begin
-  AWS IAM END
-=end
