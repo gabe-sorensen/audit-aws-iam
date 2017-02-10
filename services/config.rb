@@ -406,7 +406,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.return}'
+                "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   function <<-EOH
   
 
