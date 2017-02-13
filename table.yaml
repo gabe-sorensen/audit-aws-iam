@@ -21,6 +21,7 @@ iam-inventory-groups:
   "Create Date": "+__OBJECT__.violations.__RULE__.result_info.0.object.create_date+"
 iam-unusediamgroup:
   "Group Name": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/groups/__OBJECT__"
+  "Group ARN": "+__OBJECT__.violator_info.arn+"
 iam-inactive-key-no-rotation:
   "IAM Key": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/+__OBJECT__.violations.__RULE__.result_info.0.object.user_name+?section=security_credentials"
   "User Name": "+__OBJECT__.violations.__RULE__.result_info.0.object.user_name+"
