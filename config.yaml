@@ -42,3 +42,8 @@ variables:
     required: true
     type: string
     default: "change"
+  AUDIT_AWS_IAM_OWNER_TAG:
+      description: "Enter an AWS tag whose value is an email address of the owner of the IAM object. (Optional)"
+      required: false
+      type: string
+      default: "NOT_A_TAG"
