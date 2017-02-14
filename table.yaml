@@ -38,6 +38,7 @@ iam-expirepasswords:
   "Password Policy": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/account_settings"
 iam-no-mfa:
   "User Name": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/__OBJECT__?section=security_credentials"
+  "Group ARN": "+__OBJECT__.violator_info.arn+"
 iam-root-no-mfa:
   "Password Policy": "__OBJECT__~https://us-east-1.console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/credential_report"
 iam-root-active-key:
