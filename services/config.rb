@@ -440,13 +440,13 @@ function setTableAndSuppression() {
   try {
       suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
   } catch (e) {
-      console.log(`Error reading suppression.yaml file: ${e}`);
+      console.log(`Error reading suppression.yaml file`);
       suppression = {};
   }
   try {
       table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
   } catch (e) {
-      console.log(`Error reading table.yaml file: ${e}`);
+      console.log(`Error reading table.yaml file`);
       table = {};
   }
   coreoExport('table', JSON.stringify(table));
@@ -487,7 +487,7 @@ end
 coreo_uni_util_variables "update-planwide-3" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
+                {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
                 {'COMPOSITE::coreo_uni_util_variables.planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
