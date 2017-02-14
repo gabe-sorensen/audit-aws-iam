@@ -482,14 +482,14 @@ end
 coreo_uni_util_variables "update-planwide-3" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.iam-tags-to-notifiers-array.table'}
+                {'COMPOSITE::coreo_uni_util_variables.planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
 
 coreo_uni_util_jsrunner "iam-tags-rollup" do
   action :run
   data_type "text"
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.iam-tags-to-notifiers-array.return'
+  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
   function <<-EOH
 
 const notifiers = json_input;
@@ -520,7 +520,7 @@ end
 
 coreo_uni_util_notify "advise-iam-to-tag-values" do
   action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0)) ? :notify : :nothing)
-  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.iam-tags-to-notifiers-array.return'
+  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
 end
 
 coreo_uni_util_notify "advise-iam-rollup" do
