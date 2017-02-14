@@ -386,15 +386,36 @@ coreo_aws_rule "iam-root-access-key-2" do
   raise_when ["true"]
 end
 
+coreo_uni_util_variables "planwide" do
+  action :set
+  variables([
+                {'COMPOSITE::coreo_uni_util_variables.planwide.composite_name' => 'PLAN::stack_name'},
+                {'COMPOSITE::coreo_uni_util_variables.planwide.plan_name' => 'PLAN::name'},
+                {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'unset'},
+                {'COMPOSITE::coreo_uni_util_variables.planwide.number_violations' => 'unset'}
+            ])
+end
+
+
 coreo_aws_rule_runner_iam "advise-iam" do
   action :run
   rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
 
+coreo_uni_util_variables "update-planwide-1" do
+  action :set
+  variables([
+                {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
+                {'COMPOSITE::coreo_uni_util_variables.planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
+
+            ])
+end
+
 coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   action :run
   data_type "json"
+  provide_composite_access true
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
@@ -417,12 +438,19 @@ function setTableAndSuppression() {
   const fs = require('fs');
   const yaml = require('js-yaml');
   try {
-      table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
       suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
   } catch (e) {
+      console.log(`Error reading suppression.yaml file: ${e}`);
+      suppression = {};
+  }
+  try {
+      table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
+  } catch (e) {
+      console.log(`Error reading table.yaml file: ${e}`);
+      table = {};
   }
   coreoExport('table', JSON.stringify(table));
-  coreoExport('suppression', JSON.stringify(table));
+  coreoExport('suppression', JSON.stringify(suppression));
   
   let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
   let alertListArray = alertListToJSON.replace(/'/g, '"');
