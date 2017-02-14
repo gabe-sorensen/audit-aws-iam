@@ -479,30 +479,62 @@ callback(notifiers);
   EOH
 end
 
-# coreo_uni_util_notify "advise-jsrunner-file-html-iam" do
-#   action :nothing
-#   type 'email'
-#   allow_empty true
-#   payload_type "text"
-#   payload 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.jsrunner_file'
-#   endpoint ({
-#       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'jsrunner file for iam HTML'
-#   })
-# end
-
-# coreo_uni_util_notify "advise-package-html-iam" do
-#   action :nothing
-#   type 'email'
-#   allow_empty true
-#   payload_type "json"
-#   payload 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.packages_file'
-#   endpoint ({
-#       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'package.json file for iam HTML'
-#   })
-# end
-
-coreo_uni_util_notify "advise-iam-html-report" do
-  action :${AUDIT_AWS_IAM_HTML_REPORT}
-  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
+coreo_uni_util_variables "update-planwide-3" do
+  action :set
+  variables([
+                {'COMPOSITE::coreo_uni_util_variables.planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.iam-tags-to-notifiers-array.table'}
+            ])
 end
 
+coreo_uni_util_jsrunner "iam-tags-rollup" do
+  action :run
+  data_type "text"
+  json_input 'COMPOSITE::coreo_uni_util_jsrunner.iam-tags-to-notifiers-array.return'
+  function <<-EOH
+
+const notifiers = json_input;
+
+function setTextRollup() {
+    let emailText = '';
+    let numberOfViolations = 0;
+    notifiers.forEach(notifier => {
+        const hasEmail = notifier['endpoint']['to'].length;
+        if(hasEmail) {
+            numberOfViolations += parseInt(notifier['num_violations']);
+            emailText += "recipient: " + notifier['endpoint']['to'] + " - " + "Violations: " + notifier['num_violations'] + "\\n";
+        }
+    });
+
+    textRollup += 'Number of Violating Cloud Objects: ' + numberOfViolations + "\\n";
+    textRollup += 'Rollup' + "\\n";
+    textRollup += emailText;
+}
+
+
+let textRollup = '';
+setTextRollup();
+
+callback(textRollup);
+  EOH
+end
+
+coreo_uni_util_notify "advise-iam-to-tag-values" do
+  action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0)) ? :notify : :nothing)
+  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.iam-tags-to-notifiers-array.return'
+end
+
+coreo_uni_util_notify "advise-iam-rollup" do
+  action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0) and (! "${AUDIT_AWS_IAM_OWNER_TAG}".eql?("NOT_A_TAG"))) ? :notify : :nothing)
+  type 'email'
+  allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
+  send_on '${AUDIT_AWS_IAM_SEND_ON}'
+  payload '
+composite name: PLAN::stack_name
+plan name: PLAN::name
+COMPOSITE::coreo_uni_util_jsrunner.iam-tags-rollup.return
+  '
+  payload_type 'text'
+  endpoint ({
+      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'PLAN::stack_name New Rollup Report for PLAN::name plan from CloudCoreo'
+  })
+end
