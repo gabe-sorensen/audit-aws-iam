@@ -419,7 +419,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.8.2"
+                   :version => "1.8.3"
                },
                {
                    :name => "js-yaml",
