@@ -386,13 +386,13 @@ coreo_aws_rule "iam-root-access-key-2" do
   raise_when ["true"]
 end
 
-coreo_uni_util_variables "planwide" do
+coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.planwide.composite_name' => 'PLAN::stack_name'},
-                {'COMPOSITE::coreo_uni_util_variables.planwide.plan_name' => 'PLAN::name'},
-                {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'unset'},
-                {'COMPOSITE::coreo_uni_util_variables.planwide.number_violations' => 'unset'}
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.composite_name' => 'PLAN::stack_name'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.plan_name' => 'PLAN::name'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'unset'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'unset'}
             ])
 end
 
@@ -403,11 +403,11 @@ coreo_aws_rule_runner_iam "advise-iam" do
 end
 
 
-coreo_uni_util_variables "update-planwide-1" do
+coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
-                {'COMPOSITE::coreo_uni_util_variables.planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
 
             ])
 end
@@ -484,11 +484,11 @@ callback(notifiers);
   EOH
 end
 
-coreo_uni_util_variables "update-planwide-3" do
+coreo_uni_util_variables "iam-update-planwide-3" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
-                {'COMPOSITE::coreo_uni_util_variables.planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
 
