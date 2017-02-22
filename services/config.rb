@@ -568,3 +568,22 @@ COMPOSITE::coreo_uni_util_jsrunner.iam-tags-rollup.return
       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'PLAN::stack_name New Rollup Report for PLAN::name plan from CloudCoreo'
   })
 end
+
+coreo_uni_util_notify "advise-iam-json-to-s3" do
+  action :notify
+  type 's3'
+  allow_empty false
+  send_on 'change'
+  payload '
+COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report
+  '
+  payload_type 'json'
+  endpoint ({
+      object_name:  'PLAN::stack_name-PLAN::name',
+      bucket_name:  'cloudcoreo-cis-test-results',
+      folder:       'PLAN::stack_name/PLAN::name',
+      properties:   {}
+  })
+end
+
+
