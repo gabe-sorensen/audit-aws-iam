@@ -161,6 +161,9 @@ coreo_aws_rule "iam-passwordreuseprevention" do
   description "The current password policy doesn't prevent users from reusing thier old passwords."
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.10"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Critical"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -177,6 +180,9 @@ coreo_aws_rule "iam-expirepasswords" do
   description "The current password policy doesn't require users to regularly change their passwords. User passwords are set to never expire."
   category "Access"
   suggested_action "Configure a strong password policy for your users so that passwords expire such that users must change their passwords periodically."
+  meta_cis_id "1.11"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Critical"
   objectives ["account_password_policy"]
   audit_objects ["object.password_policy.expire_passwords"]
@@ -262,6 +268,9 @@ coreo_aws_rule "iam-user-attached-policies" do
   description "User account is using custom inline policies versus using IAM group managed policies."
   category "Access"
   suggested_action "Switch all inline policies to apply to IAM groups and assign users IAMs roles."
+  meta_cis_id "1.16"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   id_map "modifiers.user_name"
   objectives ["users", "user_policies"]
@@ -280,6 +289,9 @@ coreo_aws_rule "iam-password-policy-uppercase" do
   description "The password policy must require an uppercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.5"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -296,6 +308,9 @@ coreo_aws_rule "iam-password-policy-lowercase" do
   description "The password policy must require an lowercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.6"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -312,6 +327,9 @@ coreo_aws_rule "iam-password-policy-symbol" do
   description "The password policy must require a symbol to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.7"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -328,6 +346,9 @@ coreo_aws_rule "iam-password-policy-number" do
   description "The password policy must require a number to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.8"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -344,6 +365,9 @@ coreo_aws_rule "iam-password-policy-min-length" do
   description "The password policy must require a minimum length of 14 characters to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.9"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
