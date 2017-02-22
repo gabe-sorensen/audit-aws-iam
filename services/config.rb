@@ -570,7 +570,7 @@ COMPOSITE::coreo_uni_util_jsrunner.iam-tags-rollup.return
 end
 
 coreo_uni_util_notify "advise-iam-json-to-s3" do
-  action :notify
+  action :nothing
   type 's3'
   allow_empty false
   send_on 'change'
