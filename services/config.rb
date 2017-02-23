@@ -499,7 +499,7 @@ const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
 const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
 
-const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
+const JSONReportAfterGeneratingSuppression = AuditIAM.getSortedJSONForHTMLReports();
 coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
 
 
