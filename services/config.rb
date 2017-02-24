@@ -443,7 +443,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.8.3"
+                   :version => "1.8.6"
                },
                {
                    :name => "js-yaml",
@@ -499,7 +499,7 @@ const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
 const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
 
-const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
+const JSONReportAfterGeneratingSuppression = AuditIAM.getSortedJSONForHTMLReports();
 coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
 
 
