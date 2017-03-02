@@ -451,7 +451,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
 
 // const notifiers = AuditIAM.getNotifiers();
 // callback(notifiers);
-}
+// }
 // function setTableAndSuppression() {
 //   let table;
 //   let suppression;
