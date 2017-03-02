@@ -44,4 +44,4 @@ variables:
     description: "Number of days for which password has not been used"
     required: true
     type: string
-    default: "2"
+    default: "30"
