@@ -459,7 +459,7 @@ coreo_aws_rule "iam-ensure-security-info-registered" do
   meta_cis_scored "true"
   meta_cis_level "1"
   objectives [""]
-  audit_objects [""] << "k"
+  audit_objects [""] 
   operators ["=~"]
   raise_when [//]
   id_map ""
