@@ -16,39 +16,6 @@ coreo_aws_rule "iam-inventory-users" do
   id_map "object.users.user_name"
 end
 
-coreo_aws_rule "iam-user-password-not-changed-1" do
-  action :define
-  service :iam
-  # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
-  display_name "IAM User Password Recency"
-  description "All IAM users whose password has not changed in x days"
-  category "Security"
-  suggested_action "Change passwords regularly"
-  level "Informational"
-  objectives ["users"]
-  audit_objects ["object.users.password_last_used"]
-  operators ["<"]
-  raise_when ["2.days.ago"]
-  id_map "object.users.user_name"
-end
-
-coreo_aws_rule "iam-user-password-not-changed" do
-  action :define
-  service :iam
-  # link "http://kb.cloudcoreo.com/mydoc_elb-inventory.html"
-  include_violations_in_count false
-  display_name "IAM User Password Recency"
-  description "All IAM users whose password has not changed in x days"
-  category "Security"
-  suggested_action "Change passwords regularly"
-  level "Informational"
-  objectives ["users"]
-  audit_objects ["object.users.password_last_used"]
-  operators ["<"]
-  raise_when ['${AUDIT_AWS_IAM_DAYS_PASSWORD_UNCHANGED}.days.ago']
-  id_map "object.users.user_name"
-end
-
 coreo_aws_rule "iam-inventory-roles" do
   action :define
   service :iam
@@ -460,6 +427,23 @@ coreo_aws_rule "iam-support-role" do
   raise_when ["AWSSupportAccess", 0]
   id_map "object.policies.policy_name"
 end
+
+coreo_aws_rule "iam-user-password-not-used" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM User Password Recency"
+  description "All IAM users whose password has not used in {your choice of number of} days"
+  category "Security"
+  suggested_action "Consider rotating or deleting unused passwords"
+  level "Informational"
+  objectives ["users"]
+  audit_objects ["object.users.password_last_used"]
+  operators ["<"]
+  raise_when ['${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED}.days.ago']
+  id_map "object.users.user_name"
+end
+
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
