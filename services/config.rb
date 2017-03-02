@@ -430,7 +430,28 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                 "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   function <<-EOH
   
+// setTableAndSuppression();
 
+// const JSON_INPUT = json_input;
+// const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
+// const OWNER_TAG = "NOT_A_TAG";
+// const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
+// const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
+// const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
+
+// const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
+//      ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
+
+// const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
+// const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
+
+// const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
+// coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
+
+
+// const notifiers = AuditIAM.getNotifiers();
+// callback(notifiers);
+}
 // function setTableAndSuppression() {
 //   let table;
 //   let suppression;
@@ -457,30 +478,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
 //   json_input['alert list'] = alertListArray || [];
 //   json_input['suppression'] = suppression || [];
 //   json_input['table'] = table || {};
-// }
 
-
-// setTableAndSuppression();
-
-// const JSON_INPUT = json_input;
-// const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
-// const OWNER_TAG = "NOT_A_TAG";
-// const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
-// const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
-// const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
-
-// const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
-//      ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
-
-// const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-// const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
-
-// const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
-// coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
-
-
-// const notifiers = AuditIAM.getNotifiers();
-// callback(notifiers);
   EOH
 end
 
