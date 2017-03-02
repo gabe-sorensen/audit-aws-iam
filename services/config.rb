@@ -460,8 +460,8 @@ coreo_aws_rule "iam-ensure-security-info-registered" do
   meta_cis_level "1"
   objectives [""]
   audit_objects [""]
-  operators ["=~"]
-  raise_when [//]
+  operators ["=="]
+  raise_when [""]
   id_map ""
 end
 
@@ -476,9 +476,9 @@ coreo_aws_rule "cloudtrail-no-global-trails" do
   level "Warning"
   meta_cis_id "99.997"
   objectives [""]
-  audit_objects [1]
+  audit_objects [""]
   operators ["=="]
-  raise_when [true]
+  raise_when [nil]
   id_map ""
 end
 
