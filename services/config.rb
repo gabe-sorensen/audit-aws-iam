@@ -444,13 +444,6 @@ coreo_aws_rule_runner_iam "advise-iam" do
   rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
-coreo_aws_rule_runner "advise-iam-u" do
-  action :run
-  service :iam
-  rules ["iam-support-role"] if ${AUDIT_AWS_IAM_ALERT_LIST}.include?("iam-support-role")
-  rules [""] if !(${AUDIT_AWS_IAM_ALERT_LIST}.include?("iam-support-role"))
-end
-
 
 coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
