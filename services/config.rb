@@ -461,7 +461,7 @@ coreo_aws_rule "iam-ensure-security-info-registered" do
   objectives [""]
   audit_objects [""]
   operators [""]
-  raise_when [true]
+  raise_when [false]
   id_map ""
 end
 
