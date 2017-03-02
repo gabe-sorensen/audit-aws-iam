@@ -465,6 +465,23 @@ coreo_aws_rule "iam-ensure-security-info-registered" do
   id_map ""
 end
 
+coreo_aws_rule "cloudtrail-no-global-trails" do
+  action :define
+  service :user
+  category "Audit"
+  link "http://kb.cloudcoreo.com/mydoc_cloudtrail-trail-with-global.html"
+  display_name "Cloudtrail Global Logging is Disabled"
+  suggested_action "Enable CloudTrail global service logging in at least one region"
+  description "CloudTrail global service logging is not enabled for the selected regions."
+  level "Warning"
+  meta_cis_id "99.997"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map ""
+end
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
