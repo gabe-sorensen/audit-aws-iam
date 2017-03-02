@@ -410,6 +410,24 @@ coreo_aws_rule "iam-root-access-key-2" do
   raise_when ["true"]
 end
 
+coreo_aws_rule "iam-support-role" do
+  action :define
+  service :iam
+  display_name "IAM Support Role"
+  description "Ensure a support role exists to manage incidents"
+  category "Security"
+  suggested_action "Create a support role"
+  meta_cis_id "1.22"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  level "Warning"
+  objectives ["", "policies"]
+  audit_objects ["object.policies.policy_name", "object.policies.attachment_count"]
+  operators ["==", ">"]
+  raise_when ["AWSSupportAccess", 0]
+  id_map "object.policies.policy_name"
+end
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
@@ -424,6 +442,13 @@ end
 coreo_aws_rule_runner_iam "advise-iam" do
   action :run
   rules ${AUDIT_AWS_IAM_ALERT_LIST}
+end
+
+coreo_aws_rule_runner "advise-iam-u" do
+  action :run
+  service :iam
+  rules ["iam-support-role"] if ${AUDIT_AWS_IAM_ALERT_LIST}.include?("iam-support-role")
+  rules [""] if !(${AUDIT_AWS_IAM_ALERT_LIST}.include?("iam-support-role"))
 end
 
 
