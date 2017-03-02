@@ -431,6 +431,7 @@ end
 coreo_aws_rule "iam-user-password-not-used" do
   action :define
   service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
   include_violations_in_count false
   display_name "IAM User Password Not Used Recently"
   description "Lists all IAM users whose password has not used in {X} days"
