@@ -23,6 +23,8 @@ variables:
       - iam-password-policy-min-length
       - iam-root-access-key-1
       - iam-root-access-key-2
+      - iam-support-role
+      - iam-user-password-not-used
   AUDIT_AWS_IAM_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
     required: false
@@ -38,3 +40,8 @@ variables:
     required: true
     type: string
     default: "change"
+  AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED:
+    description: "Number of days for which password has not been used"
+    required: true
+    type: string
+    default: "2"

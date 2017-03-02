@@ -161,6 +161,9 @@ coreo_aws_rule "iam-passwordreuseprevention" do
   description "The current password policy doesn't prevent users from reusing thier old passwords."
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.10"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Critical"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -177,6 +180,9 @@ coreo_aws_rule "iam-expirepasswords" do
   description "The current password policy doesn't require users to regularly change their passwords. User passwords are set to never expire."
   category "Access"
   suggested_action "Configure a strong password policy for your users so that passwords expire such that users must change their passwords periodically."
+  meta_cis_id "1.11"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Critical"
   objectives ["account_password_policy"]
   audit_objects ["object.password_policy.expire_passwords"]
@@ -262,6 +268,9 @@ coreo_aws_rule "iam-user-attached-policies" do
   description "User account is using custom inline policies versus using IAM group managed policies."
   category "Access"
   suggested_action "Switch all inline policies to apply to IAM groups and assign users IAMs roles."
+  meta_cis_id "1.16"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   id_map "modifiers.user_name"
   objectives ["users", "user_policies"]
@@ -280,6 +289,9 @@ coreo_aws_rule "iam-password-policy-uppercase" do
   description "The password policy must require an uppercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.5"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -296,6 +308,9 @@ coreo_aws_rule "iam-password-policy-lowercase" do
   description "The password policy must require an lowercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.6"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -312,6 +327,9 @@ coreo_aws_rule "iam-password-policy-symbol" do
   description "The password policy must require a symbol to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.7"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -328,6 +346,9 @@ coreo_aws_rule "iam-password-policy-number" do
   description "The password policy must require a number to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.8"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -344,6 +365,9 @@ coreo_aws_rule "iam-password-policy-min-length" do
   description "The password policy must require a minimum length of 14 characters to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
+  meta_cis_id "1.9"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -386,6 +410,41 @@ coreo_aws_rule "iam-root-access-key-2" do
   raise_when ["true"]
 end
 
+coreo_aws_rule "iam-support-role" do
+  action :define
+  service :iam
+  display_name "IAM Support Role"
+  description "Ensure a support role exists to manage incidents"
+  category "Security"
+  suggested_action "Create a support role"
+  meta_cis_id "1.22"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  level "Warning"
+  objectives ["", "policies"]
+  audit_objects ["object.policies.policy_name", "object.policies.attachment_count"]
+  operators ["==", ">"]
+  raise_when ["AWSSupportAccess", 0]
+  id_map "object.policies.policy_name"
+end
+
+coreo_aws_rule "iam-user-password-not-used" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM User Password Recency"
+  description "All IAM users whose password has not used in {your choice of number of} days"
+  category "Security"
+  suggested_action "Consider rotating or deleting unused passwords"
+  level "Informational"
+  objectives ["users"]
+  audit_objects ["object.users.password_last_used"]
+  operators ["<"]
+  raise_when ['${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED}.days.ago']
+  id_map "object.users.user_name"
+end
+
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
@@ -419,7 +478,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.8.3"
+                   :version => "1.8.6"
                },
                {
                    :name => "js-yaml",
@@ -475,7 +534,7 @@ const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
 const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
 
-const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
+const JSONReportAfterGeneratingSuppression = AuditIAM.getSortedJSONForHTMLReports();
 coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
 
 
