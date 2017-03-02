@@ -431,57 +431,68 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   function <<-EOH
   
 
-function setTableAndSuppression() {
-  let table;
-  let suppression;
+// function setTableAndSuppression() {
+//   let table;
+//   let suppression;
 
-  const fs = require('fs');
-  const yaml = require('js-yaml');
-  try {
-      suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
-  } catch (e) {
-      console.log(`Error reading suppression.yaml file`);
-      suppression = {};
-  }
-  try {
-      table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
-  } catch (e) {
-      console.log(`Error reading table.yaml file`);
-      table = {};
-  }
-  coreoExport('table', JSON.stringify(table));
-  coreoExport('suppression', JSON.stringify(suppression));
+//   const fs = require('fs');
+//   const yaml = require('js-yaml');
+//   try {
+//       suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
+//   } catch (e) {
+//       console.log(`Error reading suppression.yaml file`);
+//       suppression = {};
+//   }
+//   try {
+//       table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
+//   } catch (e) {
+//       console.log(`Error reading table.yaml file`);
+//       table = {};
+//   }
+//   coreoExport('table', JSON.stringify(table));
+//   coreoExport('suppression', JSON.stringify(suppression));
   
-  let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
-  let alertListArray = alertListToJSON.replace(/'/g, '"');
-  json_input['alert list'] = alertListArray || [];
-  json_input['suppression'] = suppression || [];
-  json_input['table'] = table || {};
-}
+//   let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
+//   let alertListArray = alertListToJSON.replace(/'/g, '"');
+//   json_input['alert list'] = alertListArray || [];
+//   json_input['suppression'] = suppression || [];
+//   json_input['table'] = table || {};
+// }
 
 
-setTableAndSuppression();
+// setTableAndSuppression();
 
-const JSON_INPUT = json_input;
-const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
-const OWNER_TAG = "NOT_A_TAG";
-const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
-const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
-const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
+// const JSON_INPUT = json_input;
+// const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
+// const OWNER_TAG = "NOT_A_TAG";
+// const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
+// const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
+// const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
-const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
-     ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
+// const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
+//      ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
-const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
+// const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
+// const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
 
-const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
-coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
+// const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
+// coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
 
 
-const notifiers = AuditIAM.getNotifiers();
-callback(notifiers);
+// const notifiers = AuditIAM.getNotifiers();
+// callback(notifiers);
   EOH
+end
+
+coreo_uni_util_notify "ec2-s3" do
+  action :notify
+  type 'email'
+  allow_empty true
+  payload_type 'text'
+  endpoint ({
+      :to => 'paul@cloudcoreo.com', :subject => 'pla-259 jsrunner file'
+  })
+  payload 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.jsrunner_file'
 end
 
 coreo_uni_util_variables "iam-update-planwide-3" do
@@ -523,6 +534,7 @@ setTextRollup();
 callback(textRollup);
   EOH
 end
+
 
 coreo_uni_util_notify "advise-iam-to-tag-values" do
   action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0)) ? :notify : :nothing)
