@@ -444,6 +444,26 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
+coreo_aws_rule "iam-ensure-security-info-registered" do
+  action :define
+  service :user
+  category "Audit"
+  display_name "IAm Security Info"
+  suggested_action "Ensure that security contact information is registered in the AWS Console"
+  description "To enter security contact info: 1. Click on your account name at the top right corner of the console. 
+  2. From the drop-down menu Click My Account
+  3. Scroll down to the Alternate Contacts section </br>
+  4. Enter contact information in the Security section"
+  level "Warning"
+  meta_cis_id "1.20"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map ""
+end
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
