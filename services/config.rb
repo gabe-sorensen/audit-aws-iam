@@ -457,7 +457,8 @@ coreo_uni_util_variables "iam-planwide" do
 end
 
 
-coreo_aws_rule_runner_iam "advise-iam" do
+coreo_aws_rule_runner "advise-iam" do
+  service :iam
   action :run
   rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
@@ -466,8 +467,8 @@ end
 coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.report'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.number_violations'},
 
             ])
 end
@@ -479,7 +480,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.8.6"
+                   :version => "*"
                },
                {
                    :name => "js-yaml",
@@ -487,6 +488,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
+                "cloud account name": "PLAN::cloud_account_name",
                 "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   function <<-EOH
   
@@ -529,18 +531,19 @@ const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
-const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
+const SETTINGS = { NO_OWNER_EMAIL, OWNER_TAG,
      ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
+const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, SETTINGS);
 
-const JSONReportAfterGeneratingSuppression = AuditIAM.getSortedJSONForHTMLReports();
-coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
+const newJSONInput = AuditIAM.getSortedJSONForAuditPanel();
+coreoExport('JSONReport', JSON.stringify(newJSONInput));
+coreoExport('report', JSON.stringify(newJSONInput['violations']));
 
 
-const notifiers = AuditIAM.getNotifiers();
-callback(notifiers);
+const letters = AuditIAM.getLetters();
+callback(letters);
   EOH
 end
 
@@ -548,6 +551,7 @@ coreo_uni_util_variables "iam-update-planwide-3" do
   action :set
   variables([
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
+                {'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.report'},
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
