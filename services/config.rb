@@ -489,7 +489,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
                 "cloud account name": "PLAN::cloud_account_name",
-                "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
+                "violations": COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
   
 
@@ -551,7 +551,7 @@ coreo_uni_util_variables "iam-update-planwide-3" do
   action :set
   variables([
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
-                {'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.report'},
+                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.report'},
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
