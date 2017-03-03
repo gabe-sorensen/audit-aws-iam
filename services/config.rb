@@ -431,11 +431,12 @@ end
 coreo_aws_rule "iam-user-password-not-used" do
   action :define
   service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
   include_violations_in_count false
-  display_name "IAM User Password Recency"
-  description "All IAM users whose password has not used in {your choice of number of} days"
+  display_name "IAM User Password Not Used Recently"
+  description "Lists all IAM users whose password has not used in {X} days"
   category "Security"
-  suggested_action "Consider rotating or deleting unused passwords"
+  suggested_action "Consider deleting unused or unnecessary IAM users"
   level "Informational"
   objectives ["users"]
   audit_objects ["object.users.password_last_used"]
