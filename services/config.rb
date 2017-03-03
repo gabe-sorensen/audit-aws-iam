@@ -456,7 +456,8 @@ coreo_uni_util_variables "iam-planwide" do
 end
 
 
-coreo_aws_rule_runner_iam "advise-iam" do
+coreo_aws_rule_runner "advise-iam" do
+  service :iam
   action :run
   rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
@@ -465,8 +466,8 @@ end
 coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.report'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.number_violations'},
 
             ])
 end
@@ -486,7 +487,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
+                "violations": COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
   
 
