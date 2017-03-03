@@ -252,7 +252,7 @@ coreo_aws_rule "iam-root-active-password" do
   category "Security"
   suggested_action "Re-set your root account password, don't log in to your root account, and secure root account password in a safe place."
   level "Critical"
-  id_map "object.user"
+  id_map "object.content.user"
   objectives ["credential_report"]
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.password_last_used"]
@@ -385,7 +385,7 @@ coreo_aws_rule "iam-root-access-key-1" do
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
-  id_map "object.user"
+  id_map "object.content.user"
   objectives ["credential_report"]
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_1_active"]
@@ -402,7 +402,7 @@ coreo_aws_rule "iam-root-access-key-2" do
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
-  id_map "object.user"
+  id_map "object.content.user"
   objectives ["credential_report"]
   formulas ["CSV[user=<root_account>]"]
   audit_objects ["object.content.access_key_2_active"]
