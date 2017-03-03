@@ -428,6 +428,23 @@ coreo_aws_rule "iam-support-role" do
   id_map "object.policies.policy_name"
 end
 
+coreo_aws_rule "iam-user-password-not-used" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM User Password Recency"
+  description "All IAM users whose password has not used in {your choice of number of} days"
+  category "Security"
+  suggested_action "Consider rotating or deleting unused passwords"
+  level "Informational"
+  objectives ["users"]
+  audit_objects ["object.users.password_last_used"]
+  operators ["<"]
+  raise_when ['${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED}.days.ago']
+  id_map "object.users.user_name"
+end
+
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
@@ -439,7 +456,8 @@ coreo_uni_util_variables "iam-planwide" do
 end
 
 
-coreo_aws_rule_runner_iam "advise-iam" do
+coreo_aws_rule_runner "advise-iam" do
+  service :iam
   action :run
   rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
@@ -448,8 +466,8 @@ end
 coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.report'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.number_violations'},
 
             ])
 end
