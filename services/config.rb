@@ -389,7 +389,7 @@ coreo_aws_rule "iam-root-access-key-2" do
   raise_when ["<root_account>", true]
 end
 
-coreo_aws_rule "cloudbleed-passwords-not-rotated" do
+coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   action :define
   service :iam
   description "Cloudbleed is the latest internet bug that puts users private information in jeopardy. News of the bug broke late on Feb 24, 2017,"
