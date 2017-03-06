@@ -428,7 +428,7 @@ coreo_aws_rule "iam-user-password-not-used" do
   link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
   include_violations_in_count false
   display_name "IAM User Password Not Used Recently"
-  description "Lists all IAM users whose password has not used in '${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED} days"
+  description "Lists all IAM users whose password has not used in '${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED}' days"
   category "Security"
   suggested_action "Consider deleting unused or unnecessary IAM users"
   level "Informational"
