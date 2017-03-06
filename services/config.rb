@@ -401,7 +401,7 @@ coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   objectives ["credential_report", "credential_report", "credential_report"]
   audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
   operators ["!=", "!=", "<"]
-  raise_when ["not_supported", "N/A", "2017-02-25 00:00:00 -0800"]
+  raise_when ["not_supported", "N/A", "${AUDIT_AWS_IAM_DAYS_PASSWORD_UNCHANGED}.days.ago"]
 end
 
 coreo_aws_rule "iam-support-role" do
