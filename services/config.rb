@@ -398,10 +398,10 @@ coreo_aws_rule "cloudbleed-passwords-not-rotated" do
   suggested_action ""
   level "Critical"
   id_map "object.content.user"
-  objectives ["credential_report", "credential_report"]
-  audit_objects ["object.content.password_last_used", "object.content.password_last_used"]
-  operators ["!=", "<"]
-  raise_when ["N/A", "2017-02-25 00:00:00 -0800"]
+  objectives ["credential_report", "credential_report", "credential_report"]
+  audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
+  operators ["!=", "!=", "<"]
+  raise_when ["not_supported", "N/A", "2017-02-25 00:00:00 -0800"]
 end
 
 coreo_aws_rule "iam-support-role" do
