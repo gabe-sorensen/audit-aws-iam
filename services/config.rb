@@ -392,7 +392,7 @@ end
 coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   action :define
   service :iam
-  description "Password has not been changed in at least '$AUDIT_AWS_IAM_DAYS_PASSWORD_UNCHANGED' days. Useful for assessing vulnerability after a major breach, like CloudBleed."
+  description "Password has not been changed in at least $AUDIT_AWS_IAM_DAYS_PASSWORD_UNCHANGED days. Useful for assessing vulnerability after a major breach, like CloudBleed."
   link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-changed.html"
   category "Security"
   suggested_action "Change passwords regularly. Enable a password policy that enforces users change their passwords."
@@ -428,7 +428,7 @@ coreo_aws_rule "iam-user-password-not-used" do
   link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
   include_violations_in_count false
   display_name "IAM User Password Not Used Recently"
-  description "Lists all IAM users whose password has not used in {X} days"
+  description "Lists all IAM users whose password has not used in '${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED} days"
   category "Security"
   suggested_action "Consider deleting unused or unnecessary IAM users"
   level "Informational"
