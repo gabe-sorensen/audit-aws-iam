@@ -225,6 +225,22 @@ coreo_aws_rule "iam-root-no-mfa" do
   raise_when ["<root_account>", false]
 end
 
+coreo_aws_rule "iam-root-no-mfa-cis" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
+  display_name "Multi-Factor Authentication not enabled for root account"
+  description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
+  category "Security"
+  suggested_action "Enable Multi-Factor Authentication for the root cloud user."
+  level "Emergency"
+  objectives ["account_summary"]
+  audit_objects ["object.summary_map['AccountMFAEnabled']"]
+  operators ["!="]
+  raise_when [1]
+  id_map "object.summary_map['AccountMFAEnabled']"
+end
+
 coreo_aws_rule "iam-root-active-password" do
   action :define
   service :iam
