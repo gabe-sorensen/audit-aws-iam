@@ -447,11 +447,11 @@ coreo_aws_rule "iam-no-hardware-mfa-root" do
   description "Triggers if there is not hardware MFA Decive for root"
   category "Security"
   suggested_action "Establish a hardware MFA device for root"
-  meta_cis_id "1.22"
+  meta_cis_id "1.14"
   meta_cis_scored "true"
-  meta_cis_level "1"
+  meta_cis_level "2"
   level "Informational"
-  objectives ["virtual-mfa-devices"]
+  objectives ["virtual_mfa_devices"]
   audit_objects ["object.virtual_mfa_devices.serial_number"]
   operators ["=="]
   raise_when ["arn:aws:iam::530342348278:mfa/root-account-mfa-device"]
