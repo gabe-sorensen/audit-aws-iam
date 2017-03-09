@@ -444,7 +444,7 @@ coreo_aws_rule "iam-no-hardware-mfa-root" do
   service :iam
   include_violations_in_count false
   display_name "IAM has no root MFA hardware devices"
-  description "Triggers if there is not hardware MFA Decive for root"
+  description "Triggers if there is no hardware MFA Decive for root"
   category "Security"
   suggested_action "Establish a hardware MFA device for root"
   meta_cis_id "1.14"
@@ -454,7 +454,7 @@ coreo_aws_rule "iam-no-hardware-mfa-root" do
   objectives ["virtual_mfa_devices"]
   audit_objects ["object.virtual_mfa_devices.serial_number"]
   operators ["=="]
-  raise_when ["arn:aws:iam::530342348278:mfa/root-account-mfa-device"]
+  raise_when ["arn:aws:iam::${AUDIT_AWS_IAM_ACCOUNT_NUMBER}:mfa/root-account-mfa-device"]
   id_map "object.virtual_mfa_devices.serial_number"
 end
 

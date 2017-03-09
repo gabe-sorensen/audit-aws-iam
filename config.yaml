@@ -45,3 +45,9 @@ variables:
     required: true
     type: string
     default: "30"
+  AUDIT_AWS_IAM_ACCOUNT_NUMBER:
+    description: "The AWS account number. This can be found by the root user at https://console.aws.amazon.com/billing/home?#/account"
+    required: true
+    type: string
+    default: false
+    
