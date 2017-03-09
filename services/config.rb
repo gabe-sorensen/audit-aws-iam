@@ -237,7 +237,7 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   objectives ["account_summary"]
   audit_objects ["object.summary_map['AccountMFAEnabled']"]
   operators ["=="]
-  raise_when [1]
+  raise_when ["1"]
   id_map "object.summary_map['AccountMFAEnabled']"
 end
 
