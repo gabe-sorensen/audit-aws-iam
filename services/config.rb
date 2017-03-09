@@ -442,15 +442,14 @@ end
 coreo_aws_rule "iam-no-hardware-mfa-root" do
   action :define
   service :iam
-  include_violations_in_count false
   display_name "IAM has no root MFA hardware devices"
-  description "Triggers if there is no hardware MFA Decive for root"
+  description "Triggers if there is no hardware MFA Device for root"
   category "Security"
   suggested_action "Establish a hardware MFA device for root"
   meta_cis_id "1.14"
   meta_cis_scored "true"
   meta_cis_level "2"
-  level "Informational"
+  level "Critical"
   objectives ["virtual_mfa_devices"]
   audit_objects ["object.virtual_mfa_devices.serial_number"]
   operators ["=="]

@@ -49,5 +49,4 @@ variables:
     description: "The AWS account number. This can be found by the root user at https://console.aws.amazon.com/billing/home?#/account"
     required: true
     type: string
-    default: false
-    
+    default: 
