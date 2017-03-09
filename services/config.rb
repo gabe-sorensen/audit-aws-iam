@@ -439,6 +439,24 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
+coreo_aws_rule "iam-no-hardware-mfa-root" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM has no root MFA hardware devices"
+  description "Triggers if there is not hardware MFA Decive for root"
+  category "Security"
+  suggested_action "Establish a hardware MFA device for root"
+  meta_cis_id "1.22"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  level "Informational"
+  objectives ["virtual-mfa-devices"]
+  audit_objects ["object.virtual_mfa_devices.serial_number"]
+  operators ["=="]
+  raise_when ["arn:aws:iam::530342348278:mfa/root-account-mfa-device"]
+  id_map "object.virtual_mfa_devices.serial_number"
+end
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
