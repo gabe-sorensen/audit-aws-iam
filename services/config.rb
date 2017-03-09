@@ -454,7 +454,7 @@ coreo_aws_rule "iam-no-hardware-mfa-root" do
   audit_objects ["object.virtual_mfa_devices.serial_number"]
   operators ["=="]
   raise_when ["arn:aws:iam::${AUDIT_AWS_IAM_ACCOUNT_NUMBER}:mfa/root-account-mfa-device"]
-  id_map "object.virtual_mfa_devices.serial_number"
+  id_map "object.virtual_mfa_devices.user.user_name"
 end
 
 coreo_uni_util_variables "iam-planwide" do
