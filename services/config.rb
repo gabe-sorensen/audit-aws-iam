@@ -234,11 +234,14 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for the root cloud user."
   level "Emergency"
+  meta_cis_id "1.13"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   objectives ["account_summary"]
-  audit_objects ["object.summary_map"]
-  operators ["=~"]
-  raise_when [//]
-  id_map "object.summary_map"
+  audit_objects ['object.summary_map["AccountMFAEnabled"]']
+  operators ["!="]
+  raise_when [1]
+  id_map "object.summary_map['AccountMFAEnabled']"
 end
 
 coreo_aws_rule "iam-root-active-password" do
