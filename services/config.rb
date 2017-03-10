@@ -219,11 +219,10 @@ coreo_aws_rule "iam-root-no-mfa" do
   suggested_action "Enable Multi-Factor Authentication for the root cloud user."
   level "Emergency"
   id_map "object.content.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.mfa_active"]
-  operators ["=="]
-  raise_when ["false"]
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.mfa_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", false]
 end
 
 coreo_aws_rule "iam-root-active-password" do
@@ -236,11 +235,10 @@ coreo_aws_rule "iam-root-active-password" do
   suggested_action "Re-set your root account password, don't log in to your root account, and secure root account password in a safe place."
   level "Critical"
   id_map "object.content.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.password_last_used"]
-  operators [">"]
-  raise_when ["15.days.ago"]
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.password_last_used"]
+  operators ["==", ">"]
+  raise_when ["<root_account>", "15.days.ago"]
 end
 
 coreo_aws_rule "iam-user-attached-policies" do
@@ -369,11 +367,10 @@ coreo_aws_rule "iam-root-access-key-1" do
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
   id_map "object.content.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_1_active"]
-  operators ["=="]
-  raise_when ["true"]
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.access_key_1_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", true]
 end
 
 coreo_aws_rule "iam-root-access-key-2" do
@@ -386,11 +383,25 @@ coreo_aws_rule "iam-root-access-key-2" do
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
   id_map "object.content.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_2_active"]
-  operators ["=="]
-  raise_when ["true"]
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.access_key_2_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", true]
+end
+
+coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
+  action :define
+  service :iam
+  description "Cloudbleed is the latest internet bug that puts users private information in jeopardy. News of the bug broke late on Feb 24, 2017,"
+  link "https://www.cnet.com/how-to/cloudbleed-bug-everything-you-need-to-know/"
+  category "Security"
+  suggested_action ""
+  level "Critical"
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report", "credential_report"]
+  audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
+  operators ["!=", "!=", "<"]
+  raise_when ["not_supported", "N/A", "2017-02-25 00:00:00 -0800"]
 end
 
 coreo_aws_rule "iam-support-role" do
@@ -463,7 +474,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "*"
+                   :version => "latest"
                },
                {
                    :name => "js-yaml",
