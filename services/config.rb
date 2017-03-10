@@ -367,10 +367,10 @@ coreo_aws_rule "iam-root-access-key-1" do
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
   id_map "object.content.user"
-  objectives ["credential_report", "credential_report"]
-  audit_objects ["object.content.user", "object.content.access_key_1_active"]
-  operators ["==", "=="]
-  raise_when ["<root_account>", true]
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=="]
+  raise_when ["<root_account>"]
 end
 
 coreo_aws_rule "iam-root-access-key-2" do
