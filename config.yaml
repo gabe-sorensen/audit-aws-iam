@@ -45,3 +45,8 @@ variables:
     required: true
     type: string
     default: "30"
+  AUDIT_AWS_IAM_DAYS_PASSWORD_UNCHANGED:
+    description: "Number of days since the password has not been changed."
+    required: true
+    type: string
+    default: "30"
