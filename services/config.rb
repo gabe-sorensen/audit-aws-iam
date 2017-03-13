@@ -392,10 +392,11 @@ end
 coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   action :define
   service :iam
+  display_name "User may have been exposed to the CloudBleed issue"
   description "Cloudbleed is the latest internet bug that puts users private information in jeopardy. News of the bug broke late on Feb 24, 2017,"
   link "https://www.cnet.com/how-to/cloudbleed-bug-everything-you-need-to-know/"
   category "Security"
-  suggested_action ""
+  suggested_action "Users should be asked to rotate their passwords after February 25, 2017"
   level "Critical"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report", "credential_report"]
