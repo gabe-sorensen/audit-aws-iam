@@ -410,6 +410,25 @@ coreo_aws_rule "iam-root-access-key-2" do
   raise_when ["true"]
 end
 
+coreo_aws_rule "iam-active-root-user" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM Root User Activity"
+  description "This rule performs an audit on root user activity"
+  category "Inventory"
+  suggested_action "Root user should not be active, when possible. Additionally, ensure that CIS rule 3.3 is passing for this rule to pass"
+  level "Informational"
+  meta_cis_id "1.1"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=="]
+  raise_when ["<root_account>"]
+end
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
