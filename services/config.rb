@@ -583,6 +583,90 @@ coreo_uni_util_variables "iam-update-planwide-3" do
             ])
 end
 
+
+
+coreo_uni_util_jsrunner "ian-iam" do
+  action :run
+  data_type "json"
+  provide_composite_access true
+  packages([
+               {
+                   :name => "cloudcoreo-jsrunner-commons",
+                   :version => "1.8.3"
+               },
+               {
+                   :name => "js-yaml",
+                   :version => "3.7.0"
+               }       ])
+  json_input '{ "composite name":"PLAN::stack_name",
+                "plan name":"PLAN::name",
+                "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
+  function <<-EOH
+  
+
+function setTableAndSuppression() {
+  let table;
+  let suppression;
+
+  const fs = require('fs');
+  const yaml = require('js-yaml');
+  try {
+      suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
+  } catch (e) {
+      console.log(`Error reading suppression.yaml file`);
+      suppression = {};
+  }
+  try {
+      table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
+  } catch (e) {
+      console.log(`Error reading table.yaml file`);
+      table = {};
+  }
+  coreoExport('table', JSON.stringify(table));
+  coreoExport('suppression', JSON.stringify(suppression));
+  
+  let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
+  let alertListArray = alertListToJSON.replace(/'/g, '"');
+  json_input['alert list'] = alertListArray || [];
+  json_input['suppression'] = suppression || [];
+  json_input['table'] = table || {};
+}
+
+
+setTableAndSuppression();
+
+const JSON_INPUT = json_input;
+const NO_OWNER_EMAIL = "${AUDIT_AWS_IAM_ALERT_RECIPIENT}";
+const OWNER_TAG = "NOT_A_TAG";
+const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
+const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
+const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
+
+const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
+     ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
+
+const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
+const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
+
+const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
+coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
+
+
+const notifiers = AuditIAM.getNotifiers();
+callback(notifiers);
+  EOH
+end
+
+
+
+
+
+
+
+
+
+
+
 coreo_uni_util_jsrunner "iam-tags-rollup" do
   action :run
   data_type "text"
