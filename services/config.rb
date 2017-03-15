@@ -442,7 +442,7 @@ end
 
 coreo_aws_rule_runner_iam "advise-iam" do
   action :run
-  rules ${AUDIT_AWS_IAM_RULE_LIST}
+  rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
 
 
