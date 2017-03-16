@@ -389,6 +389,22 @@ coreo_aws_rule "iam-root-access-key-1" do
   raise_when ["<root_account>", true]
 end
 
+coreo_aws_rule "iam-root-access-key-1" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  display_name "Root Access Key Exists - Key #1"
+  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
+  category "Security"
+  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
+  level "Warning"
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.access_key_1_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", true]
+end
+
 coreo_aws_rule "iam-root-access-key-2" do
   action :define
   service :iam
@@ -419,21 +435,6 @@ coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
   operators ["!=", "!=", "<"]
   raise_when ["not_supported", "N/A", "2017-02-25 00:00:00 -0800"]
-end
-
-coreo_aws_rule "iam-user-not-changed-password" do
-  action :define
-  service :iam
-  description "Password has not been changed in at least '$AUDIT_AWS_IAM_DAYS_PASSWORD_UNCHANGED' days."
-  link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-changed.html"
-  category "Security"
-  suggested_action "Change passwords regularly. Enable a password policy that enforces users change their passwords."
-  level "Critical"
-  id_map "object.content.user"
-  objectives ["credential_report", "credential_report", "credential_report"]
-  audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
-  operators ["!=", "!=", "<"]
-  raise_when ["not_supported", "N/A", "${AUDIT_AWS_IAM_DAYS_PASSWORD_UNCHANGED}.days.ago"]
 end
 
 coreo_aws_rule "iam-support-role" do
