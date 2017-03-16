@@ -22,7 +22,6 @@ variables:
       - iam-password-policy-min-length
       - iam-root-access-key-1
       - iam-root-access-key-2
-      - iam-active-root-user
       - iam-mfa-password-holders
       - iam-support-role
       - iam-user-password-not-used
