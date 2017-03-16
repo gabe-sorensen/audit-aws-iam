@@ -484,10 +484,10 @@ coreo_aws_rule "iam-mfa-password-holders" do
   meta_cis_id "1.2"
   meta_cis_scored "true"
   meta_cis_level "1"
-  objectives ["","credential_report"]
+  objectives ["credential_report","credential_report"]
   audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
-  operators ["!=", "!="]
-  raise_when [nil, nil]
+  operators ["==", "=="]
+  raise_when [true, false]
   id_map "object.content.user"
 end
 
