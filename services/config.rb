@@ -472,6 +472,24 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
+coreo_aws_rule "iam-inventory-user-cred-report" do
+  action :define
+  service :iam
+  display_name "IAM Root User Activity"
+  description "This rule performs an inventory on all users using credential report"
+  category "Inventory"
+  suggested_action "User credentials that have not been used in 90 days should be removed or deactivated"
+  level "Informational"
+  meta_cis_id "1.3"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["!="]
+  raise_when [nil]
+end
+
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
@@ -499,6 +517,70 @@ coreo_uni_util_variables "iam-update-planwide-1" do
 
             ])
 end
+
+
+
+
+coreo_uni_util_jsrunner "ian-iam" do
+  action :run
+  data_type "json"
+  provide_composite_access true
+  packages([
+               {
+                   :name => "cloudcoreo-jsrunner-commons",
+                   :version => "1.9.2"
+               },
+               {
+                   :name => "js-yaml",
+                   :version => "3.7.0"
+               }])
+  json_input '{ "composite name":"PLAN::stack_name",
+                "plan name":"PLAN::name",
+                "cloud account name": "PLAN::cloud_account_name",
+                "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
+  function <<-EOH
+  
+
+const alertArrayJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
+// const regionArrayJSON = "${AUDIT_AWS_IAM_REGIONS}";
+const alertArray = JSON.parse(alertArrayJSON.replace(/'/g, '"'));
+// const regionArray = JSON.parse(regionArrayJSON.replace(/'/g, '"'));
+
+const newJSONInput = json_input
+const users = newJSONInput['violations']['us-east-1'];
+
+function setValueForNewJSONInput() {
+
+  const unusedCredsMetadata = {
+        'service': 'iam',
+        'link': 'http://kb.cloudcoreo.com/mydoc_cloudtrail-trail-with-global.html',
+        'display_name': 'Cloudtrail global logging is disabled',
+        'description': 'CloudTrail global service logging is not enabled for the selected regions.',
+        'category': 'Audit',
+        'suggested_action': 'Enable CloudTrail global service logging in at least one region',
+        'level': 'Warning',
+  };
+
+  for (var user in users) {
+      if (users[user]['violator_info']['access_key_1_active'] = "true"){
+          users[user]['violations']['cissy'] = unusedCredsMetadata;
+      }
+  }
+}
+
+setValueForNewJSONInput()
+
+const violations = newJSONInput['violations'];
+coreoExport('JSONReport', JSON.stringify(newJSONInput));
+coreoExport('report', JSON.stringify(newJSONInput['violations']));
+
+callback(violations);
+  EOH
+end
+
+
+
+
 
 coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   action :run
