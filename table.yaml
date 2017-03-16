@@ -61,12 +61,6 @@ iam-root-access-key-1:
   "Password Policy": "__OBJECT__~https://us-east-1.console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/credential_report"
 iam-root-access-key-2:
   "Password Policy": "__OBJECT__~https://us-east-1.console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/credential_report"
-iam-active-root-user:
-  # "IAM Users": "__OBJECT__~https://console.aws.amazon.com/iam/home?region=+__OBJECT__.violations.__RULE__.region+#/users/__OBJECT__"
-  # "User ID": "+__OBJECT__.violations.__RULE__.result_info.0.object.user_id+"
-  # "User ARN": "+__OBJECT__.violations.__RULE__.result_info.0.object.arn+"
-  # "User Create Date": "+__OBJECT__.violations.__RULE__.result_info.0.object.create_date+"
-  # "Password Last Used": "+__OBJECT__.violations.__RULE__.result_info.0.object.password_last_used+"
 
   
 
