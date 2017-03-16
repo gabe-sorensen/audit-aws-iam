@@ -4,16 +4,12 @@ variables:
     required: false
     type: array
     default:
-      - iam-inventory-users
-      - iam-inventory-roles
-      - iam-inventory-policies
-      - iam-inventory-groups
       - iam-unusediamgroup
       - iam-multiple-keys
       - iam-inactive-key-no-rotation
       - iam-active-key-no-rotation
-      - iam-missing-password-policy
       - iam-passwordreuseprevention
+      - iam-missing-password-policy
       - iam-expirepasswords
       - iam-no-mfa
       - iam-root-no-mfa
