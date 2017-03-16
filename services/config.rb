@@ -1,4 +1,3 @@
-
 coreo_aws_rule "iam-inventory-users" do
   action :define
   service :iam
@@ -77,7 +76,7 @@ coreo_aws_rule "iam-unusediamgroup" do
   suggested_action "Ensure that groups defined within IAM have active users in them. If the groups don't have active users or are not being used, delete the unused IAM group."
   level "Warning"
   objectives ["groups", "group"]
-  call_modifiers [{}, { :group_name => "groups.group_name" }]
+  call_modifiers [{}, {:group_name => "groups.group_name"}]
   formulas ["", "count"]
   audit_objects ["", "users"]
   operators ["", "=="]
@@ -203,7 +202,7 @@ coreo_aws_rule "iam-no-mfa" do
   id_map "modifiers.user_name"
   objectives ["users", "mfa_devices"]
   formulas ["", "count"]
-  call_modifiers [{}, { :user_name => "users.user_name" }]
+  call_modifiers [{}, {:user_name => "users.user_name"}]
   audit_objects ["", "object.mfa_devices"]
   operators ["", "<"]
   raise_when ["", 1]
@@ -218,29 +217,11 @@ coreo_aws_rule "iam-root-no-mfa" do
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for the root cloud user."
   level "Emergency"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.mfa_active"]
-  operators ["=="]
-  raise_when ["false"]
-end
-
-coreo_aws_rule "iam-root-active-key" do
-  action :define
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
-  display_name "Root user has active Access Key"
-  description "Root user has an Access Key that is active."
-  category "Security"
-  suggested_action "Replace the root Access Key with an IAM user access key, and then disable and remove the root access key."
-  level "Critical"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_1_active"]
-  operators ["=="]
-  raise_when ["true"]
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.mfa_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", false]
 end
 
 coreo_aws_rule "iam-root-active-password" do
@@ -252,12 +233,11 @@ coreo_aws_rule "iam-root-active-password" do
   category "Security"
   suggested_action "Re-set your root account password, don't log in to your root account, and secure root account password in a safe place."
   level "Critical"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.password_last_used"]
-  operators [">"]
-  raise_when ["15.days.ago"]
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.password_last_used"]
+  operators ["==", ">"]
+  raise_when ["<root_account>", "15.days.ago"]
 end
 
 coreo_aws_rule "iam-user-attached-policies" do
@@ -275,7 +255,7 @@ coreo_aws_rule "iam-user-attached-policies" do
   id_map "modifiers.user_name"
   objectives ["users", "user_policies"]
   formulas ["", "count"]
-  call_modifiers [{}, { :user_name => "users.user_name" }]
+  call_modifiers [{}, {:user_name => "users.user_name"}]
   audit_objects ["", "object.policy_names"]
   operators ["", ">"]
   raise_when ["", 0]
@@ -376,6 +356,23 @@ coreo_aws_rule "iam-password-policy-min-length" do
   raise_when [14]
 end
 
+coreo_aws_rule "iam-root-active-key" do
+  action :nothing
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
+  display_name "DEPRICATED - Root user has active Access Key"
+  description "DEPRICATED - Root user has an Access Key that is active."
+  category "Security"
+  suggested_action "DEPRICATED - Replace the root Access Key with an IAM user access key, and then disable and remove the root access key."
+  level "Critical"
+  id_map "object.user"
+  objectives ["credential_report"]
+  formulas ["CSV[user=<root_account>]"]
+  audit_objects ["object.content.access_key_1_active"]
+  operators ["=="]
+  raise_when ["true"]
+end
+
 coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
@@ -385,12 +382,27 @@ coreo_aws_rule "iam-root-access-key-1" do
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_1_active"]
-  operators ["=="]
-  raise_when ["true"]
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.access_key_1_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", true]
+end
+
+coreo_aws_rule "iam-root-access-key-1" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  display_name "Root Access Key Exists - Key #1"
+  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
+  category "Security"
+  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
+  level "Warning"
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.access_key_1_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", true]
 end
 
 coreo_aws_rule "iam-root-access-key-2" do
@@ -402,14 +414,65 @@ coreo_aws_rule "iam-root-access-key-2" do
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
   level "Warning"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_2_active"]
-  operators ["=="]
-  raise_when ["true"]
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.user", "object.content.access_key_2_active"]
+  operators ["==", "=="]
+  raise_when ["<root_account>", true]
 end
 
+coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
+  action :define
+  service :iam
+  display_name "User may have been exposed to the CloudBleed issue"
+  description "Cloudbleed is the latest internet bug that puts users private information in jeopardy. News of the bug broke late on Feb 24, 2017,"
+  link "https://www.cnet.com/how-to/cloudbleed-bug-everything-you-need-to-know/"
+  category "Security"
+  suggested_action "Users should be asked to rotate their passwords after February 25, 2017"
+  level "Critical"
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report", "credential_report"]
+  audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
+  operators ["!=", "!=", "<"]
+  raise_when ["not_supported", "N/A", "2017-02-25 00:00:00 -0800"]
+end
+
+coreo_aws_rule "iam-support-role" do
+  action :define
+  service :iam
+  display_name "IAM Support Role"
+  description "Ensure a support role exists to manage incidents"
+  category "Security"
+  suggested_action "Create a support role"
+  meta_cis_id "1.22"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  level "Warning"
+  objectives ["", "policies"]
+  audit_objects ["object.policies.policy_name", "object.policies.attachment_count"]
+  operators ["==", ">"]
+  raise_when ["AWSSupportAccess", 0]
+  id_map "object.policies.policy_name"
+end
+
+coreo_aws_rule "iam-user-password-not-used" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
+  include_violations_in_count false
+  display_name "IAM User Password Not Used Recently"
+  description "Lists all IAM users whose password has not used in {X} days"
+  category "Security"
+  suggested_action "Consider deleting unused or unnecessary IAM users"
+  level "Informational"
+  objectives ["users"]
+  audit_objects ["object.users.password_last_used"]
+  operators ["<"]
+  raise_when ['${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED}.days.ago']
+  id_map "object.users.user_name"
+end
+
+<<<<<<< HEAD
 coreo_aws_rule "iam-active-root-user" do
   action :define
   service :iam
@@ -447,6 +510,8 @@ coreo_aws_rule "iam-mfa-password-holders" do
   raise_when [true, false]
   id_map "object.content.user"
 end
+=======
+>>>>>>> master
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
@@ -459,7 +524,8 @@ coreo_uni_util_variables "iam-planwide" do
 end
 
 
-coreo_aws_rule_runner_iam "advise-iam" do
+coreo_aws_rule_runner "advise-iam" do
+  service :iam
   action :run
   rules ${AUDIT_AWS_IAM_RULE_LIST}
 end
@@ -468,8 +534,8 @@ end
 coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.report'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.number_violations'},
 
             ])
 end
@@ -481,15 +547,16 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.8.3"
+                   :version => "1.9.2"
                },
                {
                    :name => "js-yaml",
                    :version => "3.7.0"
-               }       ])
+               }])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "violations": COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
+                "cloud account name": "PLAN::cloud_account_name",
+                "violations": COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
   
 
@@ -531,18 +598,19 @@ const ALLOW_EMPTY = "${AUDIT_AWS_IAM_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_IAM_SEND_ON}";
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
-const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG,
+const SETTINGS = { NO_OWNER_EMAIL, OWNER_TAG,
      ALLOW_EMPTY, SEND_ON, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES);
+const AuditIAM = new CloudCoreoJSRunner(JSON_INPUT, SETTINGS);
 
-const JSONReportAfterGeneratingSuppression = AuditIAM.getJSONForAuditPanel();
-coreoExport('JSONReport', JSON.stringify(JSONReportAfterGeneratingSuppression));
+const newJSONInput = AuditIAM.getSortedJSONForAuditPanel();
+coreoExport('JSONReport', JSON.stringify(newJSONInput));
+coreoExport('report', JSON.stringify(newJSONInput['violations']));
 
 
-const notifiers = AuditIAM.getNotifiers();
-callback(notifiers);
+const letters = AuditIAM.getLetters();
+callback(letters);
   EOH
 end
 
@@ -550,6 +618,7 @@ coreo_uni_util_variables "iam-update-planwide-3" do
   action :set
   variables([
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
+                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.report'},
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
@@ -592,7 +661,7 @@ coreo_uni_util_notify "advise-iam-to-tag-values" do
 end
 
 coreo_uni_util_notify "advise-iam-rollup" do
-  action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0) and (! "NOT_A_TAG".eql?("NOT_A_TAG"))) ? :notify : :nothing)
+  action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0) and (!"NOT_A_TAG".eql?("NOT_A_TAG"))) ? :notify : :nothing)
   type 'email'
   allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
   send_on '${AUDIT_AWS_IAM_SEND_ON}'

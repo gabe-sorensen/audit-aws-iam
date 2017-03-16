@@ -13,7 +13,6 @@ variables:
       - iam-expirepasswords
       - iam-no-mfa
       - iam-root-no-mfa
-      - iam-root-active-key
       - iam-root-active-password
       - iam-user-attached-policies
       - iam-password-policy-uppercase
@@ -25,6 +24,9 @@ variables:
       - iam-root-access-key-2
       - iam-active-root-user
       - iam-mfa-password-holders
+      - iam-support-role
+      - iam-user-password-not-used
+      - iam-cloudbleed-passwords-not-rotated
   AUDIT_AWS_IAM_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
     required: false
@@ -40,3 +42,8 @@ variables:
     required: true
     type: string
     default: "change"
+  AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED:
+    description: "Number of days for which password has not been used"
+    required: true
+    type: string
+    default: "30"
