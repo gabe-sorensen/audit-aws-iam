@@ -486,8 +486,8 @@ coreo_aws_rule "iam-inventory-user-cred-report" do
   id_map "object.content.user"
   objectives ["credential_report"]
   audit_objects ["object.content.user"]
-  operators ["!="]
-  raise_when [nil]
+  operators ["=~"]
+  raise_when [//]
 end
 
 
