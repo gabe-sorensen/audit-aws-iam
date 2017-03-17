@@ -4,28 +4,6 @@ variables:
     required: false
     type: array
     default:
-      - iam-unusediamgroup
-      - iam-multiple-keys
-      - iam-inactive-key-no-rotation
-      - iam-active-key-no-rotation
-      - iam-passwordreuseprevention
-      - iam-missing-password-policy
-      - iam-expirepasswords
-      - iam-no-mfa
-      - iam-root-no-mfa
-      - iam-root-active-password
-      - iam-user-attached-policies
-      - iam-password-policy-uppercase
-      - iam-password-policy-lowercase
-      - iam-password-policy-symbol
-      - iam-password-policy-number
-      - iam-password-policy-min-length
-      - iam-root-access-key-1
-      - iam-root-access-key-2
-      - iam-support-role
-      - iam-user-password-not-used
-      - iam-cloudbleed-passwords-not-rotated
-      - iam-inventory-user-cred-report
       - iam-unused-access
   AUDIT_AWS_IAM_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
