@@ -1,6 +1,7 @@
 coreo_aws_rule "iam-unused-access" do
   action :define
   service :iam
+  include_violations_in_count false   
   display_name "IAM Root User Activity"
   description "This rule performs an inventory on all users using credential report"
   category "Inventory"
@@ -123,9 +124,8 @@ end
 coreo_uni_util_variables "iam-update-planwide-2.5" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
-                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.report'},
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.ian-iam.JSONReport'},
+                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.ian-iam.report'},
             ])
 end
 
