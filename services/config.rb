@@ -506,7 +506,8 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   provide_composite_access true
   packages([
                {
-                   :name => "1.9.7-beta5"
+                   :name => "cloudcoreo-jsrunner-commons",
+                   :version => "1.9.7-beta5"
                },
                {
                    :name => "js-yaml",
@@ -516,6 +517,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                 "plan name":"PLAN::name",
                 "cloud account name": "PLAN::cloud_account_name",
                 "violations": COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
+
   function <<-EOH
   
 
