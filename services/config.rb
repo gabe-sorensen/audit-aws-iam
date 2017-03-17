@@ -472,7 +472,7 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
-coreo_aws_rule "iam-inventory-user-cred-report" do
+coreo_aws_rule "iam-unused-access" do
   action :define
   service :iam
   display_name "IAM Root User Activity"
@@ -541,10 +541,8 @@ coreo_uni_util_jsrunner "ian-iam" do
   function <<-EOH
   
 
-const alertArrayJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
-// const regionArrayJSON = "${AUDIT_AWS_IAM_REGIONS}";
+const alertArrayJSON = "['iam-unused-access']";
 const alertArray = JSON.parse(alertArrayJSON.replace(/'/g, '"'));
-// const regionArray = JSON.parse(regionArrayJSON.replace(/'/g, '"'));
 
 const newJSONInput = json_input
 const users = newJSONInput['violations']['us-east-1'];
@@ -553,17 +551,40 @@ function setValueForNewJSONInput() {
 
   const unusedCredsMetadata = {
         'service': 'iam',
-        'link': 'http://kb.cloudcoreo.com/mydoc_cloudtrail-trail-with-global.html',
-        'display_name': 'Cloudtrail global logging is disabled',
-        'description': 'CloudTrail global service logging is not enabled for the selected regions.',
+        'display_name': 'IAM Unused credentials',
+        'description': 'Checks for unused credentials',
         'category': 'Audit',
-        'suggested_action': 'Enable CloudTrail global service logging in at least one region',
+        'suggested_action': 'User credentials that have not been used in 90 days should be removed or deactivated',
         'level': 'Warning',
+        'meta_cis_id': '1.3',
+        'meta_cis_scored': 'true',
+        'meta_cis_level': '1'
   };
 
   for (var user in users) {
-      if (users[user]['violator_info']['access_key_1_active'] = "true"){
+      var keyOneDate = new Date(users[user]['violator_info']['access_key_1_active']);
+      var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_active']);
+      var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
+      const ninetyDaysAgo = (new Date()) - 1000 * 60 * 60 * 24 * 90
+
+      const keyOneUnused = keyOneDate < ninetyDaysAgo
+      const keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true"
+      const keyTwoUnused = keyTwoDate < ninetyDaysAgo
+      const keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true"
+      const passwordUnused = passwordUsedDate < ninetyDaysAgo
+      const passwordEnabled = users[user]['violator_info']['password_enabled'] == "true"
+
+      if (keyOneUnused && keyOneEnabled){
           users[user]['violations']['cissy'] = unusedCredsMetadata;
+          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+      }
+      else if (keyTwoEnabled && keyTwoUnused){
+          users[user]['violations']['cissy'] = unusedCredsMetadata;
+          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+      }
+      else if (passwordEnabled && passwordUnused){
+          users[user]['violations']['cissy'] = unusedCredsMetadata;
+          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata;
       }
   }
 }
@@ -571,8 +592,9 @@ function setValueForNewJSONInput() {
 setValueForNewJSONInput()
 
 const violations = newJSONInput['violations'];
+
 coreoExport('JSONReport', JSON.stringify(newJSONInput));
-coreoExport('report', JSON.stringify(newJSONInput['violations']));
+coreoExport('report', JSON.stringify(violations));
 
 callback(violations);
   EOH

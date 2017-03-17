@@ -26,6 +26,7 @@ variables:
       - iam-user-password-not-used
       - iam-cloudbleed-passwords-not-rotated
       - iam-inventory-user-cred-report
+      - iam-unused-access
   AUDIT_AWS_IAM_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
     required: false
