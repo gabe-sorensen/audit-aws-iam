@@ -130,10 +130,10 @@ coreo_uni_util_variables "iam-update-planwide-2.5" do
             ])
 end
 
-coreo_uni_util_notify "advise-iam-to-tag-values" do
-  action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0)) ? :notify : :nothing)
-  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.ian-iam.return'
-end
+// coreo_uni_util_notify "advise-iam-to-tag-values" do
+//   action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0)) ? :notify : :nothing)
+//   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.ian-iam.return'
+// end
 
 coreo_uni_util_notify "advise-iam-rollup" do
   action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0) and (!"NOT_A_TAG".eql?("NOT_A_TAG"))) ? :notify : :nothing)
@@ -143,7 +143,7 @@ coreo_uni_util_notify "advise-iam-rollup" do
   payload '
 composite name: PLAN::stack_name
 plan name: PLAN::name
-COMPOSITE::coreo_uni_util_jsrunner.iam-tags-rollup.return
+COMPOSITE::coreo_uni_util_jsrunner.ian-iam.return
   '
   payload_type 'text'
   endpoint ({
