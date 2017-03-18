@@ -123,7 +123,7 @@ function setValueForNewJSONInput() {
 
 setValueForNewJSONInput()
 
-const violations = newJSONInput['us-east-1'];
+const violations = newJSONInput;
 const report = JSON.stringify(violations)
 
 coreoExport('JSONReport', JSON.stringify(newJSONInput));
