@@ -93,13 +93,11 @@ coreo_aws_rule "iam-multiple-keys" do
   category "Access"
   suggested_action "Remove excess access keys"
   level "Warning"
-  objectives ["users", "access_keys"]
-  call_modifiers [{}, {:user_name => "users.user_name"}]
-  formulas ["", "count"]
-  audit_objects ["", "object.access_key_metadata"]
-  operators ["", ">"]
-  raise_when ["", 1]
-  id_map "modifiers.user_name"
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.access_key_1_active", "object.content.access_key_2_active"]
+  operators ["=~", "=~" ]
+  raise_when [/true/i, /true/i]
 end
 
 coreo_aws_rule "iam-inactive-key-no-rotation" do
