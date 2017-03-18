@@ -202,8 +202,8 @@ coreo_aws_rule "iam-no-mfa" do
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
   audit_objects ["object.password_enabled", "object.content.mfa_active"]
-  operators ["=~", "=~"]
-  raise_when [/true/i, /false/i]
+  operators ["==", "==" ]
+  raise_when [true, false]
 end
 
 coreo_aws_rule "iam-root-no-mfa" do
