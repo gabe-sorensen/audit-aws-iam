@@ -124,7 +124,7 @@ function setValueForNewJSONInput() {
 
 setValueForNewJSONInput()
 
-const violations = newJSONInput;
+const violations = newJSONInput['violations'];
 const report = JSON.stringify(violations)
 
 coreoExport('JSONReport', JSON.stringify(newJSONInput));
