@@ -130,7 +130,7 @@ const report = JSON.stringify(violations)
 coreoExport('JSONReport', JSON.stringify(newJSONInput));
 coreoExport('report', report);
 
-callback(violations['violations']);
+callback(violations);
   EOH
 end
 
