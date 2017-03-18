@@ -199,13 +199,11 @@ coreo_aws_rule "iam-no-mfa" do
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for every cloud user."
   level "Critical"
-  id_map "modifiers.user_name"
-  objectives ["users", "mfa_devices"]
-  formulas ["", "count"]
-  call_modifiers [{}, {:user_name => "users.user_name"}]
-  audit_objects ["", "object.mfa_devices"]
-  operators ["", "<"]
-  raise_when ["", 1]
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.password_enabled", "object.content.mfa_active"]
+  operators ["=~", "=~"]
+  raise_when [/true/i, /false/i]
 end
 
 coreo_aws_rule "iam-root-no-mfa" do
