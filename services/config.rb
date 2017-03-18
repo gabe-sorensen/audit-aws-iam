@@ -65,11 +65,19 @@ coreo_uni_util_jsrunner "ian-iam" do
   function <<-EOH
   
 
+function copyPropForNewJsonInput() {
+    newJSONInput['composite name'] = json_input['composite name'];
+    newJSONInput['cloud account name'] = json_input['cloud account name'];
+    // newJSONInput['number_of_violations'] = violationCounter;
+    return newJSONInput;
+}
+
 const alertArrayJSON = "['iam-unused-access']";
 const alertArray = JSON.parse(alertArrayJSON.replace(/'/g, '"'));
-
-const newJSONInput = json_input
-const users = newJSONInput['violations']['us-east-1'];
+const newJSONInput = {}
+newJSONinput = copyPropForNewJsonInput();
+newJSONInput['us-east-1'] = {}
+const users = json_input['violations']['us-east-1'];
 
 function setValueForNewJSONInput() {
 
@@ -86,8 +94,8 @@ function setValueForNewJSONInput() {
   };
 
   for (var user in users) {
-      var keyOneDate = new Date(users[user]['violator_info']['access_key_1_active']);
-      var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_active']);
+      var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
+      var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
       var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
       const ninetyDaysAgo = (new Date()) - 1000 * 60 * 60 * 24 * 90
 
@@ -98,21 +106,24 @@ function setValueForNewJSONInput() {
       const passwordUnused = passwordUsedDate < ninetyDaysAgo
       const passwordEnabled = users[user]['violator_info']['password_enabled'] == "true"
 
-      if (keyOneUnused && keyOneEnabled){
-          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
-      }
-      else if (keyTwoEnabled && keyTwoUnused){
-          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
-      }
-      else if (passwordEnabled && passwordUnused){
-          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata;
+      if ((keyOneUnused && keyOneEnabled)|| (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)){
+
+          if (!newJSONInput['us-east-1'][user]){
+              newJSONInput['us-east-1'][user] = {}
+          };
+          if (!newJSONInput['us-east-1'][user]['violations']){
+              newJSONInput['us-east-1'][user]['violations'] = {}
+          };
+
+          newJSONInput['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+
       }
   }
 }
 
 setValueForNewJSONInput()
 
-const violations = newJSONInput['violations'];
+const violations = newJSONInput['us-east-1'];
 const report = JSON.stringify(violations)
 
 coreoExport('JSONReport', JSON.stringify(newJSONInput));
