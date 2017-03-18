@@ -76,7 +76,8 @@ const alertArrayJSON = "['iam-unused-access']";
 const alertArray = JSON.parse(alertArrayJSON.replace(/'/g, '"'));
 const newJSONInput = {}
 newJSONinput = copyPropForNewJsonInput();
-newJSONInput['us-east-1'] = {}
+newJSONInput['violations'] = {}
+newJSONInput['violations']['us-east-1'] = {}
 const users = json_input['violations']['us-east-1'];
 
 function setValueForNewJSONInput() {
@@ -108,14 +109,14 @@ function setValueForNewJSONInput() {
 
       if ((keyOneUnused && keyOneEnabled)|| (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)){
 
-          if (!newJSONInput['us-east-1'][user]){
-              newJSONInput['us-east-1'][user] = {}
+          if (!newJSONInput['violations']['us-east-1'][user]){
+              newJSONInput['violations']['us-east-1'][user] = {}
           };
-          if (!newJSONInput['us-east-1'][user]['violations']){
-              newJSONInput['us-east-1'][user]['violations'] = {}
+          if (!newJSONInput['violations']['us-east-1'][user]['violations']){
+              newJSONInput['violations']['us-east-1'][user]['violations'] = {}
           };
 
-          newJSONInput['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
 
       }
   }
@@ -129,7 +130,7 @@ const report = JSON.stringify(violations)
 coreoExport('JSONReport', JSON.stringify(newJSONInput));
 coreoExport('report', report);
 
-callback(violations);
+callback(violations['violations']);
   EOH
 end
 
