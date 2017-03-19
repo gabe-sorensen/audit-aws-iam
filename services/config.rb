@@ -104,12 +104,12 @@ coreo_aws_rule "iam-inactive-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-inactive-key-no-rotation.html"
-  display_name "Inactive user Access Key not rotated"
+  display_name "User Has Access Keys Inactive and Un-rotated"
   description "User has inactive keys that have not been rotated in the last 90 days."
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
-  id_map "object.access_key_metadata.access_key_id"
+  id_map "modifier.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
@@ -121,7 +121,7 @@ coreo_aws_rule "iam-active-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-active-key-no-rotation.html"
-  display_name "Active user Access Key not rotated"
+  display_name "User Has Access Keys Active and Un-rotated"
   description "User has active keys that have not been rotated in the last 90 days"
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
@@ -457,7 +457,7 @@ coreo_aws_rule "iam-user-password-not-used" do
   link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
   include_violations_in_count false
   display_name "IAM User Password Not Used Recently"
-  description "Lists all IAM users whose password has not used in {X} days"
+  description "Lists all IAM users whose password has not used in ${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED} days"
   category "Security"
   suggested_action "Consider deleting unused or unnecessary IAM users"
   level "Informational"
