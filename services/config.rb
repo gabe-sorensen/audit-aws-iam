@@ -17,6 +17,25 @@ coreo_aws_rule "iam-unused-access" do
   raise_when [//]
 end
 
+coreo_aws_rule "iam-root-access_key" do
+  action :define
+  service :iam
+  include_violations_in_count false   
+  display_name "IAM Root Access Key"
+  description "This rule checks for root access keys. Root account should not have access keys enabled"
+  category "Inventory"
+  suggested_action "Deactivate root access keys"
+  level "Informational"
+  meta_cis_id "1.12"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=="]
+  raise_when ["<root_account>"]
+end
+
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
@@ -64,7 +83,6 @@ coreo_uni_util_jsrunner "ian-iam" do
                 "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
   
-
 function copyPropForNewJsonInput() {
     newJSONInput['composite name'] = json_input['composite name'];
     newJSONInput['cloud account name'] = json_input['cloud account name'];
@@ -72,7 +90,7 @@ function copyPropForNewJsonInput() {
     return newJSONInput;
 }
 
-const alertArrayJSON = "['iam-unused-access']";
+const alertArrayJSON = "['iam-unused-access', 'iam-root-access_key']";
 const alertArray = JSON.parse(alertArrayJSON.replace(/'/g, '"'));
 const newJSONInput = {}
 newJSONinput = copyPropForNewJsonInput();
@@ -94,37 +112,75 @@ function setValueForNewJSONInput() {
         'meta_cis_level': '1'
   };
 
-  for (var user in users) {
-      var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
-      var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
-      var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
-      const ninetyDaysAgo = (new Date()) - 1000 * 60 * 60 * 24 * 90
+    const rootAccessMetadata = {
+        'service': 'iam',
+        'display_name': 'IAM Root Access Key',
+        'description': 'IAM Root Access Key',
+        'category': 'Audit',
+        'suggested_action': 'IAM Root Access Key',
+        'level': 'Warning',
+        'meta_cis_id': '1.12',
+        'meta_cis_scored': 'true',
+        'meta_cis_level': '1'
+    };
 
-      const keyOneUnused = keyOneDate < ninetyDaysAgo
-      const keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true"
-      const keyTwoUnused = keyTwoDate < ninetyDaysAgo
-      const keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true"
-      const passwordUnused = passwordUsedDate < ninetyDaysAgo
-      const passwordEnabled = users[user]['violator_info']['password_enabled'] == "true"
+  //if cis 1.3 wanted, the below will run
+  if  (alertArray.indexOf('iam-unused-access') > -1) {
+      for (var user in users) {
+          var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
+          var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
+          var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
+          const ninetyDaysAgo = (new Date()) - 1000 * 60 * 60 * 24 * 90
 
-      if ((keyOneUnused && keyOneEnabled)|| (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)){
+          const keyOneUnused = keyOneDate < ninetyDaysAgo
+          const keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true"
+          const keyTwoUnused = keyTwoDate < ninetyDaysAgo
+          const keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true"
+          const passwordUnused = passwordUsedDate < ninetyDaysAgo
+          const passwordEnabled = users[user]['violator_info']['password_enabled'] == "true"
 
-          if (!newJSONInput['violations']['us-east-1'][user]){
-              newJSONInput['violations']['us-east-1'][user] = {}
-          };
-          if (!newJSONInput['violations']['us-east-1'][user]['violations']){
-              newJSONInput['violations']['us-east-1'][user]['violations'] = {}
-          };
+          if ((keyOneUnused && keyOneEnabled) || (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)) {
 
-          newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+              if (!newJSONInput['violations']['us-east-1'][user]) {
+                  newJSONInput['violations']['us-east-1'][user] = {}
+              }
+              ;
+              if (!newJSONInput['violations']['us-east-1'][user]['violations']) {
+                  newJSONInput['violations']['us-east-1'][user]['violations'] = {}
+              }
+              ;
 
+              newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+
+          }
       }
   }
+
+    //if cis 1.12 wanted, the below will run
+    if  (alertArray.indexOf('iam-root-access_key') > -1) {
+        const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
+        const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
+    
+        if ((keyOneEnabled && keyTwoEnabled)) {
+    
+            if (!newJSONInput['violations']['us-east-1']["<root_account>"]) {
+                newJSONInput['violations']['us-east-1']["<root_account>"] = {}
+            }
+            ;
+            if (!newJSONInput['violations']['us-east-1']["<root_account>"]['violations']) {
+                newJSONInput['violations']['us-east-1']["<root_account>"]['violations'] = {}
+            }
+            ;
+    
+            newJSONInput['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
+    
+        }
+    }
 }
 
 setValueForNewJSONInput()
 
-const violations = newJSONInput['violations'];
+const violations = newJSONinput['violations'];
 const report = JSON.stringify(violations)
 
 coreoExport('JSONReport', JSON.stringify(newJSONInput));
