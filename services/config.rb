@@ -52,6 +52,7 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   audit_objects ['object.summary_map']
   operators ["!="]
   raise_when [nil]
+  id_map "object.summary_map"
 end
 
 
