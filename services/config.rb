@@ -52,7 +52,7 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   audit_objects ['object.summary_map']
   operators ["!="]
   raise_when [nil]
-  id_map "static.no_op"
+  id_map "object.summary_map.AccountMFAEnabled"
 end
 
 
@@ -131,6 +131,18 @@ function setValueForNewJSONInput() {
         'meta_cis_level': '1'
   };
 
+    const rootMFAMetadata = {
+        'service': 'iam',
+        'display_name': 'Root MFA disabled',
+        'description': 'Checks root MFA status',
+        'category': 'Audit',
+        'suggested_action': 'Root MFA should be enabled',
+        'level': 'Warning',
+        'meta_cis_id': '1.13',
+        'meta_cis_scored': 'true',
+        'meta_cis_level': '1'
+    };
+
     const rootAccessMetadata = {
         'service': 'iam',
         'display_name': 'IAM Root Access Key',
@@ -176,12 +188,12 @@ function setValueForNewJSONInput() {
   }
 
     //if cis 1.12 wanted, the below will run
-    if  (alertArray.indexOf('iam-root-access_key') > -1) {
+    if  (alertArray.indexOf('iam-root-access-key') > -1) {
         const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
         const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
-    
+
         if ((keyOneEnabled && keyTwoEnabled)) {
-    
+
             if (!newJSONInput['violations']['us-east-1']["<root_account>"]) {
                 newJSONInput['violations']['us-east-1']["<root_account>"] = {}
             }
@@ -190,9 +202,27 @@ function setValueForNewJSONInput() {
                 newJSONInput['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-    
+
             newJSONInput['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
-    
+
+        }
+    }
+
+    //if cis 1.13 wanted, the below will run
+    if  (alertArray.indexOf('iam-root-no-mfa-cis') > -1) {
+        if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
+
+            if (!newJSONInput['violations']['us-east-1']["<root_account>"]) {
+                newJSONInput['violations']['us-east-1']["<root_account>"] = {}
+            }
+            ;
+            if (!newJSONInput['violations']['us-east-1']["<root_account>"]['violations']) {
+                newJSONInput['violations']['us-east-1']["<root_account>"]['violations'] = {}
+            }
+            ;
+
+            newJSONInput['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootMFAMetadata
+
         }
     }
 }
