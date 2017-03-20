@@ -32,8 +32,8 @@ coreo_aws_rule "iam-root-access_key" do
   id_map "object.content.user"
   objectives ["credential_report"]
   audit_objects ["object.content.user"]
-  operators ["=="]
-  raise_when ["<root_account>"]
+  operators ["=~"]
+  raise_when [//]
 end
 
 coreo_aws_rule "iam-root-no-mfa-cis" do
@@ -48,10 +48,11 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   meta_cis_id "1.13"
   meta_cis_scored "true"
   meta_cis_level "1"
-  objectives ["account_summary"]
-  audit_objects ['object.summary_map']
-  operators ["!="]
-  raise_when [nil]
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=~"]
+  raise_when [//]
 end
 
 coreo_aws_rule "iam-initialization-access-key" do
@@ -66,11 +67,11 @@ coreo_aws_rule "iam-initialization-access-key" do
   meta_cis_id "1.23"
   meta_cis_scored "false"
   meta_cis_level "1"
-  id_map ""
-  objectives [""]
-  audit_objects [""]
-  operators [""]
-  raise_when [""]
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=~"]
+  raise_when [//]
 end
 
 
