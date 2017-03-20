@@ -127,7 +127,7 @@ function copyPropForNewJsonInput() {
     return newJSONInput;
 }
 
-const alertArrayJSON = "['iam-unused-access', 'iam-root-access_key', 'iam-initialization-access-key']";
+const alertArrayJSON = "['iam-unused-access', 'iam-root-access_key', 'iam-root-no-mfa-cis', 'iam-initialization-access-key']";
 const alertArray = JSON.parse(alertArrayJSON.replace(/'/g, '"'));
 const newJSONInput = {}
 newJSONinput = copyPropForNewJsonInput();
@@ -222,7 +222,7 @@ function setValueForNewJSONInput() {
         const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
         const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
 
-        if ((keyOneEnabled && keyTwoEnabled)) {
+        if ((keyOneEnabled || keyTwoEnabled)) {
 
             if (!newJSONInput['violations']['us-east-1']["<root_account>"]) {
                 newJSONInput['violations']['us-east-1']["<root_account>"] = {}
