@@ -96,8 +96,8 @@ end
 coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
   variables([
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.report'},
-                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.number_violations'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report'},
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.number_violations'},
 
             ])
 end
@@ -118,7 +118,7 @@ coreo_uni_util_jsrunner "ian-iam" do
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
                 "cloud account name": "PLAN::cloud_account_name",
-                "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
+                "violations":COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report}'
   function <<-EOH
   
 function copyPropForNewJsonInput() {
@@ -262,7 +262,7 @@ coreo_uni_util_variables "iam-update-planwide-2.5" do
   action :set
   variables([
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.ian-iam.JSONReport'},
-                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.ian-iam.report'},
+                {'COMPOSITE::coreo_aws_rule_runner_iam.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.ian-iam.report'},
             ])
 end
 
