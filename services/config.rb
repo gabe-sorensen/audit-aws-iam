@@ -38,7 +38,7 @@ end
 
 coreo_aws_rule "iam-root-no-mfa-cis" do
   action :define
-  service :user
+  service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
   display_name "Multi-Factor Authentication not enabled for root account"
   description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
@@ -57,7 +57,7 @@ end
 
 coreo_aws_rule "iam-initialization-access-key" do
   action :define
-  service :user
+  service :iam
   include_violations_in_count false
   display_name "IAM Root Access Key"
   description "This rule checks for root access keys. Root account should not have access keys enabled"
