@@ -19,7 +19,7 @@ end
 
 coreo_aws_rule "iam-ian-test" do
   action :define
-  service :user
+  service :iam
   include_violations_in_count false   
   display_name "IAM Root User Activity"
   description "This rule performs an inventory on all users using credential report"
@@ -34,6 +34,7 @@ coreo_aws_rule "iam-ian-test" do
   audit_objects [""]
   operators [""]
   raise_when [""]
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "iam-root-access_key" do
