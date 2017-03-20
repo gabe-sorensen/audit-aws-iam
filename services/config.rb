@@ -17,26 +17,6 @@ coreo_aws_rule "iam-unused-access" do
   raise_when [//]
 end
 
-coreo_aws_rule "iam-ian-test" do
-  action :define
-  service :iam
-  include_violations_in_count false   
-  display_name "IAM Root User Activity"
-  description "This rule performs an inventory on all users using credential report"
-  category "Inventory"
-  suggested_action "User credentials that have not been used in 90 days should be removed or deactivated"
-  level "Informational"
-  meta_cis_id "1.3"
-  meta_cis_scored "true"
-  meta_cis_level "1"
-  id_map ""
-  objectives [""]
-  audit_objects [""]
-  operators [""]
-  raise_when [""]
-  id_map "static.no_op"
-end
-
 coreo_aws_rule "iam-root-access_key" do
   action :define
   service :iam
@@ -56,24 +36,24 @@ coreo_aws_rule "iam-root-access_key" do
   raise_when ["<root_account>"]
 end
 
-# coreo_aws_rule "iam-root-no-mfa-cis" do
-#   action :define
-#   service :iam
-#   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
-#   display_name "Multi-Factor Authentication not enabled for root account"
-#   description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
-#   category "Security"
-#   suggested_action "Enable Multi-Factor Authentication for the root cloud user."
-#   level "Emergency"
-#   meta_cis_id "1.13"
-#   meta_cis_scored "true"
-#   meta_cis_level "1"
-#   objectives ["account_summary"]
-#   audit_objects ['object.summary_map']
-#   operators ["!="]
-#   raise_when [nil]
-#   id_map "object.summary_map"
-# end
+coreo_aws_rule "iam-root-no-mfa-cis" do
+  action :define
+  service :iam
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
+  display_name "Multi-Factor Authentication not enabled for root account"
+  description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
+  category "Security"
+  suggested_action "Enable Multi-Factor Authentication for the root cloud user."
+  level "Emergency"
+  meta_cis_id "1.13"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives ["account_summary"]
+  audit_objects ['object.summary_map']
+  operators ["!="]
+  raise_when [nil]
+  id_map "object.summary_map.AccountMFAEnabled"
+end
 
 
 coreo_uni_util_variables "iam-planwide" do
