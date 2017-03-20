@@ -87,8 +87,8 @@ coreo_uni_util_variables "iam-planwide" do
 end
 
 
-coreo_aws_rule_runner_iam "advise-iam" do
-  # service :iam
+coreo_aws_rule_runner "advise-iam" do
+  service :iam
   action :run
   rules ${AUDIT_AWS_IAM_ALERT_LIST}
 end
