@@ -528,7 +528,6 @@ end
 coreo_aws_rule "iam-initialization-access-key" do
   action :define
   service :iam
-  include_violations_in_count false
   display_name "IAM Root Access Key"
   description "This rule checks for root access keys. Root account should not have access keys enabled"
   category "Inventory"
@@ -544,13 +543,9 @@ coreo_aws_rule "iam-initialization-access-key" do
   raise_when [//]
 end
 
-
-
-
 coreo_aws_rule "iam-internal" do
   action :define
   service :iam
-  include_violations_in_count false
   display_name "IAM Root Access Key"
   description "This rule checks for root access keys. Root account should not have access keys enabled"
   category "Internal"
@@ -565,8 +560,6 @@ coreo_aws_rule "iam-internal" do
   operators ["=~"]
   raise_when [//]
 end
-
-
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
