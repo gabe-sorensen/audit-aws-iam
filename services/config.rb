@@ -750,7 +750,7 @@ function setValueForNewJSONInput(json_input) {
     };
 
     //if cis 1.3 wanted, the below will run
-    if  (true) {
+    if  (alertListArray.indexOf('iam-unused-access') > -1) {
         for (var user in users) {
             var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
             var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
@@ -780,7 +780,7 @@ function setValueForNewJSONInput(json_input) {
     }
 
     //if cis 1.12 wanted, the below will run
-    if  (true) {
+    if  (alertListArray.indexOf('iam-root-access-key') > -1) {
         const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
         const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
 
@@ -799,7 +799,7 @@ function setValueForNewJSONInput(json_input) {
     }
 
     //if cis 1.13 wanted, the below will run
-    if  (true) {
+    if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
         if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
 
             if (!json_input['violations']['us-east-1']["<root_account>"]) {
@@ -816,7 +816,7 @@ function setValueForNewJSONInput(json_input) {
 
 
     //if cis 1.23 wanted, the below will run
-    if  (true) {
+    if  (alertListArray.indexOf('iam-initialization-access-key') > -1) {
         for (var user in users) {
             var keyOneDate = users[user]['violator_info']['access_key_1_last_used_date'] == "N/A";
             var keyTwoDate = users[user]['violator_info']['access_key_2_last_used_date'] == "N/A";
