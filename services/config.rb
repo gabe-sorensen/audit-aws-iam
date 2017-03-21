@@ -904,23 +904,23 @@ callback(textRollup);
   EOH
 end
 
-# coreo_uni_util_notify "advise-iam-to-tag-values" do
-#   action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0)) ? :notify : :nothing)
-#   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
-# end
+coreo_uni_util_notify "advise-iam-to-tag-values" do
+  action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0)) ? :notify : :nothing)
+  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.return'
+end
 
-# coreo_uni_util_notify "advise-iam-rollup" do
-#   action :notify
-#   type 'email'
-#   allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
-#   send_on '${AUDIT_AWS_IAM_SEND_ON}'
-#   payload '
-# composite name: PLAN::stack_name
-# plan name: PLAN::name
-# COMPOSITE::coreo_uni_util_jsrunner.iam-tags-rollup.return
-#   '
-#   payload_type 'text'
-#   endpoint ({
-#       :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'PLAN::stack_name New Rollup Report for PLAN::name plan from CloudCoreo'
-#   })
-# end
+coreo_uni_util_notify "advise-iam-rollup" do
+  action :notify
+  type 'email'
+  allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
+  send_on '${AUDIT_AWS_IAM_SEND_ON}'
+  payload '
+composite name: PLAN::stack_name
+plan name: PLAN::name
+COMPOSITE::coreo_uni_util_jsrunner.iam-tags-rollup.return
+  '
+  payload_type 'text'
+  endpoint ({
+      :to => '${AUDIT_AWS_IAM_ALERT_RECIPIENT}', :subject => 'PLAN::stack_name New Rollup Report for PLAN::name plan from CloudCoreo'
+  })
+end
