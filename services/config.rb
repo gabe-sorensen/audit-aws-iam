@@ -484,7 +484,7 @@ coreo_aws_rule "iam-unused-access" do
   audit_objects [""]
   operators [""]
   raise_when [true]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "iam-root-access_key" do
@@ -503,7 +503,7 @@ coreo_aws_rule "iam-root-access_key" do
   audit_objects [""]
   operators [""]
   raise_when [true]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "iam-root-no-mfa-cis" do
@@ -522,7 +522,7 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   audit_objects [""]
   operators [""]
   raise_when [true]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "iam-initialization-access-key" do
@@ -540,7 +540,7 @@ coreo_aws_rule "iam-initialization-access-key" do
   audit_objects [""]
   operators [""]
   raise_when [true]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "iam-internal" do
