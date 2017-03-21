@@ -544,6 +544,30 @@ coreo_aws_rule "iam-initialization-access-key" do
   raise_when [//]
 end
 
+
+
+
+coreo_aws_rule "iam-internal" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM Root Access Key"
+  description "This rule checks for root access keys. Root account should not have access keys enabled"
+  category "Internal"
+  suggested_action "Ignore"
+  level "Internal"
+  meta_cis_id "1.23"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object"]
+  operators ["=="]
+  raise_when [true]
+end
+
+
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
