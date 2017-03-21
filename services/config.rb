@@ -863,7 +863,7 @@ coreo_uni_util_variables "iam-update-planwide-4" do
   action :set
   variables([
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.cis-iam.JSONReport'},
-                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.cis-iam.report'},
+                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.cis-iam.report'}
             ])
 end
 
