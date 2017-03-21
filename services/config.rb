@@ -667,7 +667,7 @@ function setValueForNewJSONInput(json_input) {
     //if cis 1.3 wanted, the below will run
     if  (alertListArray.indexOf('iam-unused-access') > -1) {
         for (var user in users) {
-          if (users[user].hasOwnProperty('violator_info'))
+          if (users[user].hasOwnProperty('violator_info')) {
             var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
             var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
             var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
@@ -735,7 +735,7 @@ function setValueForNewJSONInput(json_input) {
     //if cis 1.23 wanted, the below will run
     if  (alertListArray.indexOf('iam-initialization-access-key') > -1) {
         for (var user in users) {
-          if (users[user].hasOwnProperty('violator_info'))
+          if (users[user].hasOwnProperty('violator_info')) {
             var keyOneDate = users[user]['violator_info']['access_key_1_last_used_date'] == "N/A";
             var keyTwoDate = users[user]['violator_info']['access_key_2_last_used_date'] == "N/A";
             var keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true";
