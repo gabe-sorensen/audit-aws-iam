@@ -597,8 +597,6 @@ coreo_uni_util_jsrunner "cis-iam" do
                },
                ])
   json_input '{ "composite name":"PLAN::stack_name",
-                "plan name":"PLAN::name",
-                "cloud account name": "PLAN::cloud_account_name",
                 "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
   
