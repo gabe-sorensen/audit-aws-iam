@@ -693,13 +693,13 @@ function copyPropForNewJsonInput() {
 
 let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
 let alertListArray = alertListToJSON.replace(/'/g, '"');
-const newJSONInput = {}
-newJSONinput = copyPropForNewJsonInput();
-newJSONInput['violations'] = {}
-newJSONInput['violations']['us-east-1'] = {}
+const newJSONInput = json_input
+// newJSONinput = copyPropForNewJsonInput();
+// newJSONInput['violations'] = {}
+// newJSONInput['violations']['us-east-1'] = {}
 const users = json_input['violations']['us-east-1'];
 
-function setValueForNewJSONInput() {
+function setValueForNewJSONInput(json_input) {
 
   const unusedCredsMetadata = {
         'service': 'iam',
@@ -766,15 +766,15 @@ function setValueForNewJSONInput() {
 
             if ((keyOneUnused && keyOneEnabled) || (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)) {
 
-                if (!newJSONInput['violations']['us-east-1'][user]) {
-                    newJSONInput['violations']['us-east-1'][user] = {}
+                if (!json_input['violations']['us-east-1'][user]) {
+                    json_input['violations']['us-east-1'][user] = {}
                 }
                 ;
-                if (!newJSONInput['violations']['us-east-1'][user]['violations']) {
-                    newJSONInput['violations']['us-east-1'][user]['violations'] = {}
+                if (!json_input['violations']['us-east-1'][user]['violations']) {
+                    json_input['violations']['us-east-1'][user]['violations'] = {}
                 }
                 ;
-                newJSONInput['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+                json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
             }
         }
     }
@@ -786,15 +786,15 @@ function setValueForNewJSONInput() {
 
         if ((keyOneEnabled || keyTwoEnabled)) {
 
-            if (!newJSONInput['violations']['us-east-1']["<root_account>"]) {
-                newJSONInput['violations']['us-east-1']["<root_account>"] = {}
+            if (!json_input['violations']['us-east-1']["<root_account>"]) {
+                json_input['violations']['us-east-1']["<root_account>"] = {}
             }
             ;
-            if (!newJSONInput['violations']['us-east-1']["<root_account>"]['violations']) {
-                newJSONInput['violations']['us-east-1']["<root_account>"]['violations'] = {}
+            if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
+                json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            newJSONInput['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
         }
     }
 
@@ -802,15 +802,15 @@ function setValueForNewJSONInput() {
     if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
         if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
 
-            if (!newJSONInput['violations']['us-east-1']["<root_account>"]) {
-                newJSONInput['violations']['us-east-1']["<root_account>"] = {}
+            if (!json_input['violations']['us-east-1']["<root_account>"]) {
+                json_input['violations']['us-east-1']["<root_account>"] = {}
             }
             ;
-            if (!newJSONInput['violations']['us-east-1']["<root_account>"]['violations']) {
-                newJSONInput['violations']['us-east-1']["<root_account>"]['violations'] = {}
+            if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
+                json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            newJSONInput['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootMFAMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootMFAMetadata
         }
     }
 
@@ -825,27 +825,39 @@ function setValueForNewJSONInput() {
 
             if ((keyOneDate && keyOneEnabled) || (keyTwoDate && keyTwoEnabled)) {
 
-                if (!newJSONInput['violations']['us-east-1'][user]) {
-                    newJSONInput['violations']['us-east-1'][user] = {}
+                if (!json_input['violations']['us-east-1'][user]) {
+                    json_input['violations']['us-east-1'][user] = {}
                 }
                 ;
-                if (!newJSONInput['violations']['us-east-1'][user]['violations']) {
-                    newJSONInput['violations']['us-east-1'][user]['violations'] = {}
+                if (!json_input['violations']['us-east-1'][user]['violations']) {
+                    json_input['violations']['us-east-1'][user]['violations'] = {}
                 }
                 ;
-                newJSONInput['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = initAccessMetadata
+                json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = initAccessMetadata
             }
         }
     }
 
+    //Strip internal violations
+    for (var user in users) {
+        var internal = users[user]['violations'].hasOwnProperty('iam-internal');
+        var single_violation = (Object.keys(users[user]['violations']).length === 1);
+
+        if (internal && single_violation) {
+            delete json_input['violations']['us-east-1'][user];
+        }
+        else if (internal && !single_violation){
+            delete json_input['violations']['us-east-1'][user]['violations']['iam-internal'];
+        }
+    }
 }
 
-setValueForNewJSONInput()
+setValueForNewJSONInput(json_input)
 
-const violations = newJSONinput['violations'];
+const violations = json_input['violations'];
 const report = JSON.stringify(violations)
 
-coreoExport('JSONReport', JSON.stringify(newJSONInput));
+coreoExport('JSONReport', JSON.stringify(json_input));
 coreoExport('report', report);
 
 callback(violations);
