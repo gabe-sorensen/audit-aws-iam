@@ -667,6 +667,7 @@ function setValueForNewJSONInput(json_input) {
     //if cis 1.3 wanted, the below will run
     if  (alertListArray.indexOf('iam-unused-access') > -1) {
         for (var user in users) {
+          if (users[user].hasOwnProperty('violator_info'))
             var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
             var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
             var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
@@ -691,11 +692,13 @@ function setValueForNewJSONInput(json_input) {
                 ;
                 json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
             }
+          }
         }
     }
 
     //if cis 1.12 wanted, the below will run
     if  (alertListArray.indexOf('iam-root-access-key') > -1) {
+      if (users[user].hasOwnProperty('violator_info'))
         const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
         const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
 
@@ -711,10 +714,12 @@ function setValueForNewJSONInput(json_input) {
             ;
             json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
         }
+      }
     }
 
     //if cis 1.13 wanted, the below will run
     if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
+      if (users[user].hasOwnProperty('violator_info'))
         if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
 
             if (!json_input['violations']['us-east-1']["<root_account>"]) {
@@ -727,12 +732,14 @@ function setValueForNewJSONInput(json_input) {
             ;
             json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootMFAMetadata
         }
+      }
     }
 
 
     //if cis 1.23 wanted, the below will run
     if  (alertListArray.indexOf('iam-initialization-access-key') > -1) {
         for (var user in users) {
+          if (users[user].hasOwnProperty('violator_info'))
             var keyOneDate = users[user]['violator_info']['access_key_1_last_used_date'] == "N/A";
             var keyTwoDate = users[user]['violator_info']['access_key_2_last_used_date'] == "N/A";
             var keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true";
@@ -750,6 +757,7 @@ function setValueForNewJSONInput(json_input) {
                 ;
                 json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = initAccessMetadata
             }
+          }
         }
     }
 
@@ -869,8 +877,6 @@ coreo_uni_util_variables "iam-update-planwide-3" do
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
-
-
 
 coreo_uni_util_jsrunner "iam-tags-rollup" do
   action :run
