@@ -698,7 +698,6 @@ function setValueForNewJSONInput(json_input) {
 
     //if cis 1.12 wanted, the below will run
     if  (alertListArray.indexOf('iam-root-access-key') > -1) {
-      if (users[user].hasOwnProperty('violator_info'))
         const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
         const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
 
@@ -714,12 +713,10 @@ function setValueForNewJSONInput(json_input) {
             ;
             json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
         }
-      }
     }
 
     //if cis 1.13 wanted, the below will run
     if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
-      if (users[user].hasOwnProperty('violator_info'))
         if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
 
             if (!json_input['violations']['us-east-1']["<root_account>"]) {
@@ -732,7 +729,6 @@ function setValueForNewJSONInput(json_input) {
             ;
             json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootMFAMetadata
         }
-      }
     }
 
 
