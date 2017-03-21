@@ -470,7 +470,7 @@ end
 
 coreo_aws_rule "iam-unused-access" do
   action :define
-  service :iam
+  service :user
   include_violations_in_count false   
   display_name "IAM Root User Activity"
   description "This rule performs an inventory on all users using credential report"
@@ -480,16 +480,16 @@ coreo_aws_rule "iam-unused-access" do
   meta_cis_id "1.3"
   meta_cis_scored "true"
   meta_cis_level "1"
-  id_map "object.content.user"
-  objectives ["credential_report"]
-  audit_objects ["object.content.user"]
-  operators ["=~"]
-  raise_when [//]
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map ""
 end
 
 coreo_aws_rule "iam-root-access_key" do
   action :define
-  service :iam
+  service :user
   include_violations_in_count false   
   display_name "IAM Root Access Key"
   description "This rule checks for root access keys. Root account should not have access keys enabled"
@@ -499,16 +499,16 @@ coreo_aws_rule "iam-root-access_key" do
   meta_cis_id "1.12"
   meta_cis_scored "true"
   meta_cis_level "1"
-  id_map "object.content.user"
-  objectives ["credential_report"]
-  audit_objects ["object.content.user"]
-  operators ["=~"]
-  raise_when [//]
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map ""
 end
 
 coreo_aws_rule "iam-root-no-mfa-cis" do
   action :define
-  service :iam
+  service :user
   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
   display_name "Multi-Factor Authentication not enabled for root account"
   description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
@@ -518,16 +518,16 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   meta_cis_id "1.13"
   meta_cis_scored "true"
   meta_cis_level "1"
-  id_map "object.content.user"
-  objectives ["credential_report"]
-  audit_objects ["object.content.user"]
-  operators ["=~"]
-  raise_when [//]
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map ""
 end
 
 coreo_aws_rule "iam-initialization-access-key" do
   action :define
-  service :iam
+  service :user
   display_name "IAM Root Access Key"
   description "This rule checks for root access keys. Root account should not have access keys enabled"
   category "Inventory"
@@ -536,11 +536,11 @@ coreo_aws_rule "iam-initialization-access-key" do
   meta_cis_id "1.23"
   meta_cis_scored "false"
   meta_cis_level "1"
-  id_map "object.content.user"
-  objectives ["credential_report"]
-  audit_objects ["object.content.user"]
-  operators ["=~"]
-  raise_when [//]
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map ""
 end
 
 coreo_aws_rule "iam-internal" do
