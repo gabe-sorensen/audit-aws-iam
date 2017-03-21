@@ -581,7 +581,7 @@ end
 coreo_aws_rule_runner "advise-iam" do
   service :iam
   action :run
-  rules ${AUDIT_AWS_IAM_ALERT_LIST}
+  rules ${AUDIT_AWS_IAM_ALERT_LIST}.push("iam-internal")
 end
 
 coreo_uni_util_variables "iam-update-planwide-1" do
