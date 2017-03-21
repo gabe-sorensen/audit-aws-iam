@@ -910,7 +910,7 @@ coreo_uni_util_notify "advise-iam-to-tag-values" do
 end
 
 coreo_uni_util_notify "advise-iam-rollup" do
-  action :notify
+  action((("${AUDIT_AWS_IAM_ALERT_RECIPIENT}".length > 0) and (!"NOT_A_TAG".eql?("NOT_A_TAG"))) ? :notify : :nothing)
   type 'email'
   allow_empty ${AUDIT_AWS_IAM_ALLOW_EMPTY}
   send_on '${AUDIT_AWS_IAM_SEND_ON}'
