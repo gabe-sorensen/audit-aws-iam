@@ -557,8 +557,8 @@ coreo_aws_rule "iam-internal" do
   id_map "object.content.user"
   objectives ["credential_report"]
   audit_objects ["object.content.user"]
-  operators ["!="]
-  raise_when [nil]
+  operators ["=~"]
+  raise_when [//]
 end
 
 coreo_uni_util_variables "iam-planwide" do
@@ -591,7 +591,15 @@ coreo_uni_util_jsrunner "cis-iam" do
   data_type "json"
   provide_composite_access true
   packages([
-  json_input '{"violations": COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
+               {
+                   :name => "cloudcoreo-jsrunner-commons",
+                   :version => "1.9.2"
+               },
+               ])
+  json_input '{ "composite name":"PLAN::stack_name",
+                "plan name":"PLAN::name",
+                "cloud account name": "PLAN::cloud_account_name",
+                "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
   
 function copyPropForNewJsonInput() {
