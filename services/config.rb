@@ -435,6 +435,25 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
+coreo_aws_rule "iam-active-root-user" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM Root User Activity"
+  description "This rule performs an audit on root user activity"
+  category "Inventory"
+  suggested_action "Root user should not be active, when possible. Additionally, ensure that CIS rule 3.3 is passing for this rule to pass"
+  level "Informational"
+  meta_cis_id "1.1"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=="]
+  raise_when ["<root_account>"]
+end
+
 coreo_aws_rule "iam-mfa-password-holders" do
   action :define
   service :iam
