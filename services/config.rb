@@ -613,6 +613,26 @@ coreo_aws_rule "manual-full-privilege-user" do
   id_map ""
 end
 
+coreo_aws_rule "manual-appropriate-sns-subscribers" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=130"
+  display_name "SNS Appropriate Subscribers"
+  description "Unintended SNS subscribers may pose a security risk"
+  category "Security"
+  suggested_action "Regularly ensure that only appropriate subscribers exist in SNS"
+  level "Warning"
+  meta_always_show_card "true"
+  meta_cis_id "3.15"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map ""
+end
+
 
 
 coreo_uni_util_variables "iam-planwide" do
