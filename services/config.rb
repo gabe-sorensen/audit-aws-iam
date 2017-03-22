@@ -490,7 +490,7 @@ coreo_aws_rule "manual-ensure-security-questions" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-detailed-billing" do
@@ -510,7 +510,7 @@ coreo_aws_rule "manual-detailed-billing" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-strategic-iam-roles" do
@@ -530,7 +530,7 @@ coreo_aws_rule "manual-strategic-iam-roles" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-contact-details" do
@@ -550,7 +550,7 @@ coreo_aws_rule "manual-contact-details" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-security-contact" do
@@ -570,7 +570,7 @@ coreo_aws_rule "manual-security-contact" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-resource-instance-access" do
@@ -590,7 +590,7 @@ coreo_aws_rule "manual-resource-instance-access" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-full-privilege-user" do
@@ -610,7 +610,7 @@ coreo_aws_rule "manual-full-privilege-user" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-appropriate-sns-subscribers" do
@@ -630,7 +630,7 @@ coreo_aws_rule "manual-appropriate-sns-subscribers" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 coreo_aws_rule "manual-least-access-routing-tables" do
@@ -650,7 +650,7 @@ coreo_aws_rule "manual-least-access-routing-tables" do
   audit_objects [""]
   operators [""]
   raise_when [""]
-  id_map ""
+  id_map "static.no_op"
 end
 
 
