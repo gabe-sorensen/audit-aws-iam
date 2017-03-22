@@ -590,21 +590,9 @@ coreo_uni_util_jsrunner "cis-iam" do
   action :run
   data_type "json"
   provide_composite_access true
-  packages([
-               {
-                   :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.9.2"
-               },
-               ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
-  
-function copyPropForNewJsonInput() {
-    newJSONInput['composite name'] = json_input['composite name'];
-    newJSONInput['cloud account name'] = json_input['cloud account name'];
-    return newJSONInput;
-}
 
 let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
 let alertListArray = alertListToJSON.replace(/'/g, '"');
