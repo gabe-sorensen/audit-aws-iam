@@ -352,39 +352,6 @@ coreo_aws_rule "iam-password-policy-min-length" do
   raise_when [14]
 end
 
-coreo_aws_rule "iam-root-active-key" do
-  action :nothing
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
-  display_name "DEPRICATED - Root user has active Access Key"
-  description "DEPRICATED - Root user has an Access Key that is active."
-  category "Security"
-  suggested_action "DEPRICATED - Replace the root Access Key with an IAM user access key, and then disable and remove the root access key."
-  level "Critical"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_1_active"]
-  operators ["=="]
-  raise_when ["true"]
-end
-
-coreo_aws_rule "iam-root-access-key-1" do
-  action :define
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
-  display_name "Root Access Key Exists - Key #1"
-  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
-  category "Security"
-  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
-  level "Warning"
-  id_map "object.content.user"
-  objectives ["credential_report", "credential_report"]
-  audit_objects ["object.content.user", "object.content.access_key_1_active"]
-  operators ["==", "=="]
-  raise_when ["<root_account>", true]
-end
-
 coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
