@@ -612,6 +612,8 @@ coreo_uni_util_jsrunner "cis-iam" do
        ruleMeta[rule] = flattenedRule;
    })
 
+   const UNUSED_ACCESS_RULE = 'iam-unused-access'
+
 let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
 let alertListArray = alertListToJSON.replace(/'/g, '"');
 const users = json_input['violations']['us-east-1'];
@@ -692,7 +694,7 @@ function setValueForNewJSONInput(json_input) {
                     json_input['violations']['us-east-1'][user]['violations'] = {}
                 }
                 ;
-                json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+                json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = Object.assign(ruleMeta[UNUSED_ACCESS_RULE]);
             }
           }
         }
