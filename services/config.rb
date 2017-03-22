@@ -613,6 +613,9 @@ coreo_uni_util_jsrunner "cis-iam" do
    })
 
    const UNUSED_ACCESS_RULE = 'iam-unused-access'
+   const ROOT_ACCESS_RULE = 'iam-root-access_key'
+   const ROOT_MFA_RULE = 'iam-root-no-mfa-cis'
+   const INIT_ACCESS_RULE = 'iam-initialization-access-key'
 
 let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
 let alertListArray = alertListToJSON.replace(/'/g, '"');
@@ -715,7 +718,7 @@ function setValueForNewJSONInput(json_input) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = Object.assign(ruleMeta[ROOT_ACCESS_RULE]);
         }
     }
 
@@ -731,7 +734,7 @@ function setValueForNewJSONInput(json_input) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootMFAMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = Object.assign(ruleMeta[ROOT_MFA_RULE]);
         }
     }
 
@@ -755,7 +758,7 @@ function setValueForNewJSONInput(json_input) {
                     json_input['violations']['us-east-1'][user]['violations'] = {}
                 }
                 ;
-                json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = initAccessMetadata
+                json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = Object.assign(ruleMeta[INIT_ACCESS_RULE]);
             }
           }
         }
