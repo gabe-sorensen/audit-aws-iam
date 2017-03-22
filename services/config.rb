@@ -617,177 +617,129 @@ coreo_uni_util_jsrunner "cis-iam" do
    const ROOT_MFA_RULE = 'iam-root-no-mfa-cis'
    const INIT_ACCESS_RULE = 'iam-initialization-access-key'
 
-let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
-let alertListArray = alertListToJSON.replace(/'/g, '"');
-const users = json_input['violations']['us-east-1'];
+  let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
+  let alertListArray = alertListToJSON.replace(/'/g, '"');
+  const users = json_input['violations']['us-east-1'];
 
-function setValueForNewJSONInput(json_input) {
+  function setValueForNewJSONInput(json_input) {
 
-  const unusedCredsMetadata = {
-        'service': 'iam',
-        'display_name': 'IAM Unused credentials',
-        'description': 'Checks for unused credentials',
-        'category': 'Audit',
-        'suggested_action': 'User credentials that have not been used in 90 days should be removed or deactivated',
-        'level': 'Warning',
-        'meta_cis_id': '1.3',
-        'meta_cis_scored': 'true',
-        'meta_cis_level': '1'
-  };
+      //if cis 1.3 wanted, the below will run
+      if  (alertListArray.indexOf('iam-unused-access') > -1) {
+          for (var user in users) {
+            if (users[user].hasOwnProperty('violator_info')) {
+              var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
+              var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
+              var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
+              const ninetyDaysAgo = (new Date()) - 1000 * 60 * 60 * 24 * 90
 
-    const rootMFAMetadata = {
-        'service': 'iam',
-        'display_name': 'Root MFA disabled',
-        'description': 'Checks root MFA status',
-        'category': 'Audit',
-        'suggested_action': 'Root MFA should be enabled',
-        'level': 'Warning',
-        'meta_cis_id': '1.13',
-        'meta_cis_scored': 'true',
-        'meta_cis_level': '1'
-    };
+              const keyOneUnused = keyOneDate < ninetyDaysAgo
+              const keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true"
+              const keyTwoUnused = keyTwoDate < ninetyDaysAgo
+              const keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true"
+              const passwordUnused = passwordUsedDate < ninetyDaysAgo
+              const passwordEnabled = users[user]['violator_info']['password_enabled'] == "true"
 
-    const rootAccessMetadata = {
-        'service': 'iam',
-        'display_name': 'IAM Root Access Key',
-        'description': 'IAM Root Access Key',
-        'category': 'Audit',
-        'suggested_action': 'IAM Root Access Key',
-        'level': 'Warning',
-        'meta_cis_id': '1.12',
-        'meta_cis_scored': 'true',
-        'meta_cis_level': '1'
-    };
+              if ((keyOneUnused && keyOneEnabled) || (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)) {
 
-    const initAccessMetadata = {
-        'service': 'iam',
-        'display_name': 'IAM Init Access',
-        'description': 'IAM Init Access Key',
-        'category': 'Audit',
-        'suggested_action': 'IAM Init Access Key',
-        'level': 'Warning',
-        'meta_cis_id': '1.23',
-        'meta_cis_scored': 'false',
-        'meta_cis_level': '1'
-    };
-
-    //if cis 1.3 wanted, the below will run
-    if  (alertListArray.indexOf('iam-unused-access') > -1) {
-        for (var user in users) {
-          if (users[user].hasOwnProperty('violator_info')) {
-            var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
-            var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
-            var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
-            const ninetyDaysAgo = (new Date()) - 1000 * 60 * 60 * 24 * 90
-
-            const keyOneUnused = keyOneDate < ninetyDaysAgo
-            const keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true"
-            const keyTwoUnused = keyTwoDate < ninetyDaysAgo
-            const keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true"
-            const passwordUnused = passwordUsedDate < ninetyDaysAgo
-            const passwordEnabled = users[user]['violator_info']['password_enabled'] == "true"
-
-            if ((keyOneUnused && keyOneEnabled) || (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)) {
-
-                if (!json_input['violations']['us-east-1'][user]) {
-                    json_input['violations']['us-east-1'][user] = {}
-                }
-                ;
-                if (!json_input['violations']['us-east-1'][user]['violations']) {
-                    json_input['violations']['us-east-1'][user]['violations'] = {}
-                }
-                ;
-                json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = Object.assign(ruleMeta[UNUSED_ACCESS_RULE]);
+                  if (!json_input['violations']['us-east-1'][user]) {
+                      json_input['violations']['us-east-1'][user] = {}
+                  }
+                  ;
+                  if (!json_input['violations']['us-east-1'][user]['violations']) {
+                      json_input['violations']['us-east-1'][user]['violations'] = {}
+                  }
+                  ;
+                  json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = Object.assign(ruleMeta[UNUSED_ACCESS_RULE]);
+              }
             }
           }
-        }
-    }
+      }
 
-    //if cis 1.12 wanted, the below will run
-    if  (alertListArray.indexOf('iam-root-access-key') > -1) {
-        const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
-        const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
+      //if cis 1.12 wanted, the below will run
+      if  (alertListArray.indexOf('iam-root-access-key') > -1) {
+          const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
+          const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
 
-        if ((keyOneEnabled || keyTwoEnabled)) {
+          if ((keyOneEnabled || keyTwoEnabled)) {
 
-            if (!json_input['violations']['us-east-1']["<root_account>"]) {
-                json_input['violations']['us-east-1']["<root_account>"] = {}
-            }
-            ;
-            if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
-                json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
-            }
-            ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = Object.assign(ruleMeta[ROOT_ACCESS_RULE]);
-        }
-    }
+              if (!json_input['violations']['us-east-1']["<root_account>"]) {
+                  json_input['violations']['us-east-1']["<root_account>"] = {}
+              }
+              ;
+              if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
+                  json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
+              }
+              ;
+              json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = Object.assign(ruleMeta[ROOT_ACCESS_RULE]);
+          }
+      }
 
-    //if cis 1.13 wanted, the below will run
-    if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
-        if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
+      //if cis 1.13 wanted, the below will run
+      if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
+          if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
 
-            if (!json_input['violations']['us-east-1']["<root_account>"]) {
-                json_input['violations']['us-east-1']["<root_account>"] = {}
-            }
-            ;
-            if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
-                json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
-            }
-            ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = Object.assign(ruleMeta[ROOT_MFA_RULE]);
-        }
-    }
+              if (!json_input['violations']['us-east-1']["<root_account>"]) {
+                  json_input['violations']['us-east-1']["<root_account>"] = {}
+              }
+              ;
+              if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
+                  json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
+              }
+              ;
+              json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = Object.assign(ruleMeta[ROOT_MFA_RULE]);
+          }
+      }
 
 
-    //if cis 1.23 wanted, the below will run
-    if  (alertListArray.indexOf('iam-initialization-access-key') > -1) {
-        for (var user in users) {
-          if (users[user].hasOwnProperty('violator_info')) {
-            var keyOneDate = users[user]['violator_info']['access_key_1_last_used_date'] == "N/A";
-            var keyTwoDate = users[user]['violator_info']['access_key_2_last_used_date'] == "N/A";
-            var keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true";
-            var keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true";
+      //if cis 1.23 wanted, the below will run
+      if  (alertListArray.indexOf('iam-initialization-access-key') > -1) {
+          for (var user in users) {
+            if (users[user].hasOwnProperty('violator_info')) {
+              var keyOneDate = users[user]['violator_info']['access_key_1_last_used_date'] == "N/A";
+              var keyTwoDate = users[user]['violator_info']['access_key_2_last_used_date'] == "N/A";
+              var keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true";
+              var keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true";
 
-            if ((keyOneDate && keyOneEnabled) || (keyTwoDate && keyTwoEnabled)) {
+              if ((keyOneDate && keyOneEnabled) || (keyTwoDate && keyTwoEnabled)) {
 
-                if (!json_input['violations']['us-east-1'][user]) {
-                    json_input['violations']['us-east-1'][user] = {}
-                }
-                ;
-                if (!json_input['violations']['us-east-1'][user]['violations']) {
-                    json_input['violations']['us-east-1'][user]['violations'] = {}
-                }
-                ;
-                json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = Object.assign(ruleMeta[INIT_ACCESS_RULE]);
+                  if (!json_input['violations']['us-east-1'][user]) {
+                      json_input['violations']['us-east-1'][user] = {}
+                  }
+                  ;
+                  if (!json_input['violations']['us-east-1'][user]['violations']) {
+                      json_input['violations']['us-east-1'][user]['violations'] = {}
+                  }
+                  ;
+                  json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = Object.assign(ruleMeta[INIT_ACCESS_RULE]);
+              }
             }
           }
-        }
-    }
+      }
 
-    //Strip internal violations
-    for (var user in users) {
-        var internal = users[user]['violations'].hasOwnProperty('iam-internal');
-        var single_violation = (Object.keys(users[user]['violations']).length === 1);
+      //Strip internal violations
+      for (var user in users) {
+          var internal = users[user]['violations'].hasOwnProperty('iam-internal');
+          var single_violation = (Object.keys(users[user]['violations']).length === 1);
 
-        if (internal && single_violation) {
-            delete json_input['violations']['us-east-1'][user];
-        }
-        else if (internal && !single_violation){
-            delete json_input['violations']['us-east-1'][user]['violations']['iam-internal'];
-        }
-    }
-}
+          if (internal && single_violation) {
+              delete json_input['violations']['us-east-1'][user];
+          }
+          else if (internal && !single_violation){
+              delete json_input['violations']['us-east-1'][user]['violations']['iam-internal'];
+          }
+      }
+  }
 
-setValueForNewJSONInput(json_input)
+  setValueForNewJSONInput(json_input)
 
-const violations = json_input['violations'];
-const report = JSON.stringify(violations)
+  const violations = json_input['violations'];
+  const report = JSON.stringify(violations)
 
-coreoExport('JSONReport', JSON.stringify(json_input));
-coreoExport('report', report);
+  coreoExport('JSONReport', JSON.stringify(json_input));
+  coreoExport('report', report);
 
-callback(violations);
-  EOH
+  callback(violations);
+    EOH
 end
 
 
