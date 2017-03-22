@@ -493,6 +493,26 @@ coreo_aws_rule "manual-ensure-security-questions" do
   id_map ""
 end
 
+coreo_aws_rule "enable-detailed-billing" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=44"
+  display_name "Enable Detailed Billing"
+  description "Detailed billing can help to bring attention to anomalous use of AWS resources"
+  category "Security"
+  suggested_action "Ensure that Detailed Billing has been enabled"
+  level "Warning"
+  meta_always_show_card "true"
+  meta_cis_id "1.17"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map ""
+end
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
