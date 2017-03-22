@@ -593,6 +593,26 @@ coreo_aws_rule "manual-resource-instance-access" do
   id_map ""
 end
 
+coreo_aws_rule "manual-full-privilege-user" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=69"
+  display_name "IAM Full Privileges"
+  description "IAM users should not be granted full privileges"
+  category "Security"
+  suggested_action "Ensure no IAM user has full '*' privileges"
+  level "Warning"
+  meta_always_show_card "true"
+  meta_cis_id "1.24"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map ""
+end
+
 
 
 coreo_uni_util_variables "iam-planwide" do
