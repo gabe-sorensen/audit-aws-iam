@@ -435,6 +435,24 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
+coreo_aws_rule "iam-mfa-password-holders" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "MFA for IAM Password Holders"
+  description "This rule checks that all IAM users with a password have MFA enabled"
+  category "Security"
+  suggested_action "Activate MFA for all users with a console password"
+  level "Warning"
+  meta_cis_id "1.2"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives ["credential_report","credential_report"]
+  audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
+  operators ["==", "=="]
+  raise_when [true, false]
+  id_map "object.content.user"
+end
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
