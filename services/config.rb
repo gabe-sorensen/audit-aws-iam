@@ -573,6 +573,27 @@ coreo_aws_rule "manual-security-contact" do
   id_map ""
 end
 
+coreo_aws_rule "manual-resource-instance-access" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=62"
+  display_name "IAM Instance Roles"
+  description "Proper usage of IAM roles reduces the risk of active, unrotated keys"
+  category "Security"
+  suggested_action "Ensure IAM instance roles are used for AWS resource access from instances"
+  level "Warning"
+  meta_always_show_card "true"
+  meta_cis_id "1.21"
+  meta_cis_scored "false"
+  meta_cis_level "2"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map ""
+end
+
+
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
