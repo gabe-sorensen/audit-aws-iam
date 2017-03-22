@@ -590,31 +590,30 @@ coreo_uni_util_jsrunner "cis-iam" do
   action :run
   data_type "json"
   provide_composite_access true
-  packages([
-               {
-                   :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.9.2"
-               },
-               ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
-  
-function copyPropForNewJsonInput() {
-    newJSONInput['composite name'] = json_input['composite name'];
-    newJSONInput['cloud account name'] = json_input['cloud account name'];
-    return newJSONInput;
-}
+
+  const ruleMetaJSON = {
+      'iam-unused-access': COMPOSITE::coreo_aws_rule.iam-unused-access.inputs,
+  };
+  const ruleInputsToKeep = ['service', 'category', 'link', 'display_name', 'suggested_action', 'description', 'level', 'meta_cis_id', 'meta_cis_scored', 'meta_cis_level', 'include_violations_in_count'];
+  const ruleMeta = {};
+
+  Object.keys(ruleMetaJSON).forEach(rule => {
+      const flattenedRule = {};
+      ruleMetaJSON[rule].forEach(input => {
+          if (ruleInputsToKeep.includes(input.name))
+              flattenedRule[input.name] = input.value;
+      })
+      ruleMeta[rule] = flattenedRule;
+  })
 
 let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
 let alertListArray = alertListToJSON.replace(/'/g, '"');
-const newJSONInput = json_input
-// newJSONinput = copyPropForNewJsonInput();
-// newJSONInput['violations'] = {}
-// newJSONInput['violations']['us-east-1'] = {}
 const users = json_input['violations']['us-east-1'];
 
-function setValueForNewJSONInput(json_input) {
+function setValueForNewJSONOutput(json_input) {
 
   const unusedCredsMetadata = {
         'service': 'iam',
@@ -685,12 +684,10 @@ function setValueForNewJSONInput(json_input) {
                 if (!json_input['violations']['us-east-1'][user]) {
                     json_input['violations']['us-east-1'][user] = {}
                 }
-                ;
                 if (!json_input['violations']['us-east-1'][user]['violations']) {
                     json_input['violations']['us-east-1'][user]['violations'] = {}
                 }
-                ;
-                json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = unusedCredsMetadata
+                json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = Object.assign(ruleMeta['iam-unused-access]');
             }
           }
         }
@@ -706,11 +703,9 @@ function setValueForNewJSONInput(json_input) {
             if (!json_input['violations']['us-east-1']["<root_account>"]) {
                 json_input['violations']['us-east-1']["<root_account>"] = {}
             }
-            ;
             if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
-            ;
             json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootAccessMetadata
         }
     }
@@ -722,11 +717,9 @@ function setValueForNewJSONInput(json_input) {
             if (!json_input['violations']['us-east-1']["<root_account>"]) {
                 json_input['violations']['us-east-1']["<root_account>"] = {}
             }
-            ;
             if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
-            ;
             json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootMFAMetadata
         }
     }
@@ -746,11 +739,9 @@ function setValueForNewJSONInput(json_input) {
                 if (!json_input['violations']['us-east-1'][user]) {
                     json_input['violations']['us-east-1'][user] = {}
                 }
-                ;
                 if (!json_input['violations']['us-east-1'][user]['violations']) {
                     json_input['violations']['us-east-1'][user]['violations'] = {}
                 }
-                ;
                 json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = initAccessMetadata
             }
           }
@@ -771,7 +762,7 @@ function setValueForNewJSONInput(json_input) {
     }
 }
 
-setValueForNewJSONInput(json_input)
+setValueForNewJSONOutput(json_input)
 
 const violations = json_input['violations'];
 const report = JSON.stringify(violations)
