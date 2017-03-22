@@ -306,7 +306,7 @@ coreo_aws_rule "iam-password-policy-symbol" do
   meta_cis_id "1.7"
   meta_cis_scored "true"
   meta_cis_level "1"
-  level "Manual"
+  level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
   audit_objects ["object.password_policy.require_symbols"]
