@@ -633,6 +633,25 @@ coreo_aws_rule "manual-appropriate-sns-subscribers" do
   id_map ""
 end
 
+coreo_aws_rule "manual-least-access-routing-tables" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=141"
+  display_name "Least Access Routing Tables"
+  description "Being highly selective in peering routing tables minimizes impact of potential breach"
+  category "Security"
+  suggested_action "Review and minimize routing table access regularly"
+  level "Warning"
+  meta_always_show_card "true"
+  meta_cis_id "4.5"
+  meta_cis_scored "false"
+  meta_cis_level "2"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map ""
+end
 
 
 coreo_uni_util_variables "iam-planwide" do
