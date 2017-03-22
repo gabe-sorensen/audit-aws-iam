@@ -536,14 +536,14 @@ end
 coreo_aws_rule "manual-contact-details" do
   action :define
   service :user
-  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=47"
-  display_name "Ensure Strategic IAM Roles"
-  description "Use IAM Master and Manager Roles to optimise security"
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=59"
+  display_name "Maintain Contact Details"
+  description "Contact details associated with the AWS account may be used by AWS staff to contact the account owner"
   category "Security"
-  suggested_action "Implement IAM roles as set out in the CIS document"
+  suggested_action "Ensure that contact details associated with AWS account are current"
   level "Warning"
   meta_always_show_card "true"
-  meta_cis_id "1.18"
+  meta_cis_id "1.19"
   meta_cis_scored "true"
   meta_cis_level "1"
   objectives [""]
@@ -553,6 +553,25 @@ coreo_aws_rule "manual-contact-details" do
   id_map ""
 end
 
+coreo_aws_rule "manual-security-contact" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=61"
+  display_name "Security Contact Details"
+  description "Contact details may be provided to the AWS account for your security team, allowing AWS staff to contact them when required"
+  category "Security"
+  suggested_action "Ensure that security contact information is provided in your AWS account"
+  level "Warning"
+  meta_always_show_card "true"
+  meta_cis_id "1.20"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map ""
+end
 
 
 coreo_uni_util_variables "iam-planwide" do
