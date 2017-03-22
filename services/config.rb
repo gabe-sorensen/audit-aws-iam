@@ -473,6 +473,26 @@ coreo_aws_rule "iam-mfa-password-holders" do
   id_map "object.content.user"
 end
 
+coreo_aws_rule "manual-ensure-security-questions" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=40"
+  display_name "Ensure Account Security Questions"
+  description "Security Questions improve account security"
+  category "Security"
+  suggested_action "Ensure that the AWS account has security questions registered"
+  level "Warning"
+  meta_always_show_card "true"
+  meta_cis_id "1.15"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map ""
+end
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
