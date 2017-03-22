@@ -493,7 +493,7 @@ coreo_aws_rule "manual-ensure-security-questions" do
   id_map ""
 end
 
-coreo_aws_rule "enable-detailed-billing" do
+coreo_aws_rule "manual-detailed-billing" do
   action :define
   service :user
   link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=44"
@@ -513,7 +513,7 @@ coreo_aws_rule "enable-detailed-billing" do
   id_map ""
 end
 
-coreo_aws_rule "ensure-strategic-iam-roles" do
+coreo_aws_rule "manual-strategic-iam-roles" do
   action :define
   service :user
   link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=47"
