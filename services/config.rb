@@ -93,25 +93,23 @@ coreo_aws_rule "iam-multiple-keys" do
   category "Access"
   suggested_action "Remove excess access keys"
   level "Warning"
-  objectives ["users", "access_keys"]
-  call_modifiers [{}, {:user_name => "users.user_name"}]
-  formulas ["", "count"]
-  audit_objects ["", "object.access_key_metadata"]
-  operators ["", ">"]
-  raise_when ["", 1]
-  id_map "modifiers.user_name"
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.access_key_1_active", "object.content.access_key_2_active"]
+  operators ["=~", "=~" ]
+  raise_when [/true/i, /true/i]
 end
 
 coreo_aws_rule "iam-inactive-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-inactive-key-no-rotation.html"
-  display_name "Inactive user Access Key not rotated"
+  display_name "User Has Access Keys Inactive and Un-rotated"
   description "User has inactive keys that have not been rotated in the last 90 days."
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
-  id_map "object.access_key_metadata.access_key_id"
+  id_map "modifier.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
@@ -123,7 +121,7 @@ coreo_aws_rule "iam-active-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-active-key-no-rotation.html"
-  display_name "Active user Access Key not rotated"
+  display_name "User Has Access Keys Active and Un-rotated"
   description "User has active keys that have not been rotated in the last 90 days"
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
@@ -199,13 +197,11 @@ coreo_aws_rule "iam-no-mfa" do
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for every cloud user."
   level "Critical"
-  id_map "modifiers.user_name"
-  objectives ["users", "mfa_devices"]
-  formulas ["", "count"]
-  call_modifiers [{}, {:user_name => "users.user_name"}]
-  audit_objects ["", "object.mfa_devices"]
-  operators ["", "<"]
-  raise_when ["", 1]
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
+  operators ["=~", "=~" ]
+  raise_when [/true/i, /false/i]
 end
 
 coreo_aws_rule "iam-root-no-mfa" do
@@ -356,39 +352,6 @@ coreo_aws_rule "iam-password-policy-min-length" do
   raise_when [14]
 end
 
-coreo_aws_rule "iam-root-active-key" do
-  action :nothing
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
-  display_name "DEPRICATED - Root user has active Access Key"
-  description "DEPRICATED - Root user has an Access Key that is active."
-  category "Security"
-  suggested_action "DEPRICATED - Replace the root Access Key with an IAM user access key, and then disable and remove the root access key."
-  level "Critical"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_1_active"]
-  operators ["=="]
-  raise_when ["true"]
-end
-
-coreo_aws_rule "iam-root-access-key-1" do
-  action :define
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
-  display_name "Root Access Key Exists - Key #1"
-  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
-  category "Security"
-  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
-  level "Warning"
-  id_map "object.content.user"
-  objectives ["credential_report", "credential_report"]
-  audit_objects ["object.content.user", "object.content.access_key_1_active"]
-  operators ["==", "=="]
-  raise_when ["<root_account>", true]
-end
-
 coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
@@ -461,7 +424,7 @@ coreo_aws_rule "iam-user-password-not-used" do
   link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
   include_violations_in_count false
   display_name "IAM User Password Not Used Recently"
-  description "Lists all IAM users whose password has not used in {X} days"
+  description "Lists all IAM users whose password has not used in ${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED} days"
   category "Security"
   suggested_action "Consider deleting unused or unnecessary IAM users"
   level "Informational"
@@ -489,6 +452,25 @@ coreo_aws_rule "iam-active-root-user" do
   audit_objects ["object.content.user"]
   operators ["=="]
   raise_when ["<root_account>"]
+end
+
+coreo_aws_rule "iam-mfa-password-holders" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "MFA for IAM Password Holders"
+  description "This rule checks that all IAM users with a password have MFA enabled"
+  category "Security"
+  suggested_action "Activate MFA for all users with a console password"
+  level "Warning"
+  meta_cis_id "1.2"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives ["credential_report","credential_report"]
+  audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
+  operators ["==", "=="]
+  raise_when [true, false]
+  id_map "object.content.user"
 end
 
 coreo_uni_util_variables "iam-planwide" do
@@ -525,7 +507,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.9.2"
+                   :version => "1.10.7-9"
                },
                {
                    :name => "js-yaml",
