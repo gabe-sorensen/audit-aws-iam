@@ -472,11 +472,11 @@ coreo_aws_rule "iam-unused-access" do
   action :define
   service :user
   include_violations_in_count false   
-  display_name "IAM Root User Activity"
-  description "This rule performs an inventory on all users using credential report"
+  display_name "IAM inactive credentials"
+  description "This rule checks for credentials that have been unused for 90 days"
   category "Inventory"
   suggested_action "User credentials that have not been used in 90 days should be removed or deactivated"
-  level "Informational"
+  level "Warning"
   meta_cis_id "1.3"
   meta_cis_scored "true"
   meta_cis_level "1"
@@ -495,7 +495,7 @@ coreo_aws_rule "iam-root-access_key" do
   description "This rule checks for root access keys. Root account should not have access keys enabled"
   category "Inventory"
   suggested_action "Deactivate root access keys"
-  level "Informational"
+  level "Warning"
   meta_cis_id "1.12"
   meta_cis_scored "true"
   meta_cis_level "1"
@@ -514,7 +514,7 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for the root cloud user."
-  level "Emergency"
+  level "Warning"
   meta_cis_id "1.13"
   meta_cis_scored "true"
   meta_cis_level "1"
@@ -528,11 +528,11 @@ end
 coreo_aws_rule "iam-initialization-access-key" do
   action :define
   service :user
-  display_name "IAM Root Access Key"
-  description "This rule checks for root access keys. Root account should not have access keys enabled"
+  display_name "IAM Initialization Access"
+  description "This rule checks for access keys that were activated during initialization"
   category "Inventory"
-  suggested_action "Deactivate root access keys"
-  level "Internal"
+  suggested_action "Do not establish access keys during initialization of user"
+  level "Warning"
   meta_cis_id "1.23"
   meta_cis_scored "false"
   meta_cis_level "1"
