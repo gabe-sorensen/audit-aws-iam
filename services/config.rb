@@ -596,10 +596,6 @@ coreo_uni_util_jsrunner "cis-iam" do
 
 let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
 let alertListArray = alertListToJSON.replace(/'/g, '"');
-const newJSONInput = json_input
-// newJSONinput = copyPropForNewJsonInput();
-// newJSONInput['violations'] = {}
-// newJSONInput['violations']['us-east-1'] = {}
 const users = json_input['violations']['us-east-1'];
 
 function setValueForNewJSONInput(json_input) {
