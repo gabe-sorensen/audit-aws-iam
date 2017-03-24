@@ -232,6 +232,10 @@ coreo_aws_rule "iam-root-active-password" do
   description "The root user has been logging in using a password."
   category "Security"
   suggested_action "Re-set your root account password, don't log in to your root account, and secure root account password in a safe place."
+  meta_cis_id "1.01"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=11"
   level "Critical"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
