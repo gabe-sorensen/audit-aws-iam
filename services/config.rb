@@ -126,6 +126,9 @@ coreo_aws_rule "iam-active-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
+  meta_cis_id "1.4"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   id_map "modifiers.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
@@ -434,6 +437,23 @@ coreo_aws_rule "iam-user-password-not-used" do
   raise_when ['${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED}.days.ago']
   id_map "object.users.user_name"
 end
+
+coreo_aws_rule "iam-no-hardware-mfa-root" do
+  action :define
+  service :iam
+  display_name "IAM has no root MFA hardware devices"
+  description "Triggers if there is no hardware MFA Device for root"
+  category "Security"
+  suggested_action "Establish a hardware MFA device for root"
+  meta_cis_id "1.14"
+  meta_cis_scored "true"
+  meta_cis_level "2"
+  level "Critical"
+  objectives ["virtual_mfa_devices"]
+  audit_objects ["object.virtual_mfa_devices.serial_number"]
+  operators ["=="]
+  raise_when ["arn:aws:iam::${AUDIT_AWS_IAM_ACCOUNT_NUMBER}:mfa/root-account-mfa-device"]
+  id_map "object.virtual_mfa_devices.user.user_name"
 
 coreo_aws_rule "iam-active-root-user" do
   action :define
