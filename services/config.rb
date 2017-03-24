@@ -493,6 +493,187 @@ coreo_aws_rule "iam-mfa-password-holders" do
   id_map "object.content.user"
 end
 
+coreo_aws_rule "manual-ensure-security-questions" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=40"
+  display_name "Ensure Account Security Questions"
+  description "Security Questions improve account security"
+  category "Security"
+  suggested_action "Ensure that the AWS account has security questions registered"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.15"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-detailed-billing" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=44"
+  display_name "Enable Detailed Billing"
+  description "Detailed billing can help to bring attention to anomalous use of AWS resources"
+  category "Security"
+  suggested_action "Ensure that Detailed Billing has been enabled"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.17"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-strategic-iam-roles" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=47"
+  display_name "Ensure Strategic IAM Roles"
+  description "Use IAM Master and Manager Roles to optimise security"
+  category "Security"
+  suggested_action "Implement IAM roles as set out in the CIS document"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.18"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-contact-details" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=59"
+  display_name "Maintain Contact Details"
+  description "Contact details associated with the AWS account may be used by AWS staff to contact the account owner"
+  category "Security"
+  suggested_action "Ensure that contact details associated with AWS account are current"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.19"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-security-contact" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=61"
+  display_name "Security Contact Details"
+  description "Contact details may be provided to the AWS account for your security team, allowing AWS staff to contact them when required"
+  category "Security"
+  suggested_action "Ensure that security contact information is provided in your AWS account"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.20"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-resource-instance-access" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=62"
+  display_name "IAM Instance Roles"
+  description "Proper usage of IAM roles reduces the risk of active, unrotated keys"
+  category "Security"
+  suggested_action "Ensure IAM instance roles are used for AWS resource access from instances"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.21"
+  meta_cis_scored "false"
+  meta_cis_level "2"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-full-privilege-user" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=69"
+  display_name "IAM Full Privileges"
+  description "IAM users should not be granted full privileges"
+  category "Security"
+  suggested_action "Ensure no IAM user has full '*' privileges"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.24"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-appropriate-sns-subscribers" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=130"
+  display_name "SNS Appropriate Subscribers"
+  description "Unintended SNS subscribers may pose a security risk"
+  category "Security"
+  suggested_action "Regularly ensure that only appropriate subscribers exist in SNS"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "3.15"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-least-access-routing-tables" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=141"
+  display_name "Least Access Routing Tables"
+  description "Being highly selective in peering routing tables minimizes impact of potential breach"
+  category "Security"
+  suggested_action "Review and minimize routing table access regularly"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "4.5"
+  meta_cis_scored "false"
+  meta_cis_level "2"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
