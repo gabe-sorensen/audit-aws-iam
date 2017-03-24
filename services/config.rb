@@ -126,6 +126,9 @@ coreo_aws_rule "iam-active-key-no-rotation" do
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
+  meta_cis_id "1.4"
+  meta_cis_scored "true"
+  meta_cis_level "1"
   id_map "modifiers.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
@@ -352,39 +355,6 @@ coreo_aws_rule "iam-password-policy-min-length" do
   raise_when [14]
 end
 
-coreo_aws_rule "iam-root-active-key" do
-  action :nothing
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
-  display_name "DEPRICATED - Root user has active Access Key"
-  description "DEPRICATED - Root user has an Access Key that is active."
-  category "Security"
-  suggested_action "DEPRICATED - Replace the root Access Key with an IAM user access key, and then disable and remove the root access key."
-  level "Critical"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_1_active"]
-  operators ["=="]
-  raise_when ["true"]
-end
-
-coreo_aws_rule "iam-root-access-key-1" do
-  action :define
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
-  display_name "Root Access Key Exists - Key #1"
-  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
-  category "Security"
-  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
-  level "Warning"
-  id_map "object.content.user"
-  objectives ["credential_report", "credential_report"]
-  audit_objects ["object.content.user", "object.content.access_key_1_active"]
-  operators ["==", "=="]
-  raise_when ["<root_account>", true]
-end
-
 coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
@@ -422,7 +392,7 @@ coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   service :iam
   display_name "User may have been exposed to the CloudBleed issue"
   description "Cloudbleed is the latest internet bug that puts users private information in jeopardy. News of the bug broke late on Feb 24, 2017,"
-  link "https://www.cnet.com/how-to/cloudbleed-bug-everything-you-need-to-know/"
+  link "http://kb.cloudcoreo.com/mydoc_iam-cloudbleed-password-not-rotated.html"
   category "Security"
   suggested_action "Users should be asked to rotate their passwords after February 25, 2017"
   level "Critical"
@@ -430,7 +400,7 @@ coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   objectives ["credential_report", "credential_report", "credential_report"]
   audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
   operators ["!=", "!=", "<"]
-  raise_when ["not_supported", "N/A", "2017-02-25 00:00:00 -0800"]
+  raise_when ["not_supported", "N/A", "2017-02-21 16:00:00 -0800"]
 end
 
 coreo_aws_rule "iam-support-role" do
@@ -487,16 +457,94 @@ coreo_aws_rule "iam-unused-access" do
   id_map "static.no_op"
 end
 
-coreo_aws_rule "iam-root-access_key" do
+
+coreo_aws_rule "iam-no-hardware-mfa-root" do
+  action :define
+  service :iam
+  display_name "IAM has no root MFA hardware devices"
+  description "Triggers if there is no hardware MFA Device for root"
+  category "Security"
+  suggested_action "Establish a hardware MFA device for root"
+  meta_cis_id "1.14"
+  meta_cis_scored "true"
+  meta_cis_level "2"
+  level "Critical"
+  objectives ["virtual_mfa_devices"]
+  audit_objects ["object.virtual_mfa_devices.serial_number"]
+  operators ["=="]
+  raise_when ["arn:aws:iam::${AUDIT_AWS_IAM_ACCOUNT_NUMBER}:mfa/root-account-mfa-device"]
+  id_map "object.virtual_mfa_devices.user.user_name"
+end
+
+coreo_aws_rule "iam-active-root-user" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM Root User Activity"
+  description "This rule performs an audit on root user activity"
+  category "Inventory"
+  suggested_action "Root user should not be active, when possible. Additionally, ensure that CIS rule 3.3 is passing for this rule to pass"
+  level "Informational"
+  meta_cis_id "1.1"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=="]
+  raise_when ["<root_account>"]
+end
+
+coreo_aws_rule "iam-mfa-password-holders" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "MFA for IAM Password Holders"
+  description "This rule checks that all IAM users with a password have MFA enabled"
+  category "Security"
+  suggested_action "Activate MFA for all users with a console password"
+  level "Warning"
+  meta_cis_id "1.2"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives ["credential_report","credential_report"]
+  audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
+  operators ["==", "=="]
+  raise_when [true, false]
+  id_map "object.content.user"
+end
+
+coreo_aws_rule "manual-ensure-security-questions" do
   action :define
   service :user
-  include_violations_in_count false   
-  display_name "IAM Root Access Key"
-  description "This rule checks for root access keys. Root account should not have access keys enabled"
-  category "Inventory"
-  suggested_action "Deactivate root access keys"
-  level "Warning"
-  meta_cis_id "1.12"
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=40"
+  display_name "Ensure Account Security Questions"
+  description "Security Questions improve account security"
+  category "Security"
+  suggested_action "Ensure that the AWS account has security questions registered"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.15"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-detailed-billing" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=44"
+  display_name "Enable Detailed Billing"
+  description "Detailed billing can help to bring attention to anomalous use of AWS resources"
+  category "Security"
+  suggested_action "Ensure that Detailed Billing has been enabled"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.17"
   meta_cis_scored "true"
   meta_cis_level "1"
   objectives [""]
@@ -516,6 +564,24 @@ coreo_aws_rule "iam-root-no-mfa-cis" do
   suggested_action "Enable Multi-Factor Authentication for the root cloud user."
   level "Warning"
   meta_cis_id "1.13"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-strategic-iam-roles" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=47"
+  display_name "Ensure Strategic IAM Roles"
+  description "Use IAM Master and Manager Roles to optimise security"
+  category "Security"
+  suggested_action "Implement IAM roles as set out in the CIS document"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.18"
   meta_cis_scored "true"
   meta_cis_level "1"
   objectives [""]
@@ -535,6 +601,85 @@ coreo_aws_rule "iam-initialization-access-key" do
   level "Warning"
   meta_cis_id "1.23"
   meta_cis_scored "false"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-contact-details" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=59"
+  display_name "Maintain Contact Details"
+  description "Contact details associated with the AWS account may be used by AWS staff to contact the account owner"
+  category "Security"
+  suggested_action "Ensure that contact details associated with AWS account are current"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.19"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-security-contact" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=61"
+  display_name "Security Contact Details"
+  description "Contact details may be provided to the AWS account for your security team, allowing AWS staff to contact them when required"
+  category "Security"
+  suggested_action "Ensure that security contact information is provided in your AWS account"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.20"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-resource-instance-access" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=62"
+  display_name "IAM Instance Roles"
+  description "Proper usage of IAM roles reduces the risk of active, unrotated keys"
+  category "Security"
+  suggested_action "Ensure IAM instance roles are used for AWS resource access from instances"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.21"
+  meta_cis_scored "false"
+  meta_cis_level "2"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-full-privilege-user" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=69"
+  display_name "IAM Full Privileges"
+  description "IAM users should not be granted full privileges"
+  category "Security"
+  suggested_action "Ensure no IAM user has full '*' privileges"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "1.24"
+  meta_cis_scored "true"
   meta_cis_level "1"
   objectives [""]
   audit_objects [""]
@@ -559,6 +704,46 @@ coreo_aws_rule "iam-internal" do
   audit_objects ["object.content.user"]
   operators ["=~"]
   raise_when [//]
+end
+
+coreo_aws_rule "manual-appropriate-sns-subscribers" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=130"
+  display_name "SNS Appropriate Subscribers"
+  description "Unintended SNS subscribers may pose a security risk"
+  category "Security"
+  suggested_action "Regularly ensure that only appropriate subscribers exist in SNS"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "3.15"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "manual-least-access-routing-tables" do
+  action :define
+  service :user
+  link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=141"
+  display_name "Least Access Routing Tables"
+  description "Being highly selective in peering routing tables minimizes impact of potential breach"
+  category "Security"
+  suggested_action "Review and minimize routing table access regularly"
+  level "Informational"
+  meta_always_show_card "true"
+  meta_cis_id "4.5"
+  meta_cis_scored "false"
+  meta_cis_level "2"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [""]
+  id_map "static.no_op"
 end
 
 coreo_uni_util_variables "iam-planwide" do
