@@ -438,6 +438,26 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
+coreo_aws_rule "iam-unused-access" do
+  action :define
+  service :user
+  include_violations_in_count false   
+  display_name "IAM inactive credentials"
+  description "This rule checks for credentials that have been unused for 90 days"
+  category "Inventory"
+  suggested_action "User credentials that have not been used in 90 days should be removed or deactivated"
+  level "Warning"
+  meta_cis_id "1.3"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map "static.no_op"
+end
+
+
 coreo_aws_rule "iam-no-hardware-mfa-root" do
   action :define
   service :iam
@@ -454,6 +474,7 @@ coreo_aws_rule "iam-no-hardware-mfa-root" do
   operators ["=="]
   raise_when ["arn:aws:iam::${AUDIT_AWS_IAM_ACCOUNT_NUMBER}:mfa/root-account-mfa-device"]
   id_map "object.virtual_mfa_devices.user.user_name"
+end
 
 coreo_aws_rule "iam-active-root-user" do
   action :define
@@ -529,7 +550,24 @@ coreo_aws_rule "manual-detailed-billing" do
   objectives [""]
   audit_objects [""]
   operators [""]
-  raise_when [""]
+  raise_when [true]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "iam-root-no-mfa-cis" do
+  action :define
+  service :user
+  link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
+  display_name "Multi-Factor Authentication not enabled for root account"
+  description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
+  category "Security"
+  suggested_action "Enable Multi-Factor Authentication for the root cloud user."
+  level "Warning"
+  meta_cis_id "1.13"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
   id_map "static.no_op"
 end
 
@@ -549,7 +587,24 @@ coreo_aws_rule "manual-strategic-iam-roles" do
   objectives [""]
   audit_objects [""]
   operators [""]
-  raise_when [""]
+  raise_when [true]
+  id_map "static.no_op"
+end
+
+coreo_aws_rule "iam-initialization-access-key" do
+  action :define
+  service :user
+  display_name "IAM Initialization Access"
+  description "This rule checks for access keys that were activated during initialization"
+  category "Inventory"
+  suggested_action "Do not establish access keys during initialization of user"
+  level "Warning"
+  meta_cis_id "1.23"
+  meta_cis_scored "false"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
   id_map "static.no_op"
 end
 
@@ -629,8 +684,26 @@ coreo_aws_rule "manual-full-privilege-user" do
   objectives [""]
   audit_objects [""]
   operators [""]
-  raise_when [""]
+  raise_when [true]
   id_map "static.no_op"
+end
+
+coreo_aws_rule "iam-internal" do
+  action :define
+  service :iam
+  display_name "IAM Root Access Key"
+  description "This rule checks for root access keys. Root account should not have access keys enabled"
+  category "Internal"
+  suggested_action "Ignore"
+  level "Internal"
+  meta_cis_id "1.23"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=~"]
+  raise_when [//]
 end
 
 coreo_aws_rule "manual-appropriate-sns-subscribers" do
@@ -673,7 +746,6 @@ coreo_aws_rule "manual-least-access-routing-tables" do
   id_map "static.no_op"
 end
 
-
 coreo_uni_util_variables "iam-planwide" do
   action :set
   variables([
@@ -684,13 +756,11 @@ coreo_uni_util_variables "iam-planwide" do
             ])
 end
 
-
 coreo_aws_rule_runner "advise-iam" do
   service :iam
   action :run
-  rules ${AUDIT_AWS_IAM_ALERT_LIST}
+  rules ${AUDIT_AWS_IAM_ALERT_LIST}.push("iam-internal")
 end
-
 
 coreo_uni_util_variables "iam-update-planwide-1" do
   action :set
@@ -698,6 +768,219 @@ coreo_uni_util_variables "iam-update-planwide-1" do
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.report'},
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.number_violations' => 'COMPOSITE::coreo_aws_rule_runner.advise-iam.number_violations'},
 
+            ])
+end
+
+coreo_uni_util_jsrunner "cis-iam" do
+  action :run
+  data_type "json"
+  provide_composite_access true
+  json_input '{ "composite name":"PLAN::stack_name",
+                "violations":COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
+  function <<-EOH
+
+  const ruleMetaJSON = {
+       'iam-unused-access': COMPOSITE::coreo_aws_rule.iam-unused-access.inputs,
+       'iam-root-access_key': COMPOSITE::coreo_aws_rule.iam-root-access_key.inputs,
+       'iam-root-no-mfa-cis': COMPOSITE::coreo_aws_rule.iam-root-no-mfa-cis.inputs,
+       'iam-initialization-access-key': COMPOSITE::coreo_aws_rule.iam-initialization-access-key.inputs
+   };
+   const ruleInputsToKeep = ['service', 'category', 'link', 'display_name', 'suggested_action', 'description', 'level', 'meta_cis_id', 'meta_cis_scored', 'meta_cis_level', 'include_violations_in_count'];
+   const ruleMeta = {};
+ 
+   Object.keys(ruleMetaJSON).forEach(rule => {
+       const flattenedRule = {};
+       ruleMetaJSON[rule].forEach(input => {
+           if (ruleInputsToKeep.includes(input.name))
+               flattenedRule[input.name] = input.value;
+       })
+       ruleMeta[rule] = flattenedRule;
+   })
+
+   const UNUSED_ACCESS_RULE = 'iam-unused-access'
+   const ROOT_ACCESS_RULE = 'iam-root-access_key'
+   const ROOT_MFA_RULE = 'iam-root-no-mfa-cis'
+   const INIT_ACCESS_RULE = 'iam-initialization-access-key'
+
+let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
+let alertListArray = alertListToJSON.replace(/'/g, '"');
+const users = json_input['violations']['us-east-1'];
+
+function setValueForNewJSONInput(json_input) {
+
+  const unusedCredsMetadata = {
+        'service': 'iam',
+        'display_name': 'IAM Unused credentials',
+        'description': 'Checks for unused credentials',
+        'category': 'Audit',
+        'suggested_action': 'User credentials that have not been used in 90 days should be removed or deactivated',
+        'level': 'Warning',
+        'meta_cis_id': '1.3',
+        'meta_cis_scored': 'true',
+        'meta_cis_level': '1'
+  };
+
+    const rootMFAMetadata = {
+        'service': 'iam',
+        'display_name': 'Root MFA disabled',
+        'description': 'Checks root MFA status',
+        'category': 'Audit',
+        'suggested_action': 'Root MFA should be enabled',
+        'level': 'Warning',
+        'meta_cis_id': '1.13',
+        'meta_cis_scored': 'true',
+        'meta_cis_level': '1'
+    };
+
+    const rootAccessMetadata = {
+        'service': 'iam',
+        'display_name': 'IAM Root Access Key',
+        'description': 'IAM Root Access Key',
+        'category': 'Audit',
+        'suggested_action': 'IAM Root Access Key',
+        'level': 'Warning',
+        'meta_cis_id': '1.12',
+        'meta_cis_scored': 'true',
+        'meta_cis_level': '1'
+    };
+
+    const initAccessMetadata = {
+        'service': 'iam',
+        'display_name': 'IAM Init Access',
+        'description': 'IAM Init Access Key',
+        'category': 'Audit',
+        'suggested_action': 'IAM Init Access Key',
+        'level': 'Warning',
+        'meta_cis_id': '1.23',
+        'meta_cis_scored': 'false',
+        'meta_cis_level': '1'
+    };
+
+    //if cis 1.3 wanted, the below will run
+    if  (alertListArray.indexOf('iam-unused-access') > -1) {
+        for (var user in users) {
+          if (users[user].hasOwnProperty('violator_info')) {
+            var keyOneDate = new Date(users[user]['violator_info']['access_key_1_last_used_date']);
+            var keyTwoDate = new Date(users[user]['violator_info']['access_key_2_last_used_date']);
+            var passwordUsedDate = new Date(users[user]['violator_info']['password_last_used']);
+            const ninetyDaysAgo = (new Date()) - 1000 * 60 * 60 * 24 * 90
+
+            const keyOneUnused = keyOneDate < ninetyDaysAgo
+            const keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true"
+            const keyTwoUnused = keyTwoDate < ninetyDaysAgo
+            const keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true"
+            const passwordUnused = passwordUsedDate < ninetyDaysAgo
+            const passwordEnabled = users[user]['violator_info']['password_enabled'] == "true"
+
+            if ((keyOneUnused && keyOneEnabled) || (keyTwoEnabled && keyTwoUnused) || (passwordEnabled && passwordUnused)) {
+
+                if (!json_input['violations']['us-east-1'][user]) {
+                    json_input['violations']['us-east-1'][user] = {}
+                }
+                ;
+                if (!json_input['violations']['us-east-1'][user]['violations']) {
+                    json_input['violations']['us-east-1'][user]['violations'] = {}
+                }
+                ;
+                json_input['violations']['us-east-1'][user]['violations']['iam-unused-access'] = Object.assign(ruleMeta[UNUSED_ACCESS_RULE]);
+            }
+          }
+        }
+    }
+
+    //if cis 1.12 wanted, the below will run
+    if  (alertListArray.indexOf('iam-root-access-key') > -1) {
+        const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
+        const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
+
+        if ((keyOneEnabled || keyTwoEnabled)) {
+
+            if (!json_input['violations']['us-east-1']["<root_account>"]) {
+                json_input['violations']['us-east-1']["<root_account>"] = {}
+            }
+            ;
+            if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
+                json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
+            }
+            ;
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = Object.assign(ruleMeta[ROOT_ACCESS_RULE]);
+        }
+    }
+
+    //if cis 1.13 wanted, the below will run
+    if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
+        if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
+
+            if (!json_input['violations']['us-east-1']["<root_account>"]) {
+                json_input['violations']['us-east-1']["<root_account>"] = {}
+            }
+            ;
+            if (!json_input['violations']['us-east-1']["<root_account>"]['violations']) {
+                json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
+            }
+            ;
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = Object.assign(ruleMeta[ROOT_MFA_RULE]);
+        }
+    }
+
+
+    //if cis 1.23 wanted, the below will run
+    if  (alertListArray.indexOf('iam-initialization-access-key') > -1) {
+        for (var user in users) {
+          if (users[user].hasOwnProperty('violator_info')) {
+            var keyOneDate = users[user]['violator_info']['access_key_1_last_used_date'] == "N/A";
+            var keyTwoDate = users[user]['violator_info']['access_key_2_last_used_date'] == "N/A";
+            var keyOneEnabled = users[user]['violator_info']['access_key_1_active'] == "true";
+            var keyTwoEnabled = users[user]['violator_info']['access_key_2_active'] == "true";
+
+            if ((keyOneDate && keyOneEnabled) || (keyTwoDate && keyTwoEnabled)) {
+
+                if (!json_input['violations']['us-east-1'][user]) {
+                    json_input['violations']['us-east-1'][user] = {}
+                }
+                ;
+                if (!json_input['violations']['us-east-1'][user]['violations']) {
+                    json_input['violations']['us-east-1'][user]['violations'] = {}
+                }
+                ;
+                json_input['violations']['us-east-1'][user]['violations']['iam-initialization-access-key'] = Object.assign(ruleMeta[INIT_ACCESS_RULE]);
+            }
+          }
+        }
+    }
+
+    //Strip internal violations
+    for (var user in users) {
+        var internal = users[user]['violations'].hasOwnProperty('iam-internal');
+        var single_violation = (Object.keys(users[user]['violations']).length === 1);
+
+        if (internal && single_violation) {
+            delete json_input['violations']['us-east-1'][user];
+        }
+        else if (internal && !single_violation){
+            delete json_input['violations']['us-east-1'][user]['violations']['iam-internal'];
+        }
+    }
+}
+
+setValueForNewJSONInput(json_input)
+
+const violations = json_input['violations'];
+const report = JSON.stringify(violations)
+
+coreoExport('JSONReport', JSON.stringify(json_input));
+coreoExport('report', report);
+
+callback(violations);
+  EOH
+end
+
+
+coreo_uni_util_variables "iam-update-planwide-4" do
+  action :set
+  variables([
+                {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.cis-iam.JSONReport'},
+                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.cis-iam.report'},
             ])
 end
 
