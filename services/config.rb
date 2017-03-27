@@ -808,54 +808,6 @@ const users = json_input['violations']['us-east-1'];
 
 function setValueForNewJSONInput(json_input) {
 
-  const unusedCredsMetadata = {
-        'service': 'iam',
-        'display_name': 'IAM Unused credentials',
-        'description': 'Checks for unused credentials',
-        'category': 'Audit',
-        'suggested_action': 'User credentials that have not been used in 90 days should be removed or deactivated',
-        'level': 'Warning',
-        'meta_cis_id': '1.3',
-        'meta_cis_scored': 'true',
-        'meta_cis_level': '1'
-  };
-
-    const rootMFAMetadata = {
-        'service': 'iam',
-        'display_name': 'Root MFA disabled',
-        'description': 'Checks root MFA status',
-        'category': 'Audit',
-        'suggested_action': 'Root MFA should be enabled',
-        'level': 'Warning',
-        'meta_cis_id': '1.13',
-        'meta_cis_scored': 'true',
-        'meta_cis_level': '1'
-    };
-
-    const rootAccessMetadata = {
-        'service': 'iam',
-        'display_name': 'IAM Root Access Key',
-        'description': 'IAM Root Access Key',
-        'category': 'Audit',
-        'suggested_action': 'IAM Root Access Key',
-        'level': 'Warning',
-        'meta_cis_id': '1.12',
-        'meta_cis_scored': 'true',
-        'meta_cis_level': '1'
-    };
-
-    const initAccessMetadata = {
-        'service': 'iam',
-        'display_name': 'IAM Init Access',
-        'description': 'IAM Init Access Key',
-        'category': 'Audit',
-        'suggested_action': 'IAM Init Access Key',
-        'level': 'Warning',
-        'meta_cis_id': '1.23',
-        'meta_cis_scored': 'false',
-        'meta_cis_level': '1'
-    };
-
     //if cis 1.3 wanted, the below will run
     if  (alertListArray.indexOf('iam-unused-access') > -1) {
         for (var user in users) {
