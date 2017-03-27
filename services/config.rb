@@ -93,25 +93,23 @@ coreo_aws_rule "iam-multiple-keys" do
   category "Access"
   suggested_action "Remove excess access keys"
   level "Warning"
-  objectives ["users", "access_keys"]
-  call_modifiers [{}, {:user_name => "users.user_name"}]
-  formulas ["", "count"]
-  audit_objects ["", "object.access_key_metadata"]
-  operators ["", ">"]
-  raise_when ["", 1]
-  id_map "modifiers.user_name"
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.access_key_1_active", "object.content.access_key_2_active"]
+  operators ["=~", "=~" ]
+  raise_when [/true/i, /true/i]
 end
 
 coreo_aws_rule "iam-inactive-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-inactive-key-no-rotation.html"
-  display_name "Inactive user Access Key not rotated"
+  display_name "User Has Access Keys Inactive and Un-rotated"
   description "User has inactive keys that have not been rotated in the last 90 days."
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
   level "Critical"
-  id_map "object.access_key_metadata.access_key_id"
+  id_map "modifier.user_name"
   objectives ["users", "access_keys", "access_keys"]
   audit_objects ["", "access_key_metadata.status", "access_key_metadata.create_date"]
   call_modifiers [{}, {:user_name => "users.user_name"}, {:user_name => "users.user_name"}]
@@ -123,10 +121,14 @@ coreo_aws_rule "iam-active-key-no-rotation" do
   action :define
   service :iam
   link "http://kb.cloudcoreo.com/mydoc_iam-active-key-no-rotation.html"
-  display_name "Active user Access Key not rotated"
+  display_name "User Has Access Keys Active and Un-rotated"
   description "User has active keys that have not been rotated in the last 90 days"
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
+  meta_cis_id "1.04"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=18"
   level "Critical"
   id_map "modifiers.user_name"
   objectives ["users", "access_keys", "access_keys"]
@@ -163,6 +165,7 @@ coreo_aws_rule "iam-passwordreuseprevention" do
   meta_cis_id "1.10"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=30"
   level "Critical"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -181,7 +184,8 @@ coreo_aws_rule "iam-expirepasswords" do
   suggested_action "Configure a strong password policy for your users so that passwords expire such that users must change their passwords periodically."
   meta_cis_id "1.11"
   meta_cis_scored "true"
-  meta_cis_level "1"
+  meta_cis_level "1" 
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=32"
   level "Critical"
   objectives ["account_password_policy"]
   audit_objects ["object.password_policy.expire_passwords"]
@@ -198,14 +202,16 @@ coreo_aws_rule "iam-no-mfa" do
   description "Cloud user does not have Multi-Factor Authentication enabled on their cloud account."
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for every cloud user."
+  meta_cis_id "1.02"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=13"
   level "Critical"
-  id_map "modifiers.user_name"
-  objectives ["users", "mfa_devices"]
-  formulas ["", "count"]
-  call_modifiers [{}, {:user_name => "users.user_name"}]
-  audit_objects ["", "object.mfa_devices"]
-  operators ["", "<"]
-  raise_when ["", 1]
+  id_map "object.content.user"
+  objectives ["credential_report", "credential_report"]
+  audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
+  operators ["=~", "=~" ]
+  raise_when [/true/i, /false/i]
 end
 
 coreo_aws_rule "iam-root-no-mfa" do
@@ -232,6 +238,10 @@ coreo_aws_rule "iam-root-active-password" do
   description "The root user has been logging in using a password."
   category "Security"
   suggested_action "Re-set your root account password, don't log in to your root account, and secure root account password in a safe place."
+  meta_cis_id "1.01"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=11"
   level "Critical"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
@@ -251,6 +261,7 @@ coreo_aws_rule "iam-user-attached-policies" do
   meta_cis_id "1.16"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=42"
   level "Warning"
   id_map "modifiers.user_name"
   objectives ["users", "user_policies"]
@@ -269,9 +280,10 @@ coreo_aws_rule "iam-password-policy-uppercase" do
   description "The password policy must require an uppercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.5"
+  meta_cis_id "1.05"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=20"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -288,9 +300,10 @@ coreo_aws_rule "iam-password-policy-lowercase" do
   description "The password policy must require an lowercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.6"
+  meta_cis_id "1.06"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=22"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -307,9 +320,10 @@ coreo_aws_rule "iam-password-policy-symbol" do
   description "The password policy must require a symbol to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.7"
+  meta_cis_id "1.07"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=24"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -326,9 +340,10 @@ coreo_aws_rule "iam-password-policy-number" do
   description "The password policy must require a number to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.8"
+  meta_cis_id "1.08"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=26"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -348,6 +363,7 @@ coreo_aws_rule "iam-password-policy-min-length" do
   meta_cis_id "1.9"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=28"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -356,23 +372,6 @@ coreo_aws_rule "iam-password-policy-min-length" do
   raise_when [14]
 end
 
-coreo_aws_rule "iam-root-active-key" do
-  action :nothing
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-key.html"
-  display_name "DEPRICATED - Root user has active Access Key"
-  description "DEPRICATED - Root user has an Access Key that is active."
-  category "Security"
-  suggested_action "DEPRICATED - Replace the root Access Key with an IAM user access key, and then disable and remove the root access key."
-  level "Critical"
-  id_map "object.user"
-  objectives ["credential_report"]
-  formulas ["CSV[user=<root_account>]"]
-  audit_objects ["object.content.access_key_1_active"]
-  operators ["=="]
-  raise_when ["true"]
-end
-
 coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
@@ -381,22 +380,10 @@ coreo_aws_rule "iam-root-access-key-1" do
   description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
-  level "Warning"
-  id_map "object.content.user"
-  objectives ["credential_report", "credential_report"]
-  audit_objects ["object.content.user", "object.content.access_key_1_active"]
-  operators ["==", "=="]
-  raise_when ["<root_account>", true]
-end
-
-coreo_aws_rule "iam-root-access-key-1" do
-  action :define
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
-  display_name "Root Access Key Exists - Key #1"
-  description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
-  category "Security"
-  suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
+  meta_cis_id "1.12"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=34"
   level "Warning"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
@@ -413,6 +400,10 @@ coreo_aws_rule "iam-root-access-key-2" do
   description "Root Access Key #2 exists. Ideally, the root account should not have any active keys."
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
+  meta_cis_id "1.12"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=34"
   level "Warning"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
@@ -426,7 +417,7 @@ coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   service :iam
   display_name "User may have been exposed to the CloudBleed issue"
   description "Cloudbleed is the latest internet bug that puts users private information in jeopardy. News of the bug broke late on Feb 24, 2017,"
-  link "https://www.cnet.com/how-to/cloudbleed-bug-everything-you-need-to-know/"
+  link "http://kb.cloudcoreo.com/mydoc_iam-cloudbleed-password-not-rotated.html"
   category "Security"
   suggested_action "Users should be asked to rotate their passwords after February 25, 2017"
   level "Critical"
@@ -434,7 +425,7 @@ coreo_aws_rule "iam-cloudbleed-passwords-not-rotated" do
   objectives ["credential_report", "credential_report", "credential_report"]
   audit_objects ["object.content.password_last_changed", "object.content.password_last_changed", "object.content.password_last_changed"]
   operators ["!=", "!=", "<"]
-  raise_when ["not_supported", "N/A", "2017-02-25 00:00:00 -0800"]
+  raise_when ["not_supported", "N/A", "2017-02-21 16:00:00 -0800"]
 end
 
 coreo_aws_rule "iam-support-role" do
@@ -447,6 +438,7 @@ coreo_aws_rule "iam-support-role" do
   meta_cis_id "1.22"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=65"
   level "Warning"
   objectives ["", "policies"]
   audit_objects ["object.policies.policy_name", "object.policies.attachment_count"]
@@ -461,7 +453,7 @@ coreo_aws_rule "iam-user-password-not-used" do
   link "http://kb.cloudcoreo.com/mydoc_iam-user-password-not-used.html"
   include_violations_in_count false
   display_name "IAM User Password Not Used Recently"
-  description "Lists all IAM users whose password has not used in {X} days"
+  description "Lists all IAM users whose password has not used in ${AUDIT_AWS_IAM_DAYS_PASSWORD_UNUSED} days"
   category "Security"
   suggested_action "Consider deleting unused or unnecessary IAM users"
   level "Informational"
@@ -472,6 +464,43 @@ coreo_aws_rule "iam-user-password-not-used" do
   id_map "object.users.user_name"
 end
 
+coreo_aws_rule "iam-active-root-user" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "IAM Root User Activity"
+  description "This rule performs an audit on root user activity"
+  category "Inventory"
+  suggested_action "Root user should not be active, when possible. Additionally, ensure that CIS rule 3.3 is passing for this rule to pass"
+  level "Informational"
+  meta_cis_id "1.1"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=="]
+  raise_when ["<root_account>"]
+end
+
+coreo_aws_rule "iam-mfa-password-holders" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "MFA for IAM Password Holders"
+  description "This rule checks that all IAM users with a password have MFA enabled"
+  category "Security"
+  suggested_action "Activate MFA for all users with a console password"
+  level "Warning"
+  meta_cis_id "1.2"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives ["credential_report","credential_report"]
+  audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
+  operators ["==", "=="]
+  raise_when [true, false]
+  id_map "object.content.user"
+end
 
 coreo_uni_util_variables "iam-planwide" do
   action :set
@@ -507,7 +536,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.9.6-beta1"
+                   :version => "1.10.7-9"
                },
                {
                    :name => "js-yaml",
@@ -578,7 +607,6 @@ coreo_uni_util_variables "iam-update-planwide-3" do
   action :set
   variables([
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.JSONReport'},
-                {'COMPOSITE::coreo_aws_rule_runner.advise-iam.report' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.report'},
                 {'COMPOSITE::coreo_uni_util_variables.iam-planwide.table' => 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-iam.table'}
             ])
 end
