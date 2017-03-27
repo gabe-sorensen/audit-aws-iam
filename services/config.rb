@@ -125,6 +125,10 @@ coreo_aws_rule "iam-active-key-no-rotation" do
   description "User has active keys that have not been rotated in the last 90 days"
   category "Access"
   suggested_action "If you regularly use the AWS access keys, we recommend that you also regularly rotate or delete them."
+  meta_cis_id "1.04"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=18"
   level "Critical"
   id_map "modifiers.user_name"
   objectives ["users", "access_keys", "access_keys"]
@@ -161,6 +165,7 @@ coreo_aws_rule "iam-passwordreuseprevention" do
   meta_cis_id "1.10"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=30"
   level "Critical"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -179,7 +184,8 @@ coreo_aws_rule "iam-expirepasswords" do
   suggested_action "Configure a strong password policy for your users so that passwords expire such that users must change their passwords periodically."
   meta_cis_id "1.11"
   meta_cis_scored "true"
-  meta_cis_level "1"
+  meta_cis_level "1" 
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=32"
   level "Critical"
   objectives ["account_password_policy"]
   audit_objects ["object.password_policy.expire_passwords"]
@@ -196,6 +202,10 @@ coreo_aws_rule "iam-no-mfa" do
   description "Cloud user does not have Multi-Factor Authentication enabled on their cloud account."
   category "Security"
   suggested_action "Enable Multi-Factor Authentication for every cloud user."
+  meta_cis_id "1.02"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=13"
   level "Critical"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
@@ -228,6 +238,10 @@ coreo_aws_rule "iam-root-active-password" do
   description "The root user has been logging in using a password."
   category "Security"
   suggested_action "Re-set your root account password, don't log in to your root account, and secure root account password in a safe place."
+  meta_cis_id "1.01"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=11"
   level "Critical"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
@@ -247,6 +261,7 @@ coreo_aws_rule "iam-user-attached-policies" do
   meta_cis_id "1.16"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=42"
   level "Warning"
   id_map "modifiers.user_name"
   objectives ["users", "user_policies"]
@@ -265,9 +280,10 @@ coreo_aws_rule "iam-password-policy-uppercase" do
   description "The password policy must require an uppercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.5"
+  meta_cis_id "1.05"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=20"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -284,9 +300,10 @@ coreo_aws_rule "iam-password-policy-lowercase" do
   description "The password policy must require an lowercase letter to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.6"
+  meta_cis_id "1.06"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=22"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -303,9 +320,10 @@ coreo_aws_rule "iam-password-policy-symbol" do
   description "The password policy must require a symbol to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.7"
+  meta_cis_id "1.07"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=24"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -322,9 +340,10 @@ coreo_aws_rule "iam-password-policy-number" do
   description "The password policy must require a number to meet CIS standards"
   category "Access"
   suggested_action "Configure a strong password policy for your users to ensure that passwords expire, aren't reused, have a certain length, require certain characters, and more."
-  meta_cis_id "1.8"
+  meta_cis_id "1.08"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=26"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -344,6 +363,7 @@ coreo_aws_rule "iam-password-policy-min-length" do
   meta_cis_id "1.9"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=28"
   level "Warning"
   objectives ["account_password_policy"]
   id_map "static.password_policy"
@@ -360,6 +380,10 @@ coreo_aws_rule "iam-root-access-key-1" do
   description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
+  meta_cis_id "1.12"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=34"
   level "Warning"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
@@ -376,6 +400,10 @@ coreo_aws_rule "iam-root-access-key-2" do
   description "Root Access Key #2 exists. Ideally, the root account should not have any active keys."
   category "Security"
   suggested_action "Do not use Root Access Keys. Consider deleting the Root Access keys and using IAM users instead."
+  meta_cis_id "1.12"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=34"
   level "Warning"
   id_map "object.content.user"
   objectives ["credential_report", "credential_report"]
@@ -410,6 +438,7 @@ coreo_aws_rule "iam-support-role" do
   meta_cis_id "1.22"
   meta_cis_scored "true"
   meta_cis_level "1"
+  meta_cis_link "https://benchmarks.cisecurity.org/tools2/amazon/CIS_Amazon_Web_Services_Foundations_Benchmark_v1.1.0.pdf#page=65"
   level "Warning"
   objectives ["", "policies"]
   audit_objects ["object.policies.policy_name", "object.policies.attachment_count"]
