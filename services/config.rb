@@ -13,7 +13,7 @@ coreo_aws_rule "iam-inventory-users" do
   operators ["=~"]
   raise_when [//]
   id_map "object.users.user_name"
-end
+end 
 
 coreo_aws_rule "iam-inventory-roles" do
   action :define
@@ -207,22 +207,6 @@ coreo_aws_rule "iam-no-mfa" do
   raise_when [/true/i, /false/i]
 end
 
-coreo_aws_rule "iam-root-no-mfa" do
-  action :define
-  service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
-  display_name "Multi-Factor Authentication not enabled for root account"
-  description "Root cloud user does not have Multi-Factor Authentication enabled on their cloud account"
-  category "Security"
-  suggested_action "Enable Multi-Factor Authentication for the root cloud user."
-  level "Emergency"
-  id_map "object.content.user"
-  objectives ["credential_report", "credential_report"]
-  audit_objects ["object.content.user", "object.content.mfa_active"]
-  operators ["==", "=="]
-  raise_when ["<root_account>", false]
-end
-
 coreo_aws_rule "iam-root-active-password" do
   action :define
   service :iam
@@ -358,7 +342,7 @@ end
 coreo_aws_rule "iam-root-access-key-1" do
   action :define
   service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  link ""
   display_name "Root Access Key Exists - Key #1"
   description "Root Access Key #1 exists. Ideally, the root account should not have any active keys."
   category "Security"
@@ -374,7 +358,7 @@ end
 coreo_aws_rule "iam-root-access-key-2" do
   action :define
   service :iam
-  link "http://kb.cloudcoreo.com/mydoc_iam-root-active-password.html"
+  link ""
   display_name "Root Access Key Exists - Key #2"
   description "Root Access Key #2 exists. Ideally, the root account should not have any active keys."
   category "Security"
@@ -554,7 +538,7 @@ coreo_aws_rule "manual-detailed-billing" do
   id_map "static.no_op"
 end
 
-coreo_aws_rule "iam-root-no-mfa-cis" do
+coreo_aws_rule "iam-root-no-mfa" do
   action :define
   service :user
   link "http://kb.cloudcoreo.com/mydoc_iam-root-no-mfa.html"
@@ -688,24 +672,6 @@ coreo_aws_rule "manual-full-privilege-user" do
   id_map "static.no_op"
 end
 
-coreo_aws_rule "iam-internal" do
-  action :define
-  service :iam
-  display_name "IAM Root Access Key"
-  description "This rule checks for root access keys. Root account should not have access keys enabled"
-  category "Internal"
-  suggested_action "Ignore"
-  level "Internal"
-  meta_cis_id "1.23"
-  meta_cis_scored "false"
-  meta_cis_level "1"
-  id_map "object.content.user"
-  objectives ["credential_report"]
-  audit_objects ["object.content.user"]
-  operators ["=~"]
-  raise_when [//]
-end
-
 coreo_aws_rule "manual-appropriate-sns-subscribers" do
   action :define
   service :user
@@ -744,6 +710,26 @@ coreo_aws_rule "manual-least-access-routing-tables" do
   operators [""]
   raise_when [""]
   id_map "static.no_op"
+end
+
+# end of user-visible content. Remaining resources are system-defined
+
+coreo_aws_rule "iam-internal" do
+  action :define
+  service :iam
+  display_name "IAM Root Access Key"
+  description "This rule checks for root access keys. Root account should not have access keys enabled"
+  category "Internal"
+  suggested_action "Ignore"
+  level "Internal"
+  meta_cis_id "1.23"
+  meta_cis_scored "false"
+  meta_cis_level "1"
+  id_map "object.content.user"
+  objectives ["credential_report"]
+  audit_objects ["object.content.user"]
+  operators ["=~"]
+  raise_when [//]
 end
 
 coreo_uni_util_variables "iam-planwide" do
@@ -885,7 +871,7 @@ function setValueForNewJSONInput(json_input) {
     }
 
     //if cis 1.13 wanted, the below will run
-    if  (alertListArray.indexOf('iam-root-no-mfa-cis') > -1) {
+    if  (alertListArray.indexOf('iam-root-no-mfa') > -1) {
         if (users["<root_account>"]['violator_info']['mfa_active'] == "false"){
 
             if (!json_input['violations']['us-east-1']["<root_account>"]) {
@@ -896,7 +882,7 @@ function setValueForNewJSONInput(json_input) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa-cis'] = rootAccessMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa'] = rootAccessMetadata
         }
     }
 
