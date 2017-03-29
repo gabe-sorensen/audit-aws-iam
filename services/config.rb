@@ -538,6 +538,24 @@ coreo_aws_rule "manual-detailed-billing" do
   id_map "static.no_op"
 end
 
+coreo_aws_rule "iam-root-key-access" do
+  action :define
+  service :iam
+  display_name "IAM Root Access Key"
+  description "This rule checks for root access keys. Root account should not have access keys enabled"
+  category "Security"
+  suggested_action "Deactivate root access keys"
+  level "Informational"
+  meta_cis_id "1.12"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives [""]
+  audit_objects [""]
+  operators [""]
+  raise_when [true]
+  id_map "static.no_op"
+end
+
 coreo_aws_rule "iam-root-no-mfa" do
   action :define
   service :user
@@ -852,7 +870,7 @@ function setValueForNewJSONInput(json_input) {
     }
 
     //if cis 1.12 wanted, the below will run
-    if  (alertListArray.indexOf('iam-root-access-key') > -1) {
+    if  (alertListArray.indexOf('iam-root-key-access') > -1) {
         const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
         const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
 
@@ -866,7 +884,7 @@ function setValueForNewJSONInput(json_input) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-access_key'] = rootMFAMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-key-access'] = rootMFAMetadata
         }
     }
 
