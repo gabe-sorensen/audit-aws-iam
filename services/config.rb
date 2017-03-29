@@ -884,7 +884,7 @@ function setValueForNewJSONInput(json_input) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-key-access'] = rootMFAMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-key-access'] = rootAccessMetadata
         }
     }
 
@@ -900,7 +900,7 @@ function setValueForNewJSONInput(json_input) {
                 json_input['violations']['us-east-1']["<root_account>"]['violations'] = {}
             }
             ;
-            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa'] = rootAccessMetadata
+            json_input['violations']['us-east-1']["<root_account>"]['violations']['iam-root-no-mfa'] = rootMFAMetadata
         }
     }
 
