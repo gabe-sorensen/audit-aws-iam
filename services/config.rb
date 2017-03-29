@@ -540,7 +540,7 @@ end
 
 coreo_aws_rule "iam-root-key-access" do
   action :define
-  service :iam
+  service :user
   display_name "IAM Root Access Key"
   description "This rule checks for root access keys. Root account should not have access keys enabled"
   category "Security"
