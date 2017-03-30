@@ -871,10 +871,16 @@ function setValueForNewJSONInput(json_input) {
 
     //if cis 1.12 wanted, the below will run
     if  (alertListArray.indexOf('iam-root-key-access') > -1) {
-        const keyOneEnabled = users["<root_account>"]['violator_info']['access_key_1_active'] == "false"
-        const keyTwoEnabled = users["<root_account>"]['violator_info']['access_key_2_active'] == "false"
 
-        if ((keyOneEnabled || keyTwoEnabled)) {
+        const hasKeyOneEnable = user["<root_account>"] && user["<root_account>"]['violator_info'] 
+            && user["<root_account>"]['violator_info']['access_key_1_active'] 
+            && users["<root_account>"]['violator_info']['access_key_1_active'] == "false";
+
+        const hasKeyTwoEnabled = user["<root_account>"] && user["<root_account>"]['violator_info'] 
+            && user["<root_account>"]['violator_info']['access_key_2_active']
+            && users["<root_account>"]['violator_info']['access_key_2_active'] == "false";
+
+        if ((hasKeyOneEnable || hasKeyTwoEnabled)) {
 
             if (!json_input['violations']['us-east-1']["<root_account>"]) {
                 json_input['violations']['us-east-1']["<root_account>"] = {}
