@@ -1,6 +1,6 @@
 iam-inventory-users:
   - put-your-object-id-here-1: ""
-  - put-your-object-id-here-2: "2017-01-10T00:00Z"  
+  - put-your-object-id-here-2: "2017-01-10T00:00Z"
 iam-inventory-roles:
   - put-your-object-id-here-1: ""
   - put-your-object-id-here-2: "2017-01-10T00:00Z"
@@ -32,6 +32,9 @@ iam-expirepasswords:
   - put-your-object-id-here-1: ""
   - put-your-object-id-here-2: "2017-01-10T00:00Z"
 iam-no-mfa:
+  - put-your-object-id-here-1: ""
+  - put-your-object-id-here-2: "2017-01-10T00:00Z"
+cp-iam-mfa-password-expiration:
   - put-your-object-id-here-1: ""
   - put-your-object-id-here-2: "2017-01-10T00:00Z"
 iam-root-no-mfa:

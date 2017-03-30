@@ -13,7 +13,7 @@ coreo_aws_rule "iam-inventory-users" do
   operators ["=~"]
   raise_when [//]
   id_map "object.users.user_name"
-end 
+end
 
 coreo_aws_rule "iam-inventory-roles" do
   action :define
@@ -205,6 +205,25 @@ coreo_aws_rule "iam-no-mfa" do
   audit_objects ["object.content.password_enabled", "object.content.mfa_active"]
   operators ["=~", "=~" ]
   raise_when [/true/i, /false/i]
+end
+
+coreo_aws_rule "cp-iam-mfa-password-expiration" do
+  action :define
+  service :iam
+  include_violations_in_count false
+  display_name "CP MFA Password Check"
+  description "Checks if there are users that don't have MFA enabled, and aren't set for password expiration"
+  category "Security"
+  suggested_action "Enable MFA on user account, or set their password to periodically expire"
+  level "Warning"
+  meta_cis_id "1.2"
+  meta_cis_scored "true"
+  meta_cis_level "1"
+  objectives ["credential_report","credential_report","credential_report"]
+  audit_objects ["object.content.password_enabled", "object.content.mfa_active","object.content.password_next_rotation"]
+  operators ["==", "==", "=="]
+  raise_when [true, false, "N/A"]
+  id_map "object.content.user"
 end
 
 coreo_aws_rule "iam-root-active-password" do
@@ -425,7 +444,7 @@ end
 coreo_aws_rule "iam-unused-access" do
   action :define
   service :user
-  include_violations_in_count false   
+  include_violations_in_count false
   display_name "IAM inactive credentials"
   description "This rule checks for credentials that have been unused for 90 days"
   category "Inventory"
@@ -983,7 +1002,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-iam" do
                 "cloud account name": "PLAN::cloud_account_name",
                 "violations": COMPOSITE::coreo_aws_rule_runner.advise-iam.report}'
   function <<-EOH
-  
+
 
 function setTableAndSuppression() {
   let table;
@@ -1005,7 +1024,7 @@ function setTableAndSuppression() {
   }
   coreoExport('table', JSON.stringify(table));
   coreoExport('suppression', JSON.stringify(suppression));
-  
+
   let alertListToJSON = "${AUDIT_AWS_IAM_ALERT_LIST}";
   let alertListArray = alertListToJSON.replace(/'/g, '"');
   json_input['alert list'] = alertListArray || [];
